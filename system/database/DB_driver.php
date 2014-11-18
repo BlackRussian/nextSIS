@@ -110,10 +110,11 @@ class CI_DB_driver {
 		}
 
 		// ----------------------------------------------------------------
-
+		
 		// Connect to the database and set the connection ID
+		
 		$this->conn_id = ($this->pconnect == FALSE) ? $this->db_connect() : $this->db_pconnect();
-
+		
 		// No connection resource?  Throw an error
 		if ( ! $this->conn_id)
 		{
@@ -427,7 +428,7 @@ class CI_DB_driver {
 			include_once(BASEPATH.'database/DB_result.php');
 			include_once(BASEPATH.'database/drivers/'.$this->dbdriver.'/'.$this->dbdriver.'_result.php');
 		}
-
+		
 		return $driver;
 	}
 

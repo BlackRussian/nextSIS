@@ -69,7 +69,7 @@ class CI_DB_mysql_driver extends CI_DB {
 		{
 			$this->hostname .= ':'.$this->port;
 		}
-
+		
 		return @mysql_connect($this->hostname, $this->username, $this->password, TRUE);
 	}
 
@@ -83,11 +83,12 @@ class CI_DB_mysql_driver extends CI_DB {
 	 */
 	function db_pconnect()
 	{
+		
 		if ($this->port != '')
 		{
 			$this->hostname .= ':'.$this->port;
 		}
-
+		
 		return @mysql_pconnect($this->hostname, $this->username, $this->password);
 	}
 
