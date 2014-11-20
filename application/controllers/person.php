@@ -53,6 +53,35 @@ class Person extends CI_Controller
 		
 	}
 	
+// The add function adds a person
+	function edit($id)
+	{
+		    if($this->session->userdata('logged_in')) // user is logged in
+			{
+				// get session data
+				$session_data = $this->session->userdata('logged_in');
+				
+				// set the data associative array that is sent to the home view (and display/send)
+				$data['username'] = $session_data['username'];
+				$this->lang->load('person'); // default language option taken from config.php file 	
+				//$this->load->view('person_view', $data);
+				
+				// if the person model returns TRUE then call the view
+				if(!$this->load->model('person_model','',TRUE))
+				{
+					echo "this is a test";
+					$this->lang->load('person'); // default language option taken from config.php file 	
+					$data['query'] = $this->person_model->getpersonbyid($id);
+	
+				}		
+				$this->load->view('person/edit', $data);
+			}
+			else // not logged in - redirect to login controller (login page)
+			{
+				redirect('login','refresh');
+			}
+	}
+	
 	// The listing function displays a list of people in the database
 	function listing()
 	{
@@ -64,14 +93,17 @@ class Person extends CI_Controller
 			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] = $session_data['username'];
 			$this->lang->load('person'); // default language option taken from config.php file 	
-			$this->load->view('person_view', $data);
+			//$this->load->view('person_view', $data);
 			
 			// if the person model returns TRUE then call the view
-			if($this->load->model('person','',TRUE)) {
+			if(!$this->load->model('person_model','',TRUE))
+			{
+				echo "this is a test";
 				$this->lang->load('person'); // default language option taken from config.php file 	
-				$this->load->view('person_view', $data);
+				$data['query'] = $this->person_model->listing();
+
 			}		
-			
+			$this->load->view('person_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
