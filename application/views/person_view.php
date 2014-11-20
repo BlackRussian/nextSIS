@@ -68,6 +68,40 @@
   				
         		<div class="span8">
 					<h1><?php echo $this->lang->line("people");?></h1>
+					<table>
+					<tr>
+						<td>
+						First Name
+						</td>
+						<td>
+						Middle Name
+						</td>
+						<td>
+						Surname
+						</td>
+						<td>
+						&nbsp;
+						</td>
+					</tr>
+				 	<?php if(isset($query)){  foreach($query as $person){?>
+						<tr>
+							<td>
+								<?php echo $person->first_name ?>
+							</td>
+							<td>
+								<?php echo $person->middle_name ?>
+							</td>
+							<td>
+								<?php echo $person->surname ?>
+							</td>
+							<td>
+							<!--<?php echo "<a href='person/edit/'". urlencode($person->id).">" .$this->lang->line("edit_person") . "</>" ?>-->
+							
+								<a href="edit/<?php echo urlencode($person->id); ?>"><?php echo $this->lang->line("edit_person");?></a>
+							</td>
+						</tr>
+					<?php }}?>
+					</table>
         		</div>  			
   				  				
   			</div>
