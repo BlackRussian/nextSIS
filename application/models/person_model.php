@@ -20,13 +20,34 @@
  * Copyright 2012 http://nextsis.org
  */
 
-class Person extends CI_Model
+class Person_model extends CI_Model
 {
 	// The listing method takes gets a list of people in the database 
 	public function listing()
  	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,surname,firstname,middle_name,common_name,title_id,gender_id,local_id')->from('person')->where('username',$username)->limit(10);
+		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id')->from('person')->limit(10);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+ 	
+	public function getpersonbyid($personid)
+ 	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id')->from('person')->where('id',$personid)->limit(10);
 
    		// run the query and return the result
    		$query = $this->db->get();
