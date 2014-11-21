@@ -1,6 +1,7 @@
 <?php
 
 $lang['add_new_person'] 			= "Add new person";
+$lang['edit_person'] 			    = "Edit";
 $lang['attendance'] 				= "Attendance";
 $lang['courses'] 					= "Courses";
 $lang['grades'] 					= "Grades";
