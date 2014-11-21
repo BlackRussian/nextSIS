@@ -95,7 +95,7 @@
 								<?php echo $person->surname ?>
 							</td>
 							<td>
-							<!--<?php echo "<a href='person/edit/'". urlencode($person->id).">" .$this->lang->line("edit_person") . "</>" ?>-->
+							
 							
 								<a href="edit/<?php echo urlencode($person->id); ?>"><?php echo $this->lang->line("edit_person");?></a>
 							</td>
