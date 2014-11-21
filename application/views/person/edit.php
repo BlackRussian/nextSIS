@@ -68,8 +68,86 @@
   				</div>
   				
         		<div class="span8">
-					<h1><?php echo $this->lang->line("people");?></h1>
+        		<?php echo form_open('person/editrecord'); ?>
+					<h1>Edit Person</h1>
+					<table>
+					<tr>
+						<td>Title</td>
+						<td>
+						<select id="Title" name="Title">
+						<?php foreach($titles as $title){ 
+							$selected = False;
+							$value= $title->id;
+							$text = $title->label;
+							if($titleid == $value){$selected = 'selected';}
+								
+							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
+							
+						}?>
+						</select>
+					</tr>
 					
+					<tr>
+						<td>
+							First Name
+						</td>
+						<td>
+							<?php echo "<input type='text' id='fname' name='fname' value='". $fname ."'/>"?>
+					</tr>
+					<tr>
+						<td>
+						Middle Name
+						</td>
+						<td>
+						<?php echo "<input type='text' id='mname' name='mname' value='". $mname ."'/>"?>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Last Name
+						</td>
+						<td>
+							<?php echo "<input type='text' id='lname' name='lname' value='". $lname ."'/>"?>
+					</tr>
+					<tr>
+						<td>
+							Common Name
+						</td>
+						<td>
+							<?php echo "<input type='text' id='cname' name='cname' value='". $cname ."'/>"?>
+					</tr>
+					<tr>
+						<td>Gender</td>
+						<td>
+						<input style="display:none"; type="text" id="hide" name="pid" value="<?php echo $personid; ?>">
+						<select id="Gender" name="Gender">
+						<?php foreach($genders as $gender){ 
+						
+							$selected = False;
+							$value= $gender->id;
+							$text = $gender->label;
+							if($genderid == $value){$selected = 'selected';}
+								
+							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
+						}?>
+						</select>
+					</tr>
+					<tr>
+						<td>
+							User Name
+						</td>
+						<td>
+							<?php echo "<input type='text' name='uname' value='". $username ."'/>"?>
+					</tr>
+					<tr>
+						<td colspan="2">
+						<?php echo form_submit('submit','submit'); ?>
+						<?php echo form_close(); ?>
+							<a class="class="btn btn-primary"" href="">Update</a>
+							<a href="">Cancel</a>
+						</td>
+					</tr>
+					</table>
         		</div>  			
   				  				
   			</div>
