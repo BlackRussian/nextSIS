@@ -43,11 +43,61 @@ class Person_model extends CI_Model
 			return FALSE;
 		}
  	}
- 	
+ 	//Update person model
+ 	public function updateperson($id,$data)
+ 	{
+ 		$this->db->where('id', $id);
+		$this->db->update('person', $data);
+ 	}
+ 	//Get Person by person id
 	public function getpersonbyid($personid)
  	{
+ 		
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id')->from('person')->where('id',$personid)->limit(10);
+		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id,username')->from('person')->where('id',$personid);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+ 	
+ 	//Get all Person Genders
+	public function GetPersonGender($langid)
+ 	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('id,language_id,label')->from('person_gender')->where('language_id',$langid)->limit(10);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+	//Get all Person Titles
+	public function GetPersonTitles($langid)
+ 	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('id,language_id,label')->from('person_title')->where('language_id',$langid)->limit(10);
 
    		// run the query and return the result
    		$query = $this->db->get();
