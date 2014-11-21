@@ -27,6 +27,7 @@ class Person extends CI_Controller
 	function __construct()
 	{
 		parent::__construct();
+		$this->load->model('person_model');
 	}
 	
 	function index()
@@ -37,6 +38,7 @@ class Person extends CI_Controller
 			$session_data = $this->session->userdata('logged_in');
 			
 			// set the data associative array that is sent to the home view (and display/send)
+			
 			$data['username'] = $session_data['username'];
 			$this->lang->load('person'); // default language option taken from config.php file 	
 			$this->load->view('person_view', $data);
@@ -53,7 +55,42 @@ class Person extends CI_Controller
 		
 	}
 	
-// The add function adds a person
+	// The editrecord function edits a person
+	function editrecord()
+	{
+		//$this->load->model('person_model','',TRUE);
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+
+			// set the data associative array that is sent to the home view (and display/send)
+			$data['username'] = $session_data['username'];
+			$this->lang->load('person'); // default language option taken from config.php file 	
+			$this->load->view('person_view', $data);
+			
+			//Set the id that should be updated
+			$id= $this->input->post('pid');
+			$gid = $this->input->post('gender');
+			echo $gid;
+			$data = array(
+				'middle_name' => $this->input->post('mname'),
+				'first_name' => $this->input->post('fname'),
+				'surname' => $this->input->post('lname'),
+				'common_name' => $this->input->post('cname'),
+				'gender_id' => $this->input->post('Gender'),
+				'title_id' => $this->input->post('Title')
+			);
+			$this->person_model->updateperson($id,$data);
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
+	}
+	
+	
+    // The add function is used to load a person record for edit
 	function edit($id)
 	{
 		    if($this->session->userdata('logged_in')) // user is logged in
@@ -62,6 +99,7 @@ class Person extends CI_Controller
 				$session_data = $this->session->userdata('logged_in');
 				
 				// set the data associative array that is sent to the home view (and display/send)
+				$this->load->helper(array('form', 'url')); // load the html form helper
 				$data['username'] = $session_data['username'];
 				$this->lang->load('person'); // default language option taken from config.php file 	
 				//$this->load->view('person_view', $data);
@@ -69,9 +107,22 @@ class Person extends CI_Controller
 				// if the person model returns TRUE then call the view
 				if(!$this->load->model('person_model','',TRUE))
 				{
-					echo "this is a test";
+					echo "this is a test edit";
 					$this->lang->load('person'); // default language option taken from config.php file 	
-					$data['query'] = $this->person_model->getpersonbyid($id);
+					$rows = $this->person_model->getpersonbyid($id);
+					foreach($rows as $row)
+					{
+						$data['fname'] = $row->first_name;
+						$data['mname'] = $row->middle_name;
+						$data['lname'] = $row->surname;
+						$data['cname'] = $row->common_name;
+						$data['genderid'] = $row->gender_id;
+						$data['titleid'] = $row->title_id;
+						$data['username'] = $row->username;
+						$data['personid'] = $row->id;
+					}
+					$data['genders'] = $this->person_model->GetPersonGender(1);
+					$data['titles'] = $this->person_model->GetPersonTitles(1);
 	
 				}		
 				$this->load->view('person/edit', $data);
