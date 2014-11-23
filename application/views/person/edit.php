@@ -140,11 +140,38 @@
 							<?php echo "<input type='text' name='uname' value='". $username ."'/>"?>
 					</tr>
 					<tr>
+						<td>
+							User Roles
+						</td>
+						<td>
+							<?php foreach($roles as $role){ 
+							$selected="";
+							if(is_array($personroles))
+							{
+								foreach($personroles as $pr)
+								{
+									if($pr->role_id == $role->id)
+										$selected = "checked";
+								}
+								
+							}
+							echo "<input   type='checkbox' name='userrole[]'  value='". $role->id ."'". $selected ." />" .$role->label ."<br/>";
+							//$selected = False;
+							//$value= $gender->id;
+							//$text = $gender->label;
+							//if($genderid == $value){$selected = 'selected';}
+								
+							//echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
+						}?>
+						
+						</td>
+					</tr>
+					<tr>
 						<td colspan="2">
 						<?php echo form_submit('submit','submit'); ?>
 						<?php echo form_close(); ?>
-							<a class="class="btn btn-primary"" href="">Update</a>
-							<a href="">Cancel</a>
+							
+							
 						</td>
 					</tr>
 					</table>
