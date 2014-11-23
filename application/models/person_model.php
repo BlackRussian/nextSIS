@@ -43,11 +43,63 @@ class Person_model extends CI_Model
 			return FALSE;
 		}
  	}
- 	//Update person model
- 	public function updateperson($id,$data)
+	//Add person model
+ 	public function addperson($data,$roledata)
  	{
+ 		//This section will be used to add the person data
+ 		
+		$this->db->insert('person', $data);
+		$id = $this->db->insert_id();
+		$this->db->flush_cache();
+		
+		
+		//Add the new roles
+		if(is_array($roledata))
+		{
+			foreach($roledata as $itm)
+			{
+				$rdata = array(
+				'person_id' => $id,
+				'role_id' => $itm);
+				$this->db->insert('person_role',$rdata);
+				$this->db->flush_cache();
+				
+			}
+		}
+		
+		
+ 	}
+	
+	
+	
+ 	//Update person model
+ 	public function updateperson($id,$data,$roledata)
+ 	{
+ 		//This section will be used to update the person data
  		$this->db->where('id', $id);
 		$this->db->update('person', $data);
+		$this->db->flush_cache();
+		
+		//Clear the current roles associated with the person
+		$this->db->where('person_id', $id);
+        $this->db->delete('person_role'); 
+		$this->db->flush_cache();
+		
+		//Add the new roles
+		if(is_array($roledata))
+		{
+			foreach($roledata as $itm)
+			{
+				$rdata = array(
+				'person_id' => $id,
+				'role_id' => $itm);
+				$this->db->insert('person_role',$rdata);
+				$this->db->flush_cache();
+				
+			}
+		}
+		
+		
  	}
  	//Get Person by person id
 	public function getpersonbyid($personid)
@@ -71,7 +123,28 @@ class Person_model extends CI_Model
 			return FALSE;
 		}
  	}
- 	
+ 	//Get current Person Roles
+ 	public function getpersonrolesbypersonid($personid)
+	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('person_id,role_id')->from('person_role')->where('person_id',$personid);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+		
+	}
  	//Get all Person Genders
 	public function GetPersonGender($langid)
  	{
@@ -98,6 +171,28 @@ class Person_model extends CI_Model
  	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
 		$this->db->select('id,language_id,label')->from('person_title')->where('language_id',$langid)->limit(10);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+	
+	//Get all Person Roles
+	public function GetPersonRoles()
+ 	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('id,label')->from('role');
 
    		// run the query and return the result
    		$query = $this->db->get();
