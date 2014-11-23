@@ -53,6 +53,69 @@ class Person extends CI_Controller
 	function add()
 	{
 		
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+			
+			// set the data associative array that is sent to the home view (and display/send)
+			
+			$data['username'] = $session_data['username'];
+			$this->load->helper(array('form', 'url')); // load the html form helper
+			$this->lang->load('person'); // default language option taken from config.php file 
+			$data['genders'] = $this->person_model->GetPersonGender(1);
+					$data['titles'] = $this->person_model->GetPersonTitles(1);
+					$data['roles'] = $this->person_model->GetPersonRoles();	
+			$this->load->view('person/add', $data);
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
+	}
+	//This will save entry to the database
+	function addrecord()
+	{
+		//$this->load->model('person_model','',TRUE);
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+
+			// set the data associative array that is sent to the home view (and display/send)
+			$data['username'] = $session_data['username'];
+			$this->lang->load('person'); // default language option taken from config.php file 	
+			$this->load->view('person_view', $data);
+			
+			//Set the id that should be updated
+			$id= $this->input->post('pid');
+			$gid = $this->input->post('gender');
+			
+			// load our tcrypt class and create a new object to work with
+			$this->load->library('tcrypt');
+ 			$tcrypt = new Tcrypt;
+			$upwd = $tcrypt->password_hash('g66k2q2@d');
+			
+			
+			$data = array(
+				'middle_name' => $this->input->post('mname'),
+				'first_name' => $this->input->post('fname'),
+				'surname' => $this->input->post('lname'),
+				'common_name' => $this->input->post('cname'),
+				'gender_id' => $this->input->post('Gender'),
+				'title_id' => $this->input->post('Title'),
+				'username' => $this->input->post('uname'),
+				'password' => $upwd
+			);
+			$roledata = $this->input->post('userrole');
+			
+			$this->person_model->addperson($data,$roledata);
+			redirect('person','listing');
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
 	}
 	
 	// The editrecord function edits a person
@@ -72,7 +135,7 @@ class Person extends CI_Controller
 			//Set the id that should be updated
 			$id= $this->input->post('pid');
 			$gid = $this->input->post('gender');
-			echo $gid;
+			
 			$data = array(
 				'middle_name' => $this->input->post('mname'),
 				'first_name' => $this->input->post('fname'),
@@ -81,7 +144,10 @@ class Person extends CI_Controller
 				'gender_id' => $this->input->post('Gender'),
 				'title_id' => $this->input->post('Title')
 			);
-			$this->person_model->updateperson($id,$data);
+			$roledata = $this->input->post('userrole');
+			
+			$this->person_model->updateperson($id,$data,$roledata);
+			redirect('person/listing');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -123,7 +189,8 @@ class Person extends CI_Controller
 					}
 					$data['genders'] = $this->person_model->GetPersonGender(1);
 					$data['titles'] = $this->person_model->GetPersonTitles(1);
-	
+					$data['roles'] = $this->person_model->GetPersonRoles();
+					$data['personroles'] = $this->person_model->getpersonrolesbypersonid($id);
 				}		
 				$this->load->view('person/edit', $data);
 			}
