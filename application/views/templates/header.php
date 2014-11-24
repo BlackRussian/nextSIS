@@ -1,8 +1,9 @@
+<!DOCTYPE html>
 <!--
- nextSIS header view template
+ nextSIS home view
  
  PURPOSE 
- Displays a header at the top of a web page.
+ This displays the homepage once the user has logged in.
  
  LICENCE 
  This file is part of nextSIS.
@@ -19,13 +20,34 @@
  Copyright 2012 http://nextsis.org
 -->
 
-<!DOCTYPE html>
-<html lang="en">
+<html>
 	<head>
-		<base href="<?php echo base_url();?>">
 		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1">		
 		<link rel="stylesheet" href="<?php echo base_url('assets/css/bootstrap.css');?>" type="text/css">
 		<link rel="stylesheet" href="<?php echo base_url('assets/css/nextsis.css');?>" type="text/css">
 		<link rel="shortcut icon" href="<?php echo base_url('assets/img/nextsis.favicon.png');?>">
-		<title>Student Information System</title>				
+		<title><?php echo $this->lang->line('student_information_system');?></title>				
 	</head>
+	
+	<body>
+		<div class="navbar">
+  			<div class="navbar-inner">
+  				<div class="container">
+  				   	<a class="brand" href="home">nextSIS&gt;</a>
+  				   	<div class="navbar-content">
+    					<ul class="nav">
+    						<li class="active"><a href="home"><i class="icon-home"></i>&nbsp;<?php echo $this->lang->line("home");?></a></li>
+      						<li><a href="person/listing"><i class="icon-user"></i>&nbsp;<?php echo $this->lang->line("people");?></a></li>
+      						<li><a href=""><i class="icon-list-alt"></i>&nbsp;<?php echo $this->lang->line("courses");?></a></li>
+      						<li><a href="setup"><i class="icon-wrench"></i>&nbsp;<?php echo $this->lang->line("setup");?></a></li>
+      						<li><a href=""><i class="icon-question-sign"></i>&nbsp;<?php echo $this->lang->line("help");?></a></li>
+      						<li><a href="person/logout"><i class="icon-off"></i>&nbsp;<?php echo $this->lang->line("logout");?></a></li>
+  				   		</ul>
+    					<ul class="nav pull-right">
+      						<li><a href="person/me"><i class="icon-user"></i>&nbsp;<?php echo $username;?></a></li>
+    					</ul>  				   		
+  				   	</div>
+  				</div>
+  			</div>
+  		</div>

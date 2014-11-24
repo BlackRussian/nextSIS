@@ -26,7 +26,7 @@ class User extends CI_Model
 	public function login($username, $password)
  	{
 		// first try to match the username
-		$this->db->select('id,username,password')->from('person')->where('username',$username)->limit(1);
+		$this->db->select('id,username,password,default_schoolId')->from('person')->where('username',$username)->limit(1);
 
    		// run the query and return the result
    		$query = $this->db->get();

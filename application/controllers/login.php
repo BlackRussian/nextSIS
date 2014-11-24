@@ -32,7 +32,7 @@ class Login extends CI_Controller
  	{
 		$this->load->helper(array('form', 'url')); // load the html form helper
 		$this->lang->load('login'); // load the login language file - the default language option (unused second parameter) is taken from config.php file 		
-		$this->load->view('templates/header'); // load the page's visible header
+		$this->load->view('templates/loginheader'); // load the page's visible header
 		$this->load->view('login_view'); // load the standard login form
 		$this->load->view('templates/footer'); // load the page's visible footer
  	}
@@ -54,7 +54,7 @@ class Login extends CI_Controller
    		{
 			$this->load->helper(array('form', 'url')); // load the html form helper
 			$this->lang->load('login'); // default language option taken from config.php file 		
-			$this->load->view('templates/header'); // load the page's visible header
+			$this->load->view('templates/loginheader'); // load the page's visible header
 			$this->load->view('login_view'); // load the standard login form
 			$this->load->view('templates/footer'); // load the page's visible footer
    		}
@@ -78,7 +78,7 @@ class Login extends CI_Controller
      		foreach($result as $row)
      		{
        			
-       			$session = array('id'=>$row->id,'username'=>$row->username);
+       			$session = array('id'=>$row->id,'username'=>$row->username,'defaultschoolid'=>$row->default_schoolId,'currentschoolid'=>$row->default_schoolId);
        			$this->session->set_userdata('logged_in', $session);
      		}
      		return TRUE; // validation succeeded
