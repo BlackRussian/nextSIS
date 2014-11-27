@@ -77,8 +77,15 @@ class Login extends CI_Controller
      		$session = array();
      		foreach($result as $row)
      		{
-       			
-       			$session = array('id'=>$row->id,'username'=>$row->username,'defaultschoolid'=>$row->default_schoolId,'currentschoolid'=>$row->default_schoolId);
+       			$sresult = $this->user->GetSchoolYear($row->default_schoolId);
+				$myyear="";
+				foreach($sresult as $srow)
+				{
+					
+					$myyear= $srow->syear;
+				}
+				
+       			$session = array('id'=>$row->id,'username'=>$row->username,'defaultschoolid'=>$row->default_schoolId,'currentschoolid'=>$row->default_schoolId,'currentsyear'=>$myyear);
        			$this->session->set_userdata('logged_in', $session);
      		}
      		return TRUE; // validation succeeded

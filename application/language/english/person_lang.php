@@ -16,4 +16,5 @@ $lang['student_information_system'] = "Student Information System";
 $lang['grade_levels'] 			    = "Manage Grade Levels";
 $lang['edit_gradelevel']            = "Edit";
 $lang['Grade Levels'] 				= "gradelevel";
+$lang['school_periods'] 			= "Manage School Periods";
 ?>

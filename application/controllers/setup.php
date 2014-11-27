@@ -40,7 +40,7 @@ class Setup extends CI_Controller
 			// set the data associative array that is sent to the home view (and display/send)
 			
 			$data['username'] = $session_data['username'];
-			$this->lang->load('person'); // default language option taken from config.php file 	
+			$this->lang->load('setup'); // default language option taken from config.php file 	
 			$this->load->view('templates/header',$data);
 			$this->load->view('setup_view', $data);
 		}

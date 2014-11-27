@@ -15,5 +15,6 @@ $lang['search'] 					= "Search";
 $lang['setup'] 						= "Setup";
 $lang['student_information_system'] = "Student Information System";
 $lang['gradelevel'] 				= "Grade Level";
+$lang['school_periods'] 			= "Manage School Periods";
 
 ?>

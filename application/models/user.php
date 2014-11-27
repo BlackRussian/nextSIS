@@ -61,6 +61,30 @@ class User extends CI_Model
 			return FALSE;
 		}
  	}
+
+	public function GetSchoolYear($schoolid)
+	{
+		
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('id,syear')->from('school')->where('id',$schoolid)->limit(1);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+		
+	}
+
 }
 
 ?>

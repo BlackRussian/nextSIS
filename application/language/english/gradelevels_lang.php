@@ -16,6 +16,7 @@ $lang['sample_help_message']		= "This is a sample help message.";
 $lang['search'] 					= "Search";
 $lang['setup'] 						= "Setup";
 $lang['student_information_system'] = "Student Information System";
-$lang['edit_gradelevel']           =  "Edit"
+$lang['edit_gradelevel']           =  "Edit";
+$lang['school_periods'] 			= "Manage School Periods";
 
 ?>
