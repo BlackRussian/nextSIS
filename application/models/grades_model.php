@@ -20,14 +20,13 @@
  * Copyright 2012 http://nextsis.org
  */
 
-class Schoolperiods_model extends CI_Model
+class Grades_model extends CI_Model
 {
 	// The listing method takes gets a list of people in the database 
-	public function listing($schoolid,$syear)
+	public function listing()
  	{
- 		echo "testing" . $syear;
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('period_id,school_id,sort_order,title,start_time,end_time','ignore_scheduling','attendance')->from('school_periods')->where('school_id',$schoolid)->where('syear',$syear)->limit(10);
+		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id')->from('person')->join('person_role','person.id=person_role.person_id')->where('person_role.role_id',3)->limit(10);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -44,106 +43,70 @@ class Schoolperiods_model extends CI_Model
 			return FALSE;
 		}
  	}
-	
 	//Add person model
- 	public function addschoolperiod($data)
+ 	public function addperson($data,$roledata)
  	{
  		//This section will be used to add the person data
  		
-		$this->db->insert('school_periods', $data);
-		
+		$this->db->insert('person', $data);
+		$id = $this->db->insert_id();
 		$this->db->flush_cache();
 		
+		
+		//Add the new roles
+		if(is_array($roledata))
+		{
+			foreach($roledata as $itm)
+			{
+				$rdata = array(
+				'person_id' => $id,
+				'role_id' => $itm);
+				$this->db->insert('person_role',$rdata);
+				$this->db->flush_cache();
 				
+			}
+		}
+		
 		
  	}
 	
 	
 	
  	//Update person model
- 	public function updateperiodlevel($id,$data)
+ 	public function updateperson($id,$data,$roledata)
  	{
  		//This section will be used to update the person data
- 		$this->db->where('period_id', $id);
-		$this->db->update('school_periods', $data);
+ 		$this->db->where('id', $id);
+		$this->db->update('person', $data);
 		$this->db->flush_cache();
-	}
-	
-	//Get all Person Roles
-	public function GetAvailableTimes()
- 	{
- 		//Get hour values
- 		for($i=1;$i<=12;$i++)
+		
+		//Clear the current roles associated with the person
+		$this->db->where('person_id', $id);
+        $this->db->delete('person_role'); 
+		$this->db->flush_cache();
+		
+		//Add the new roles
+		if(is_array($roledata))
 		{
-			$hour_options[$i] = $i;
+			foreach($roledata as $itm)
+			{
+				$rdata = array(
+				'person_id' => $id,
+				'role_id' => $itm);
+				$this->db->insert('person_role',$rdata);
+				$this->db->flush_cache();
+				
+			}
 		}
 		
-		for($i=0;$i<=9;$i++)
-		{
-			$minute_options[$i] = '0'.$i;
-		}
-		
-		for($i=10;$i<=59;$i++)
-		{
-			$minute_options[$i] = $i;
-		}
-	
-		return array('hour'=>$hour_options,
-		'minutes'=>$minute_options);
-		// select all the information from the table we want to use with a 10 row limit (for display)
 		
  	}
-	
-	
-	
- 	//Get Grade Levels
-	public function GetSortOrder($schoolid,$syear)
+ 	//Get Person by person id
+	public function getpersonbyid($personid)
  	{
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('period_id,sort_order')->from('school_periods')->where('school_id',$schoolid)->where('syear',$syear);
-
-   		// run the query and return the result
-   		$query = $this->db->get();
-		
-		// proceed if records are found
-   		if($query->num_rows()>0)
-   		{
-   			$x=1;
-   			for($i=1;$i<=$query->num_rows();$i++)
-			{
-				$valfound = false;
-				foreach($query->result() as $q)
-				{
-					//echo "<br/>Database value" . $q->sort_order;
-					if($q->sort_order== $i)
-					{
-						$valfound = true;
-					}
-				}
-				//echo "<br/>If found:" . $valfound;
-				if(!$valfound)
-				{
-					$sortoptions[$x] = $i;
-					$x++;
-				}
-			}
-			// return the data (to the calling controller)
-			//return $query->result();
-			
-			return array('sortopts' =>$sortoptions);
-   		}
-		else
-		{
-			// there are no records
-			return FALSE;
-		}
- 	}
- 	//Get Grade levels except current grade level
- 	public function GetGradeLevelsExceptCurrent($schoolid,$currentid)
- 	{
- 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,title')->from('school_gradelevels')->where('school_id',$schoolid)->where('next_grade_id !=',$currentid);
+		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id,username')->from('person')->where('id',$personid);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -160,11 +123,33 @@ class Schoolperiods_model extends CI_Model
 			return FALSE;
 		}
  	}
-	// The listing method takes gets a list of people in the database 
-	public function GetSchoolPeriodById($id)
+ 	//Get current Person Roles
+ 	public function getpersonrolesbypersonid($personid)
+	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('person_id,role_id')->from('person_role')->where('person_id',$personid);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+		
+	}
+ 	//Get all Person Genders
+	public function GetPersonGender($langid)
  	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('period_id,syear,short_name,school_id,block,sort_order,title,start_time,end_time,ignore_scheduling,attendance')->from('school_periods')->where('period_id',$id);
+		$this->db->select('id,language_id,label')->from('person_gender')->where('language_id',$langid)->limit(10);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -181,52 +166,28 @@ class Schoolperiods_model extends CI_Model
 			return FALSE;
 		}
  	}
-	// The method will identify if the time period start time is unique
-	public function IsUniqueStartTime($stime,$syear,$sid)
+	//Get all Person Titles
+	public function GetPersonTitles($langid)
  	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		
-		$this->db->select('period_id')->from('school_periods')->where('syear',$syear)->where('school_id',$sid)->where('start_time',$stime);
-		
+		$this->db->select('id,language_id,label')->from('person_title')->where('language_id',$langid)->limit(10);
+
    		// run the query and return the result
-   		$query1 = $this->db->get();
-		echo $query1->num_rows();
+   		$query = $this->db->get();
+		
 		// proceed if records are found
-   		if($query1->num_rows()>0)
+   		if($query->num_rows()>0)
    		{
 			// return the data (to the calling controller)
-			//return $query->result();
-			return false;
+			return $query->result();
    		}
 		else
 		{
 			// there are no records
-			return true;
+			return FALSE;
 		}
  	}
-	// The method will identify if the time period start time is unique
-	public function IsUniqueEndTime($stime,$syear,$sid)
- 	{
-		// select all the information from the table we want to use with a 10 row limit (for display)
-		
-		$this->db->select('period_id')->from('school_periods')->where('syear',$syear)->where('school_id',$sid)->where('end_time',$stime);
-		
-   		// run the query and return the result
-   		$query1 = $this->db->get();
-		echo $query1->num_rows();
-		// proceed if records are found
-   		if($query1->num_rows()>0)
-   		{
-			// return the data (to the calling controller)
-			//return $query->result();
-			return false;
-   		}
-		else
-		{
-			// there are no records
-			return true;
-		}
- 	}
+	
 	//Get all Person Roles
 	public function GetPersonRoles()
  	{

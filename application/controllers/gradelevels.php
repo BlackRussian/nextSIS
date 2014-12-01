@@ -41,6 +41,7 @@ class Gradelevels extends CI_Controller
 			
 			$data['username'] = $session_data['username'];
 			$this->lang->load('gradelevels'); // default language option taken from config.php file 	
+			$this->load->view('templates/header', $data);
 			$this->load->view('gradelevels/gradelevels_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -219,10 +220,11 @@ class Gradelevels extends CI_Controller
 			if(!$this->load->model('gradelevels_model','',TRUE))
 			{
 				//echo "this is a test";
-				$this->lang->load('gradelevels'); // default language option taken from config.php file 	
+				$this->lang->load('setup'); // default language option taken from config.php file 	
 				$data['query'] = $this->gradelevels_model->listing($data['currentschoolid']);
 				$data['gradelevels'] = $this->gradelevels_model->GetGradeLevels($session_data['currentschoolid']);
-			}		
+			}	
+			$this->load->view('templates/header', $data);	
 			$this->load->view('gradelevels/gradelevels_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)

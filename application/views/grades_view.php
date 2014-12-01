@@ -56,10 +56,10 @@
   			<div class="row-fluid">
   				<div class="span4 navleft">
   					<ul class="nav nav-pills nav-stacked">
-  						<li ><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
-  						<li><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
-  						<li><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
-  						<li class="active"><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 	 						  						
+  						<li class="active"><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
+  						<li><a href="person/add"><?php echo $this->lang->line("add_new_person");?></a></li>
+  						<li><a href=""><?php echo $this->lang->line("attendance");?></a></li>
+  						<li><a href=""><?php echo $this->lang->line("grades");?></a></li>  						  						
   					</ul>
   					<div class="well">
   						<p><b><?php echo $this->lang->line("help");?></b>&nbsp;<?php echo $this->lang->line("sample_help_message");?></p>
@@ -67,71 +67,41 @@
   				</div>
   				
         		<div class="span8">
-					<h1><?php echo $this->lang->line("school_periods");?></h1>
+					<h1><?php echo $this->lang->line("people");?></h1>
 					<table>
 					<tr>
 						<td>
-							Title
+						First Name
 						</td>
 						<td>
-							Start Time
+						Middle Name
 						</td>
 						<td>
-							End Time
+						Surname
 						</td>
 						<td>
-							Length
-							(minutes)
-						</td>
-						<td>
-							&nbsp;
+						&nbsp;
 						</td>
 					</tr>
-				 	<?php 
-				 	
-				 	function is_iterable($var)
-					{
-					    return $var !== null 
-					        && (is_array($var) 
-					            || $var instanceof Traversable 
-					            || $var instanceof Iterator 
-					            || $var instanceof IteratorAggregate
-					            );
-					}
-				 	
-				 	 if(is_iterable($query))
-				 	{
-				 		foreach($query as $periods)
-				 		{?>
+				 	<?php if(isset($query)){  foreach($query as $person){?>
 						<tr>
 							<td>
-								<?php echo $periods->title ?>
+								<?php echo $person->first_name ?>
 							</td>
 							<td>
-								<?php echo $periods->start_time ?>
+								<?php echo $person->middle_name ?>
 							</td>
 							<td>
-								<?php echo $periods->end_time ?>
+								<?php echo $person->surname ?>
 							</td>
 							<td>
-								<?php $duration=0;
-								$duration =   $periods->end_time - $periods->start_time;
-								echo $duration; ?>
-							</td>
-							<td>
-									
-								<a href="edit/<?php echo urlencode($periods->period_id); ?>"><?php echo $this->lang->line("editoption");?></a>
-							</td>
-							<td>
-								
+							
+							
+								<a href="edit/<?php echo urlencode($person->id); ?>"><?php echo $this->lang->line("edit_person");?></a>
 							</td>
 						</tr>
-					<?php 
-						}
-					
-						}?>
+					<?php }}?>
 					</table>
-					<a href="add"><?php echo $this->lang->line("add_new_schoolperiod");?></a>
         		</div>  			
   				  				
   			</div>

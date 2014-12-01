@@ -22,12 +22,12 @@
 
 session_start();
 
-class Schoolperiods extends CI_Controller
+class Schoolterms extends CI_Controller
 {
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->model('schoolperiods_model');
+		$this->load->model('schoolterms_model');
 	}
 	
 	function index()
@@ -41,8 +41,8 @@ class Schoolperiods extends CI_Controller
 			
 			$data['username'] = $session_data['username'];
 			$this->lang->load('setup'); // default language option taken from config.php file 	
-			$this->load->view('templates/header');
-			$this->load->view('schoolperiods/schoolperiods_view', $data);
+			$this->load->view('templates/header', $data);
+			$this->load->view('schoolterms/schoolterms_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -67,14 +67,11 @@ class Schoolperiods extends CI_Controller
 			echo "current school year is" .$session_data['currentsyear'] . $session_data['currentschoolid'];
 			$this->load->helper(array('form', 'url')); // load the html form helper
 			$this->lang->load('setup'); // default language option taken from config.php file 
-			$availabletimedata = $this->schoolperiods_model->GetAvailableTimes();
-			$availablesortopts = $this->schoolperiods_model->GetSortOrder($session_data['currentschoolid'],$session_data['currentsyear']);
-			$data['hoursopts'] = 	$availabletimedata['hour'];
-			$data['minutesopts'] = 	$availabletimedata['minutes'];
-			$data['allsortopts'] = $availablesortopts['sortopts'];
+			
+			
 			
 		    $this->load->view('templates/header',$data);
-			$this->load->view('schoolperiods/add', $data);
+			$this->load->view('schoolterms/add', $data);
 			
 			
 		}
@@ -99,9 +96,9 @@ class Schoolperiods extends CI_Controller
    		$this->form_validation->set_rules('title', 'Title', 'trim|required|xss_clean');
 		
 		// apply rules and then callback to validate_password method below
-   		$this->form_validation->set_rules('short_name', 'Short Name', 'trim|required|xss_clean');
-   		$this->form_validation->set_rules('start_time_hr', 'Start Time', 'trim|required|xss_clean|callback_DropDownListHaveValueSelectedstart_check');
-		$this->form_validation->set_rules('end_time_hr', 'End Time', 'trim|required|xss_clean|callback_DropDownListHaveValueSelectedend_check');
+   		
+   		$this->form_validation->set_rules('startdate', 'Start Date', 'trim|required|xss_clean|callback_Startdate_check');
+		$this->form_validation->set_rules('enddate', 'End Date', 'trim|required|xss_clean|callback_Enddate_check');
 			
 			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] = $session_data['username'];
@@ -110,19 +107,14 @@ class Schoolperiods extends CI_Controller
 			
 			$syear=$this->input->post('syear');
 			$school_id=$this->input->post('school_id');
-			$sort_order="0";
-			if($this->input->post('sort_order') != 'n/a')
-			{
-				$sort_order=$this->input->post('sort_order');
-			}
+			
 			$title=$this->input->post('title');
-			$short_name=$this->input->post('short_name');
-			$start_time=$this->input->post('start_time_hr').":".$this->input->post('start_time_mins')." ".$this->input->post('start_time_ampm');
-			$end_time=$this->input->post('end_time_hr').":".$this->input->post('end_time_mins')." ".$this->input->post('end_time_ampm');
+			
+			$startdate=$this->input->post('startdate');
+			$enddate=$this->input->post('enddate');
 			
 			//echo strtotime(date('m/d/y'). ' ' .$end_time) . " - " . strtotime(date('m/d/y'). ' ' .$start_time). " " . $length;
-			$ignore_scheduling=$this->input->post('ignore_scheduling');
-			$attendance=$this->input->post('attendance');
+			
 			
 			if($this->form_validation->run() == FALSE) // authentication failed - display the login form 
    			{
@@ -136,35 +128,31 @@ class Schoolperiods extends CI_Controller
 				$data['currentsyear'] = $session_data['currentsyear'];
 				$this->load->helper(array('form', 'url')); // load the html form helper
 				$this->lang->load('setup'); // default language option taken from config.php file 
-				$availabletimedata = $this->schoolperiods_model->GetAvailableTimes();
-				$data['hoursopts'] = 	$availabletimedata['hour'];
-				$data['minutesopts'] = 	$availabletimedata['minutes'];
+				
 				$data['title'] = $title;
-				$data['start_time'] = $start_time;
-				$data['end_time'] = $end_time;
-				$data['short_name'] = $short_name;
+				$data['startdate'] = $startdate;
+				$data['enddate'] = $enddate;
+				
 			    $this->load->view('templates/header',$data);
-				$this->load->view('schoolperiods/add', $data);
+				$this->load->view('schoolterms/add', $data);
 			}else{
-				$length=(strtotime(date('m/d/y'). ' ' .$end_time) - (strtotime(date('m/d/y'). ' ' .$start_time))) / 60;
-			
+				
+				$sdate = strtotime($startdate);
+				$newsdate = date('Y-m-d',$sdate);
+				$edate = strtotime($enddate);
+				$newedate = date('Y-m-d',$edate);
 				
 				$newdata = array(
 					'syear' => $syear,
 					'title' => $title,
 					'school_id' => $school_id,
+					'startdate' => $newsdate,
+					'enddate' => $newedate
 					
-					'sort_order' => $sort_order,
-					'short_name' => $short_name,
-					'start_time' => $start_time,
-					'end_time' => $end_time,
-					'length' => $length,
-					'ignore_scheduling' => $ignore_scheduling,
-					'attendance' => $attendance
 				);
 				
-				$this->schoolperiods_model->addschoolperiod($newdata);
-			    redirect('schoolperiods/listing');
+				$this->schoolterms_model->addschoolterms($newdata);
+			    redirect('schoolterms/listing');
 			}
 
 			//$this->gradelevels_model->addgradelevel($data);
@@ -261,13 +249,13 @@ class Schoolperiods extends CI_Controller
 			// get session data
 			$session_data = $this->session->userdata('logged_in');
 			
-			// field is trimmed, required and xss cleaned respectively
+		// field is trimmed, required and xss cleaned respectively
    		$this->form_validation->set_rules('title', 'Title', 'trim|required|xss_clean');
 		
 		// apply rules and then callback to validate_password method below
-   		$this->form_validation->set_rules('short_name', 'Short Name', 'trim|required|xss_clean');
-   		$this->form_validation->set_rules('start_time_hr', 'Start Time', 'trim|required|xss_clean|callback_DropDownListHaveValueSelectedstart_check');
-		$this->form_validation->set_rules('end_time_hr', 'End Time', 'trim|required|xss_clean|callback_DropDownListHaveValueSelectedend_check');
+   		
+   		$this->form_validation->set_rules('startdate', 'Start Date', 'trim|required|xss_clean|callback_Startdate_check');
+		$this->form_validation->set_rules('enddate', 'End Date', 'trim|required|xss_clean|callback_Enddate_check');
 		
 		
 			// set the data associative array that is sent to the home view (and display/send)
@@ -275,26 +263,23 @@ class Schoolperiods extends CI_Controller
 			
 			
 			//Set the id that should be updated
-			$id= $this->input->post('period_id');
+			$id= $this->input->post('termid');
 			
 			$syear=$this->input->post('syear');
 			$school_id=$this->input->post('school_id');
-			$sort_order="0";
-			if($this->input->post('sort_order') != 'n/a')
-			{
-				$sort_order=$this->input->post('sort_order');
-			}
-			$title=$this->input->post('title');
-			$short_name=$this->input->post('short_name');
-			$start_time=$this->input->post('start_time_hr').":".$this->input->post('start_time_mins')." ".$this->input->post('start_time_ampm');
-			$end_time=$this->input->post('end_time_hr').":".$this->input->post('end_time_mins')." ".$this->input->post('end_time_ampm');
 			
-			//echo strtotime(date('m/d/y'). ' ' .$end_time) . " - " . strtotime(date('m/d/y'). ' ' .$start_time). " " . $length;
-			$ignore_scheduling=$this->input->post('ignore_scheduling');
-			$attendance=$this->input->post('attendance');
-			$period_id = $this->input->post('period_id');
-			$db_stime = $this->input->post('db_stime');
-			$db_etime = $this->input->post('db_etime');
+			$title=$this->input->post('title');
+			
+			
+			$syear=$this->input->post('syear');
+			$school_id=$this->input->post('school_id');
+			
+			
+			
+			$startdate=$this->input->post('startdate');
+			$enddate=$this->input->post('enddate');
+			$db_sdate = $this->input->post('db_sdate');
+			$db_edate = $this->input->post('db_edate');
 			
 								
 			if($this->form_validation->run() == FALSE) // authentication failed - display the login form 
@@ -309,41 +294,34 @@ class Schoolperiods extends CI_Controller
 				$data['currentsyear'] = $session_data['currentsyear'];
 				$this->load->helper(array('form', 'url')); // load the html form helper
 				$this->lang->load('setup'); // default language option taken from config.php file 
-				$availabletimedata = $this->schoolperiods_model->GetAvailableTimes();
-				$data['hoursopts'] = 	$availabletimedata['hour'];
-				$data['minutesopts'] = 	$availabletimedata['minutes'];
+				
+				
 				$data['title'] = $title;
-				$data['start_time'] = $start_time;
-				$data['end_time'] = $end_time;
-				$data['db_stime'] = $db_stime;
-				$data['db_etime'] = $db_etime;
-				$data['short_name'] = $short_name;
-				$data['attendance'] = $attendance;
-				$data['ignore_scheduling']= $ignore_scheduling;
-				$data['period_id'] = $period_id;
-			    $availablesortopts = $this->schoolperiods_model->GetSortOrder($session_data['currentschoolid'],$session_data['currentsyear']);
-			    $data['allsortopts'] = $availablesortopts['sortopts'];
+				$data['startdate'] = $startdate;
+				$data['enddate'] = $enddate;
+				$date['db_sdate'] = $db_sdate;
+				$date['db_edate'] = $db_edate;
 							
 			    $this->load->view('templates/header',$data);
-				$this->load->view('schoolperiods/edit', $data);
+				$this->load->view('schoolterms/edit', $data);
 			}else{
-				$length=(strtotime(date('m/d/y'). ' ' .$end_time) - (strtotime(date('m/d/y'). ' ' .$start_time))) / 60;
+				
 						
+				$sdate = strtotime($startdate);
+				$newsdate = date('Y-m-d',$sdate);
+				$edate = strtotime($enddate);
+				$newedate = date('Y-m-d',$edate);
+				
 				$newdata = array(
 					'syear' => $syear,
 					'title' => $title,
 					'school_id' => $school_id,
-					'sort_order' => $sort_order,
-					'short_name' => $short_name,
-					'start_time' => $start_time,
-					'end_time' => $end_time,
-					'length' => $length,
-					'ignore_scheduling' => $ignore_scheduling,
-					'attendance' => $attendance
+					'startdate' => $newsdate,
+					'enddate' => $newedate
 				);
 				
-				$this->schoolperiods_model->updateperiodlevel($id,$newdata);
-			    redirect('schoolperiods/listing');
+				$this->schoolterms_model->updateschoolterm($id,$newdata);
+			    redirect('schoolterms/listing');
 			}
 			
 			
@@ -376,35 +354,29 @@ class Schoolperiods extends CI_Controller
 				//$this->load->view('person_view', $data);
 				
 				// if the person model returns TRUE then call the view
-				if(!$this->load->model('schoolperiods_model','',TRUE))
+				if(!$this->load->model('schoolterms_model','',TRUE))
 				{
-					echo "this is a test edit";
+					
 						
-					$rows = $this->schoolperiods_model->GetSchoolPeriodById($id);
+					$rows = $this->schoolterms_model->GetSchoolTermById($id);
 					foreach($rows as $row)
 					{
 						$data['title'] = $row->title;
 						$data['school_id'] = $row->school_id;
 						$data['syear'] = $row->syear;
-						$data['period_id'] = $row->period_id;
-						$data['sort_order'] = $row->sort_order;
-						$data['short_name'] = $row->short_name;
-						$data['start_time'] = $row->start_time;
-						$data['end_time'] = $row->end_time;
-						$data['db_stime'] = $row->start_time;
-						$data['db_etime'] = $row->end_time;
-						$data['ignore_scheduling'] = $row->ignore_scheduling;
-						$data['attendance'] = $row->attendance;
+						$data['termid'] = $row->id;
+						
+						$data['startdate'] = $row->startdate;
+						$data['enddate'] = $row->enddate;
+						$data['db_sdate'] = $row->startdate;
+						$data['db_edate'] = $row->enddate;
+						
 					}
 					//$data['gradelevels'] = $this->gradelevels_model->GetGradeLevelsExceptCurrent($session_data['currentschoolid'],$id);	
 				}
-				$availablesortopts = $this->schoolperiods_model->GetSortOrder($session_data['currentschoolid'],$session_data['currentsyear']);
-				$availabletimedata = $this->schoolperiods_model->GetAvailableTimes();
-				$data['hoursopts'] = 	$availabletimedata['hour'];
-				$data['minutesopts'] = 	$availabletimedata['minutes'];	
-				$data['allsortopts'] = $availablesortopts['sortopts'];
+				
 				$this->load->view('templates/header',$data);
-				$this->load->view('schoolperiods/edit', $data);
+				$this->load->view('schoolterms/edit', $data);
 				
 				
 				
@@ -431,15 +403,15 @@ class Schoolperiods extends CI_Controller
 			
 			
 			// if the person model returns TRUE then call the view
-			if(!$this->load->model('schoolperiods_model','',TRUE))
+			if(!$this->load->model('schoolterms_model','',TRUE))
 			{
 				//echo "this is a test";
 				$this->lang->load('setup'); // default language option taken from config.php file 	
-				$data['query'] = $this->schoolperiods_model->listing($data['currentschoolid'],$data['currentsyear']);
+				$data['query'] = $this->schoolterms_model->listing($data['currentschoolid'],$data['currentsyear']);
 				
 			}	
-			$this->load->view('templates/header', $data);	
-			$this->load->view('schoolperiods/schoolperiods_view', $data);
+			$this->load->view('templates/header',$data);	
+			$this->load->view('schoolterms/schoolterms_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
 		{

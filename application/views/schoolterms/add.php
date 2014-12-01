@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<!--
+
+<!--<!DOCTYPE html>
+
  nextSIS person view
  
  PURPOSE 
@@ -51,15 +52,28 @@
   				</div>
   			</div>
   		</div>-->
+  		<script type="text/javascript">
+               $(document).ready(function(){
+                     $("#startdate").datepicker({
+                     	dateFormat:"yy-MM-dd"
+                     }      	
+                     );
+               });
+               $(document).ready(function(){
+                     $("#enddate").datepicker({
+                     	dateFormat:"yy-MM-dd"
+                     });
+               });
+       </script>
   		
   		<div class="container-fluid">
   			<div class="row-fluid">
   				<div class="span4 navleft">
   					<ul class="nav nav-pills nav-stacked">
-  						<li ><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
-  						<li><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
-  						<li><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
-  						<li class="active"><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 	 						  						
+  						<li class="active"><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
+  						<li><a href="person/add"><?php echo $this->lang->line("add_new_person");?></a></li>
+  						<li><a href=""><?php echo $this->lang->line("attendance");?></a></li>
+  						<li><a href=""><?php echo $this->lang->line("grades");?></a></li>  						  						
   					</ul>
   					<div class="well">
   						<p><b><?php echo $this->lang->line("help");?></b>&nbsp;<?php echo $this->lang->line("sample_help_message");?></p>
@@ -67,71 +81,64 @@
   				</div>
   				
         		<div class="span8">
-					<h1><?php echo $this->lang->line("school_periods");?></h1>
+        		<?php echo form_open('schoolterms/addrecord'); ?>
+					<h1>Add School Term</h1>
+					<p class="text-error"><?php echo validation_errors();?></p>
 					<table>
+					
+					<?php echo "<input type='hidden' id='school_id' name='school_id' value='" .$currentschoolid ."'  />"?>
+					<?php echo "<input type='hidden' id='syear' name='syear' value='" .$currentsyear ."'  />"?>
 					<tr>
 						<td>
-							Title
+							 Title
 						</td>
 						<td>
-							Start Time
+							<?php 
+							$val="";
+							if(isset($title))
+							{
+								$val = $title;
+							}
+							echo "<input type='text' id='title' name='title' value='". $val . "' />"?>
+					</tr>
+					<tr>
+						<td>
+							Start Date
 						</td>
 						<td>
-							End Time
-						</td>
+							<?php 
+							
+							$val="";
+							if(isset($startdate))
+							{
+								$val = $startdate;
+							}
+							echo "<input type='text' id='startdate' name='startdate' value='". $val . "'  />"?>
+					</tr>
+					<tr>
+						<td>End Date</td>
 						<td>
-							Length
-							(minutes)
-						</td>
-						<td>
-							&nbsp;
+						<?php 
+							
+							$val="";
+							if(isset($enddate))
+							{
+								$val = $enddate;
+							}
+							echo "<input type='text' id='enddate' name='enddate' value='". $val . "'  />"?>
 						</td>
 					</tr>
-				 	<?php 
-				 	
-				 	function is_iterable($var)
-					{
-					    return $var !== null 
-					        && (is_array($var) 
-					            || $var instanceof Traversable 
-					            || $var instanceof Iterator 
-					            || $var instanceof IteratorAggregate
-					            );
-					}
-				 	
-				 	 if(is_iterable($query))
-				 	{
-				 		foreach($query as $periods)
-				 		{?>
-						<tr>
-							<td>
-								<?php echo $periods->title ?>
-							</td>
-							<td>
-								<?php echo $periods->start_time ?>
-							</td>
-							<td>
-								<?php echo $periods->end_time ?>
-							</td>
-							<td>
-								<?php $duration=0;
-								$duration =   $periods->end_time - $periods->start_time;
-								echo $duration; ?>
-							</td>
-							<td>
-									
-								<a href="edit/<?php echo urlencode($periods->period_id); ?>"><?php echo $this->lang->line("editoption");?></a>
-							</td>
-							<td>
-								
-							</td>
-						</tr>
-					<?php 
-						}
 					
-						}?>
+					
+					<tr>
+						<td colspan="2">
+						<?php echo form_submit('submit','submit'); ?>
+						<?php echo form_close(); ?>
+							
+							
+						</td>
+					</tr>
 					</table>
-					<a href="add"><?php echo $this->lang->line("add_new_schoolperiod");?></a>
         		</div>  			
   				  				
   			</div>

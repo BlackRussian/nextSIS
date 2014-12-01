@@ -57,9 +57,9 @@
   				<div class="span4 navleft">
   					<ul class="nav nav-pills nav-stacked">
   						<li ><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
-  						<li><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
+  						<li class="active"><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
   						<li><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
-  						<li class="active"><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 	 						  						
+  						<li><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 				  						
   					</ul>
   					<div class="well">
   						<p><b><?php echo $this->lang->line("help");?></b>&nbsp;<?php echo $this->lang->line("sample_help_message");?></p>
@@ -71,18 +71,18 @@
 					<table>
 					<tr>
 						<td>
+							Year
+						</td>
+						<td>
 							Title
 						</td>
 						<td>
-							Start Time
+							Start Date
 						</td>
 						<td>
-							End Time
+							End Date
 						</td>
-						<td>
-							Length
-							(minutes)
-						</td>
+						
 						<td>
 							&nbsp;
 						</td>
@@ -101,26 +101,25 @@
 				 	
 				 	 if(is_iterable($query))
 				 	{
-				 		foreach($query as $periods)
+				 		foreach($query as $sterm)
 				 		{?>
 						<tr>
 							<td>
-								<?php echo $periods->title ?>
+								<?php echo $sterm->syear ?>
 							</td>
 							<td>
-								<?php echo $periods->start_time ?>
+								<?php echo $sterm->title ?>
 							</td>
 							<td>
-								<?php echo $periods->end_time ?>
+								<?php echo $sterm->startdate ?>
 							</td>
 							<td>
-								<?php $duration=0;
-								$duration =   $periods->end_time - $periods->start_time;
-								echo $duration; ?>
+								<?php echo $sterm->enddate ?>
 							</td>
+							
 							<td>
 									
-								<a href="edit/<?php echo urlencode($periods->period_id); ?>"><?php echo $this->lang->line("editoption");?></a>
+								<a href="edit/<?php echo urlencode($sterm->id); ?>"><?php echo $this->lang->line("editoption");?></a>
 							</td>
 							<td>
 								
@@ -131,7 +130,7 @@
 					
 						}?>
 					</table>
-					<a href="add"><?php echo $this->lang->line("add_new_schoolperiod");?></a>
+					<a href="add"><?php echo $this->lang->line("add_new_schoolterm");?></a>
         		</div>  			
   				  				
   			</div>

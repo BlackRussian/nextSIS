@@ -106,9 +106,16 @@
 						<td>Start Time</td>
 						<td>
 						<select style="width:70px" id="start_time_hr" name="start_time_hr">
-						<?php echo"<option value='n/a' selected>n/a</option>";
+						<?php 
+						$time= explode(":", $start_time);
+						$time2 = explode(" ", $time[1]);
+						echo"<option value='n/a' selected>n/a</option>";
 						 foreach($hoursopts as $hr){ 
 							$selected = False;
+							if($time[0] == $hr)
+							{
+							$selected = selected;
+							}
 							$value= $hr;
 							$text = $hr;
 							//if($titleid == $value){$selected = 'selected';}
@@ -122,6 +129,10 @@
 						<?php  echo "<option value='n/a' selected>n/a</option>";
 						foreach($minutesopts as $mins){ 
 							$selected = False;
+							if($time2[0] == $mins)
+							{
+								$selected = selected;
+							}
 							$value= $mins;
 							$text = $mins;
 							//if($titleid == $value){$selected = 'selected';}
@@ -133,20 +144,39 @@
 						</select>
 						<select style="width:70px" id="start_time_ampm" name="start_time_ampm">
 						<?php  echo "<option value='n/a' selected>n/a</option>";
-						echo "<option value='AM'>AM</option>";
-						echo "<option value='PM'>PM</option>";
+						if($time2[1] == "AM")
+						{
+							echo "<option selected value='AM'>AM</option>";
+							echo "<option value='PM'>PM</option>";
+						}else if($time2[1] == "PM"){
+							echo "<option value='AM'>AM</option>";
+							echo "<option selected value='PM'>PM</option>";
+						}else{
+							
+							echo "<option value='AM'>AM</option>";
+							echo "<option value='PM'>PM</option>";
+						}
 						
 						?>
 						
 						</select>
+						</td>
 					</tr>
 					<tr>
 						<td>End Time</td>
+					
 						<td>
 						<select style="width:70px" id="end_time_hr" name="end_time_hr">
-						<?php echo"<option value='n/a' selected>n/a</option>";
+						<?php 
+						$time= explode(":", $end_time);
+						$time2 = explode(" ", $time[1]);
+						echo"<option value='n/a' selected>n/a</option>";
 						 foreach($hoursopts as $hr){ 
 							$selected = False;
+							if($time[0] == $hr)
+							{
+								$selected = selected;
+							}
 							$value= $hr;
 							$text = $hr;
 							//if($titleid == $value){$selected = 'selected';}
@@ -157,9 +187,17 @@
 						
 						</select>
 						<select style="width:70px" id="end_time_mins" name="end_time_mins">
-						<?php  echo "<option value='n/a' selected>n/a</option>";
-						foreach($minutesopts as $mins){ 
+						<?php 
+						
+						 echo "<option value='n/a' selected>n/a</option>";
+						foreach($minutesopts as $mins){
 							$selected = False;
+							
+							if($time2[0] == $mins)
+							{
+								$selected = selected;
+							}
+							
 							$value= $mins;
 							$text = $mins;
 							//if($titleid == $value){$selected = 'selected';}
@@ -170,9 +208,23 @@
 						
 						</select>
 						<select style="width:70px" id="end_time_ampm" name="end_time_ampm">
-						<?php  echo "<option value='n/a' selected>n/a</option>";
-						echo "<option value='AM'>AM</option>";
-						echo "<option value='PM'>PM</option>";
+						<?php
+						echo "<option value='n/a' selected>n/a</option>";
+						$selected = false;
+						if($time2[1] == "AM")
+						{
+							echo "<option selected value='AM'>AM</option>";
+							echo "<option value='PM'>PM</option>";
+						}else if($time2[1] == "PM"){
+							echo "<option value='AM'>AM</option>";
+							echo "<option selected value='PM'>PM</option>";
+						}else{
+							
+							echo "<option value='AM'>AM</option>";
+							echo "<option value='PM'>PM</option>";
+						}
+						
+						
 						
 						?>
 						
@@ -197,16 +249,18 @@
 						<td>Sort Order</td>
 						<td>
 						<select id="sort_order" name="sort_order">
-						<?php foreach($gradelevels as $level){ 
+						<?php 
+							echo "'<option value='n/a' selected>n/a</option>'";
+							foreach($allsortopts as $opt){ 
 							$selected = False;
-							$value= $level->id;
-							$text = $level->title;
+							$value= $opt;
+							$text = $opt;
 							//if($titleid == $value){$selected = 'selected';}
 								
 							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
 							
 						}?>
-						echo '<option value='n/a' selected>n/a</option>';
+						
 						</select>
 					</tr>
 					

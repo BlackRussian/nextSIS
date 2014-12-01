@@ -18,7 +18,6 @@
  <http://www.gnu.org/licenses/>.
   
  Copyright 2012 http://nextsis.org
--->
 
 <html>
 	<head>
@@ -50,16 +49,16 @@
   				   	</div>
   				</div>
   			</div>
-  		</div>
+  </div>-->
   		
   		<div class="container-fluid">
   			<div class="row-fluid">
   				<div class="span4 navleft">
   					<ul class="nav nav-pills nav-stacked">
-  						<li class="active"><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
-  						<li><a href="person/add"><?php echo $this->lang->line("add_new_person");?></a></li>
-  						<li><a href=""><?php echo $this->lang->line("attendance");?></a></li>
-  						<li><a href=""><?php echo $this->lang->line("grades");?></a></li>  						  						
+  						<li ><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
+  						<li><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
+  						<li class="active"><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
+  						<li><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 					  						
   					</ul>
   					<div class="well">
   						<p><b><?php echo $this->lang->line("help");?></b>&nbsp;<?php echo $this->lang->line("sample_help_message");?></p>
