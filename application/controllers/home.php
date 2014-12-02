@@ -38,7 +38,8 @@ class Home extends CI_Controller
 			
 			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] = $session_data['username'];
-			$this->lang->load('home'); // default language option taken from config.php file 	
+			$this->lang->load('home'); // default language option taken from config.php file 
+			$this->load->view('templates/header', $data);	
 			$this->load->view('home_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)

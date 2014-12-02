@@ -220,7 +220,8 @@ class Person extends CI_Controller
 				$this->lang->load('person'); // default language option taken from config.php file 	
 				$data['query'] = $this->person_model->listing();
 
-			}		
+			}	
+			$this->load->view('templates/header', $data);		
 			$this->load->view('person_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
