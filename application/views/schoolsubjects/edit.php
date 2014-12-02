@@ -1,9 +1,10 @@
+
 <!--<!DOCTYPE html>
 
- nextSIS home view
+ nextSIS person view
  
  PURPOSE 
- This displays the homepage once the user has logged in.
+ This displays a list of people in the database.
  
  LICENCE 
  This file is part of nextSIS.
@@ -37,8 +38,8 @@
   				   	<a class="brand" href="home">nextSIS&gt;</a>
   				   	<div class="navbar-content">
     					<ul class="nav">
-    						<li class="active"><a href="home"><i class="icon-home"></i>&nbsp;<?php echo $this->lang->line("home");?></a></li>
-      						<li><a href="person/listing"><i class="icon-user"></i>&nbsp;<?php echo $this->lang->line("people");?></a></li>
+    						<li><a href="home"><i class="icon-home"></i>&nbsp;<?php echo $this->lang->line("home");?></a></li>
+      						<li class="active"><a href=""><i class="icon-user"></i>&nbsp;<?php echo $this->lang->line("people");?></a></li>
       						<li><a href=""><i class="icon-list-alt"></i>&nbsp;<?php echo $this->lang->line("courses");?></a></li>
       						<li><a href=""><i class="icon-wrench"></i>&nbsp;<?php echo $this->lang->line("setup");?></a></li>
       						<li><a href=""><i class="icon-question-sign"></i>&nbsp;<?php echo $this->lang->line("help");?></a></li>
@@ -51,19 +52,15 @@
   				</div>
   			</div>
   		</div>-->
-  		
+  	
   		<div class="container-fluid">
   			<div class="row-fluid">
   				<div class="span4 navleft">
   					<ul class="nav nav-pills nav-stacked">
   						<li class="active"><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
-  						<li><a href="schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
-  						<li><a href="gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
-  						<li><a href="schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 	
-  						<li><a href="schoolsubjects/listing"><?php echo $this->lang->line("school_subjects");?></a></li> 	
-  						<!--<li><a href="person/add"><?php echo $this->lang->line("add_new_person");?></a></li>
+  						<li><a href="person/add"><?php echo $this->lang->line("add_new_person");?></a></li>
   						<li><a href=""><?php echo $this->lang->line("attendance");?></a></li>
-  						<li><a href=""><?php echo $this->lang->line("grades");?></a></li>-->  						  						
+  						<li><a href=""><?php echo $this->lang->line("grades");?></a></li>  						  						
   					</ul>
   					<div class="well">
   						<p><b><?php echo $this->lang->line("help");?></b>&nbsp;<?php echo $this->lang->line("sample_help_message");?></p>
@@ -71,7 +68,53 @@
   				</div>
   				
         		<div class="span8">
-					<h1><?php echo $this->lang->line("setup");?></h1>
+        		<?php echo form_open('schoolsubjects/editrecord'); ?>
+					<h1>Edit Subject</h1>
+					<p class="text-error"><?php echo validation_errors();?></p>
+					
+					<table>
+					
+					<?php echo "<input type='hidden' id='subjectid' name='subjectid' value='" .$id ."'  />"?>
+					<?php echo "<input type='hidden' id='school_id' name='school_id' value='" .$school_id ."'  />"?>
+					
+					<tr>
+						<td>
+							 Title
+						</td>
+						<td>
+							<?php 
+							$val="";
+							if(isset($title))
+							{
+								$val = $title;
+							}
+							echo "<input type='text' id='title' name='title' value='". $val . "' />"?>
+					</tr>
+					<tr>
+						<td>
+							 Short Name
+						</td>
+						<td>
+							<?php 
+							$val="";
+							if(isset($short_name))
+							{
+								$val = $short_name;
+							}
+							echo "<input type='text' id='short_name' name='short_name' value='". $val . "' />"?>
+					</tr>
+					
+					
+					
+					<tr>
+						<td colspan="2">
+						<?php echo form_submit('submit','submit'); ?>
+						<?php echo form_close(); ?>
+							
+							
+						</td>
+					</tr>
+					</table>
         		</div>  			
   				  				
   			</div>

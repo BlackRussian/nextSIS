@@ -1,9 +1,9 @@
-<!--<!DOCTYPE html>
-
- nextSIS home view
+<!DOCTYPE html>
+<!--
+ nextSIS person view
  
  PURPOSE 
- This displays the homepage once the user has logged in.
+ This displays a list of people in the database.
  
  LICENCE 
  This file is part of nextSIS.
@@ -37,8 +37,8 @@
   				   	<a class="brand" href="home">nextSIS&gt;</a>
   				   	<div class="navbar-content">
     					<ul class="nav">
-    						<li class="active"><a href="home"><i class="icon-home"></i>&nbsp;<?php echo $this->lang->line("home");?></a></li>
-      						<li><a href="person/listing"><i class="icon-user"></i>&nbsp;<?php echo $this->lang->line("people");?></a></li>
+    						<li><a href="home"><i class="icon-home"></i>&nbsp;<?php echo $this->lang->line("home");?></a></li>
+      						<li class="active"><a href=""><i class="icon-user"></i>&nbsp;<?php echo $this->lang->line("people");?></a></li>
       						<li><a href=""><i class="icon-list-alt"></i>&nbsp;<?php echo $this->lang->line("courses");?></a></li>
       						<li><a href=""><i class="icon-wrench"></i>&nbsp;<?php echo $this->lang->line("setup");?></a></li>
       						<li><a href=""><i class="icon-question-sign"></i>&nbsp;<?php echo $this->lang->line("help");?></a></li>
@@ -56,14 +56,11 @@
   			<div class="row-fluid">
   				<div class="span4 navleft">
   					<ul class="nav nav-pills nav-stacked">
-  						<li class="active"><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
-  						<li><a href="schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
-  						<li><a href="gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
-  						<li><a href="schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 	
-  						<li><a href="schoolsubjects/listing"><?php echo $this->lang->line("school_subjects");?></a></li> 	
-  						<!--<li><a href="person/add"><?php echo $this->lang->line("add_new_person");?></a></li>
-  						<li><a href=""><?php echo $this->lang->line("attendance");?></a></li>
-  						<li><a href=""><?php echo $this->lang->line("grades");?></a></li>-->  						  						
+  						<li ><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
+  						<li ><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
+  						<li><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
+  						<li><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 	
+  						<li class="active"><a href="../schoolsubjects/listing"><?php echo $this->lang->line("school_subjects");?></a></li> 			  						
   					</ul>
   					<div class="well">
   						<p><b><?php echo $this->lang->line("help");?></b>&nbsp;<?php echo $this->lang->line("sample_help_message");?></p>
@@ -71,7 +68,61 @@
   				</div>
   				
         		<div class="span8">
-					<h1><?php echo $this->lang->line("setup");?></h1>
+					<h1><?php echo $this->lang->line("school_periods");?></h1>
+					<table>
+					<tr>
+						
+						<td>
+							Title
+						</td>
+						<td>
+							Short Name
+						</td>
+						
+						
+						<td>
+							&nbsp;
+						</td>
+					</tr>
+				 	<?php 
+				 	
+				 	function is_iterable($var)
+					{
+					    return $var !== null 
+					        && (is_array($var) 
+					            || $var instanceof Traversable 
+					            || $var instanceof Iterator 
+					            || $var instanceof IteratorAggregate
+					            );
+					}
+				 	
+				 	 if(is_iterable($query))
+				 	{
+				 		foreach($query as $subject)
+				 		{?>
+						<tr>
+							<td>
+								<?php echo $subject->title ?>
+							</td>
+							<td>
+								<?php echo $subject->short_name ?>
+							</td>
+							
+							
+							<td>
+									
+								<a href="edit/<?php echo urlencode($subject->id); ?>"><?php echo $this->lang->line("editoption");?></a>
+							</td>
+							<td>
+								
+							</td>
+						</tr>
+					<?php 
+						}
+					
+						}?>
+					</table>
+					<a href="add"><?php echo $this->lang->line("add_new_schoolsubject");?></a>
         		</div>  			
   				  				
   			</div>
