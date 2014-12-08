@@ -22,7 +22,7 @@
 
 session_start();
 
-class Setup extends CI_Controller
+class Course extends CI_Controller
 {
 	function __construct()
 	{
@@ -41,8 +41,8 @@ class Setup extends CI_Controller
 			
 			$data['username'] = $session_data['username'];
 			$this->lang->load('setup'); // default language option taken from config.php file 	
-			$this->load->view('templates/setupheader',$data);
-			$this->load->view('setup_view', $data);
+			$this->load->view('templates/courseheader',$data);
+			$this->load->view('courses_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
 		{

@@ -23,10 +23,11 @@
 class User extends CI_Model
 {
 	// The user login method - takes the username and password ultimately passed from the login screen
-	public function login($username, $password)
+	public function login($username, $password, $dschid)
  	{
 		// first try to match the username
 		$this->db->select('id,username,password,default_schoolId')->from('person')->where('username',$username)->limit(1);
+		$this->db->where('default_schoolId',$dschid)->limit(1);
 
    		// run the query and return the result
    		$query = $this->db->get();

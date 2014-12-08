@@ -19,6 +19,7 @@
   
  Copyright 2012 http://nextsis.org
 
+
 <html>
 	<head>
 		<meta charset="utf-8">
@@ -49,17 +50,18 @@
   				   	</div>
   				</div>
   			</div>
-  </div>-->
+  		</div>-->
   		
   		<div class="container-fluid">
   			<div class="row-fluid">
   				<div class="span4 navleft">
   					<ul class="nav nav-pills nav-stacked">
   						<li ><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
-  						<li><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
-  						<li class="active"><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
-  						<li><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 
-  						<li><a href="../schoolsubjects/listing"><?php echo $this->lang->line("school_subjects");?></a></li> 					  						
+  						<li ><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
+  						<li><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
+  						<li><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 	
+  						<li class="active"><a href="../grades/listing"><?php echo $this->lang->line("course_grades");?></a></li> 		
+  							  						
   					</ul>
   					<div class="well">
   						<p><b><?php echo $this->lang->line("help");?></b>&nbsp;<?php echo $this->lang->line("sample_help_message");?></p>
@@ -67,20 +69,64 @@
   				</div>
   				
         		<div class="span8">
-					<h1><?php echo $this->lang->line("gradelevel");?></h1>
+        			<?php echo form_open('grades/listing'); ?>
+					<h1><?php echo $this->lang->line("course_grades");?></h1>
 					<table>
 					<tr>
 						<td>
-						Grade Level
+							Course:
+							<select id="course" name="course">
+						<?php 
+						echo '<option selected value="0">Select Course</option>';
+						foreach($courses as $course){ 
+							$selected = False;
+							$value= $course->subjectcourse_id;
+							$text = $course->subjectcourse_title;
+							if($courseid == $value){$selected = 'selected';}
+								
+							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
+							
+						}?>
+						</select>
+						</td>
+						
+						
+					</tr>
+					<tr>
+						<td>
+							<?php echo form_submit('submit','Search',"class='active'"); ?>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							&nbsp;
+						</td>
+					</tr>
+					
+					</table>
+					<table>
+					
+					<tr>
+						<td>
+							Course Name
+						</td>
+											
+						<td>
+							Student Name
 						</td>
 						<td>
-						Next Grade Level
+							Class
 						</td>
 						<td>
-						&nbsp;
+							Grade
+						</td>
+						
+						<td>
+							&nbsp;
 						</td>
 					</tr>
 				 	<?php 
+				 	
 				 	function is_iterable($var)
 					{
 					    return $var !== null 
@@ -91,43 +137,44 @@
 					            );
 					}
 				 	
-				 	
-				 	
-				 	 if(is_iterable($query)){  foreach($query as $gradelevel){?>
+				 	 if(is_iterable($query))
+				 	{
+				 		foreach($query as $subject)
+				 		{?>
 						<tr>
 							<td>
-								<?php echo $gradelevel->title ?>
+								<?php echo $subject->subjectcourse_title ?>
 							</td>
 							<td>
-								<?php 
-								if(isset($gradelevel->next_grade_id)){
-									foreach($gradelevels as $gl)
-									{
-										
-										if($gl->id == $gradelevel->next_grade_id)		
-										{
-											echo $gl->title;												
-										}								
-									}
+								<?php echo $subject->studentname ?>
+							</td>
+							<td>
+								<?php echo $subject->classtitle ?>
+							</td>
+							<td>
+								<?php echo $subject->grade ?>
+							</td>
+							
+							
+							<td>
 									
-								}else{
-									  echo "N/A";
-								} ?>
-							</td>
-							<td>
-													
-								<a href="edit/<?php echo urlencode($gradelevel->id); ?>"><?php echo $this->lang->line("edit_gradelevel");?></a>
+								<a href="edit/<?php echo urlencode($subject->gradeid); ?>"><?php echo $this->lang->line("editoption");?></a>
 							</td>
 							<td>
 								
 							</td>
 						</tr>
-					<?php }}?>
+					<?php 
+						}
+					
+						}?>
 					</table>
-					<a href="add"><?php echo $this->lang->line("add_new_gradelevel");?></a>
+					<a href="add"><?php echo $this->lang->line("add_new_grade");?></a>
         		</div>  			
   				  				
   			</div>
+  			
+						<?php echo form_close(); ?>
   		</div>
   		
 	</body>

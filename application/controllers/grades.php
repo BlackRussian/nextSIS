@@ -22,12 +22,12 @@
 
 session_start();
 
-class Setup extends CI_Controller
+class Grades extends CI_Controller
 {
 	function __construct()
 	{
 		parent::__construct();
-		
+		$this->load->model('grades_model');
 	}
 	
 	function index()
@@ -40,9 +40,8 @@ class Setup extends CI_Controller
 			// set the data associative array that is sent to the home view (and display/send)
 			
 			$data['username'] = $session_data['username'];
-			$this->lang->load('setup'); // default language option taken from config.php file 	
-			$this->load->view('templates/setupheader',$data);
-			$this->load->view('setup_view', $data);
+			$this->lang->load('person'); // default language option taken from config.php file 	
+			$this->load->view('person_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -54,13 +53,69 @@ class Setup extends CI_Controller
 	function add()
 	{
 		
-		
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+			
+			// set the data associative array that is sent to the home view (and display/send)
+			
+			$data['username'] = $session_data['username'];
+			$this->load->helper(array('form', 'url')); // load the html form helper
+			$this->lang->load('person'); // default language option taken from config.php file 
+			$data['genders'] = $this->person_model->GetPersonGender(1);
+					$data['titles'] = $this->person_model->GetPersonTitles(1);
+					$data['roles'] = $this->person_model->GetPersonRoles();	
+			$this->load->view('person/add', $data);
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
 	}
 	//This will save entry to the database
 	function addrecord()
 	{
-		
-		
+		//$this->load->model('person_model','',TRUE);
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+
+			// set the data associative array that is sent to the home view (and display/send)
+			$data['username'] = $session_data['username'];
+			$this->lang->load('person'); // default language option taken from config.php file 	
+			$this->load->view('person_view', $data);
+			
+			//Set the id that should be updated
+			$id= $this->input->post('pid');
+			$gid = $this->input->post('gender');
+			
+			// load our tcrypt class and create a new object to work with
+			$this->load->library('tcrypt');
+ 			$tcrypt = new Tcrypt;
+			$upwd = $tcrypt->password_hash('g66k2q2@d');
+			
+			
+			$data = array(
+				'middle_name' => $this->input->post('mname'),
+				'first_name' => $this->input->post('fname'),
+				'surname' => $this->input->post('lname'),
+				'common_name' => $this->input->post('cname'),
+				'gender_id' => $this->input->post('Gender'),
+				'title_id' => $this->input->post('Title'),
+				'username' => $this->input->post('uname'),
+				'password' => $upwd
+			);
+			$roledata = $this->input->post('userrole');
+			
+			$this->person_model->addperson($data,$roledata);
+			redirect('person','listing');
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
 	}
 	
 	// The editrecord function edits a person
@@ -152,21 +207,33 @@ class Setup extends CI_Controller
 		{
 			// get session data
 			$session_data = $this->session->userdata('logged_in');
-			
+			$this->load->helper(array('form', 'url')); // load the html form helper
 			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] = $session_data['username'];
-			$this->lang->load('person'); // default language option taken from config.php file 	
+			$data['currentsyear'] = $session_data['currentsyear'];
+			$data['currentuserid'] = $session_data['id'];
+			$this->lang->load('setup'); // default language option taken from config.php file 	
 			//$this->load->view('person_view', $data);
 			
-			// if the person model returns TRUE then call the view
-			if(!$this->load->model('person_model','',TRUE))
+			$courseid = $this->input->post('course');
+			if($courseid <= '0')
 			{
-				echo "this is a test";
+				$courseid = '0';
+			}
+			
+			
+			// if the person model returns TRUE then call the view
+			if(!$this->load->model('grades_model','',TRUE))
+			{
+				echo "this is a test, courseid is:" . $courseid;
 				$this->lang->load('person'); // default language option taken from config.php file 	
-				$data['query'] = $this->person_model->listing();
+				$data['query'] = $this->grades_model->listing($courseid);
+				$data['courses'] = $this->grades_model->GetTeacherCoursesByYear($data['currentuserid'],$data['currentsyear']);
+				$data['courseid'] = $courseid;
 
-			}		
-			$this->load->view('person_view', $data);
+			}	
+			$this->load->view('templates/courseheader', $data);		
+			$this->load->view('grades/view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -177,6 +244,8 @@ class Setup extends CI_Controller
 	// The logout function logs out a person from the database
 	function logout()
 	{
+		$session_data = $this->session->userdata('logged_in');
+		$defaultschoolid = $session_data['defaultschoolid'];
 		// log the user out by destroying the session flag, then the session, then redirecting to the login controller		
 		$this->session->unset_userdata('logged_in');
 		session_destroy();

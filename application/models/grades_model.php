@@ -23,10 +23,60 @@
 class Grades_model extends CI_Model
 {
 	// The listing method takes gets a list of people in the database 
-	public function listing()
+	public function listing($courseid)
  	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id')->from('person')->join('person_role','person.id=person_role.person_id')->where('person_role.role_id',3)->limit(10);
+		$this->db->select('studentname,classtitle,grade,gradeid,subjectcourse_title,subjectcourse_id,personid,termcourseid')->from('reportgradebook');
+				
+		if($courseid != '0')
+		{
+			$this->db->where('subjectcourse_id', $courseid);
+		}
+   		// run the query and return the result
+   		$this->db->limit(10);
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+	// The listing method takes gets a list of people in the database 
+	public function searchlisting($langid)
+ 	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('studentname,classtitle,grade,gradeid,subjectcourse_title,subjectcourse_id,personid,termcourseid')->from('reportgradebook')->limit(10);
+		if(isset($name) &&  $name  != '' && !empty($name))
+		{
+			
+		}
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+	//Get Current Teachers Courses
+	public function GetTeacherCoursesByYear($id,$syear)
+ 	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('subjectcourse_id,subjectcourse_title')->from('TeacherSubjects_vw')->where('personid',$id)->where('syear', $syear)->limit(10);
 
    		// run the query and return the result
    		$query = $this->db->get();

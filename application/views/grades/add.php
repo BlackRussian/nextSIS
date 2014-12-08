@@ -1,5 +1,6 @@
-<!DOCTYPE html>
-<!--
+
+<!--<!DOCTYPE html>
+
  nextSIS person view
  
  PURPOSE 
@@ -18,6 +19,7 @@
  <http://www.gnu.org/licenses/>.
   
  Copyright 2012 http://nextsis.org
+
 
 <html>
 	<head>
@@ -49,17 +51,17 @@
   				   	</div>
   				</div>
   			</div>
-  </div>-->
+  		</div>-->
+  		
   		
   		<div class="container-fluid">
   			<div class="row-fluid">
   				<div class="span4 navleft">
   					<ul class="nav nav-pills nav-stacked">
-  						<li ><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
-  						<li><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
-  						<li class="active"><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
-  						<li><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 
-  						<li><a href="../schoolsubjects/listing"><?php echo $this->lang->line("school_subjects");?></a></li> 					  						
+  						<li class="active"><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
+  						<li><a href="person/add"><?php echo $this->lang->line("add_new_person");?></a></li>
+  						<li><a href=""><?php echo $this->lang->line("attendance");?></a></li>
+  						<li><a href=""><?php echo $this->lang->line("grades");?></a></li>  						  						
   					</ul>
   					<div class="well">
   						<p><b><?php echo $this->lang->line("help");?></b>&nbsp;<?php echo $this->lang->line("sample_help_message");?></p>
@@ -67,64 +69,106 @@
   				</div>
   				
         		<div class="span8">
-					<h1><?php echo $this->lang->line("gradelevel");?></h1>
+        		<?php echo form_open('schoolsubjects/addrecord'); ?>
+					<h1>Add School Subject</h1>
+					<p class="text-error"><?php echo validation_errors();?></p>
 					<table>
+					
+					<?php echo "<input type='hidden' id='school_id' name='school_id' value='" .$currentschoolid ."'  />"?>
+					<?php echo "<input type='hidden' id='syear' name='syear' value='" .$currentsyear ."'  />"?>
 					<tr>
 						<td>
-						Grade Level
-						</td>
-						<td>
-						Next Grade Level
-						</td>
-						<td>
-						&nbsp;
+							Course:
+							<select id="course" name="course">
+						<?php 
+						echo '<option selected value="0">Select Course</option>';
+						foreach($courses as $course){ 
+							$selected = False;
+							$value= $course->subjectcourse_id;
+							$text = $course->subjectcourse_title;
+							if($courseid == $value){$selected = 'selected';}
+								
+							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
+							
+						}?>
+						</select>
 						</td>
 					</tr>
-				 	<?php 
-				 	function is_iterable($var)
-					{
-					    return $var !== null 
-					        && (is_array($var) 
-					            || $var instanceof Traversable 
-					            || $var instanceof Iterator 
-					            || $var instanceof IteratorAggregate
-					            );
-					}
-				 	
-				 	
-				 	
-				 	 if(is_iterable($query)){  foreach($query as $gradelevel){?>
-						<tr>
-							<td>
-								<?php echo $gradelevel->title ?>
-							</td>
-							<td>
-								<?php 
-								if(isset($gradelevel->next_grade_id)){
-									foreach($gradelevels as $gl)
-									{
-										
-										if($gl->id == $gradelevel->next_grade_id)		
-										{
-											echo $gl->title;												
-										}								
-									}
-									
-								}else{
-									  echo "N/A";
-								} ?>
-							</td>
-							<td>
-													
-								<a href="edit/<?php echo urlencode($gradelevel->id); ?>"><?php echo $this->lang->line("edit_gradelevel");?></a>
-							</td>
-							<td>
+					<tr>
+						<td>
+							Type of Grade:
+							<select id="gradetype" name="gradetype">
+						<?php 
+						echo '<option selected value="0">Select Grade Type</option>';
+						foreach($gradetypes as $gtype){ 
+							$selected = False;
+							$value= $gtype->subjectcourse_id;
+							$text = $gtype->subjectcourse_title;
+							if($courseid == $value){$selected = 'selected';}
 								
-							</td>
-						</tr>
-					<?php }}?>
+							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
+							
+						}?>
+						</select>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							Student:
+							<select id="student" name="student">
+						<?php 
+						echo '<option selected value="0">Select Student</option>';
+						foreach($students as $gtype){ 
+							$selected = False;
+							$value= $gtype->subjectcourse_id;
+							$text = $gtype->subjectcourse_title;
+							if($courseid == $value){$selected = 'selected';}
+								
+							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
+							
+						}?>
+						</select>
+						</td>
+					</tr>
+					<tr>
+						
+						<td>
+							 Title
+						</td>
+						<td>
+							<?php 
+							$val="";
+							if(isset($title))
+							{
+								$val = $title;
+							}
+							echo "<input type='text' id='title' name='title' value='". $val . "' />"?>
+					</tr>
+					<tr>
+						<td>
+							 Short Name
+						</td>
+						<td>
+							<?php 
+							$val="";
+							if(isset($short_name))
+							{
+								$val = $short_name;
+							}
+							echo "<input type='text' id='short_name' name='short_name' value='". $val . "' />"?>
+					</tr>
+					
+					
+					
+					<tr>
+						<td colspan="2">
+						<?php echo form_submit('submit','submit'); ?>
+						<?php echo form_close(); ?>
+							
+							
+						</td>
+					</tr>
 					</table>
-					<a href="add"><?php echo $this->lang->line("add_new_gradelevel");?></a>
         		</div>  			
   				  				
   			</div>

@@ -33,7 +33,25 @@ class Login extends CI_Controller
 		$this->load->helper(array('form', 'url')); // load the html form helper
 		$this->lang->load('login'); // load the login language file - the default language option (unused second parameter) is taken from config.php file 		
 		$this->load->view('templates/loginheader'); // load the page's visible header
-		$this->load->view('login_view'); // load the standard login form
+		$data['defaultschid'] = $schid;
+		switch ($schid) {
+			
+				case 1:
+					$this->load->view('/allschools/pbhs/login', $data); // load login form for PBH
+					break;
+				 default:
+					 $this->load->view('login_view'); // load the standard login form
+		}
+		$this->load->view('templates/footer'); // load the page's visible footer
+ 	}
+	
+	public function pbhs()
+ 	{
+		$this->load->helper(array('form', 'url')); // load the html form helper
+		$this->lang->load('login'); // load the login language file - the default language option (unused second parameter) is taken from config.php file 		
+		$this->load->view('templates/loginheader'); // load the page's visible header
+		$data['defaultschid'] = 1;
+		$this->load->view('/allschools/pbhs/login', $data); // load the standard login form
 		$this->load->view('templates/footer'); // load the page's visible footer
  	}
 
@@ -49,13 +67,22 @@ class Login extends CI_Controller
 		
 		// apply rules and then callback to validate_password method below
    		$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean|callback_validate_password');
-
+		$schid = $this->input->post('defaultschid');
+		$data['defaultschid'] = $schid;
    		if($this->form_validation->run() == FALSE) // authentication failed - display the login form 
    		{
 			$this->load->helper(array('form', 'url')); // load the html form helper
 			$this->lang->load('login'); // default language option taken from config.php file 		
 			$this->load->view('templates/loginheader'); // load the page's visible header
-			$this->load->view('login_view'); // load the standard login form
+			switch ($schid) {
+				
+				case 1:
+					$this->load->view('/allschools/pbhs/login', $data); // load login form for PBH
+					break;
+				 default:
+					 $this->load->view('login_view'); // load the standard login form
+			}
+			
 			$this->load->view('templates/footer'); // load the page's visible footer
    		}
 		else // authentication succeeded - display the homepage
@@ -68,9 +95,9 @@ class Login extends CI_Controller
  	{
    		// take the posted username
    		$username = $this->input->post('username');
-
+		$defaultschid = $this->input->post('defaultschid');
    		// return the result of the user model login method (an array if true)
-   		$result = $this->user->login($username, $password);
+   		$result = $this->user->login($username, $password, $defaultschid);
 
    		if($result)
    		{
