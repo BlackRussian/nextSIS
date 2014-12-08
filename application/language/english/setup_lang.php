@@ -21,5 +21,8 @@ $lang['add_new_schoolperiod']		= "Add New School Period";
 $lang['add_new_schoolterm']			= "Add New School Term";
 $lang['add_new_schoolsubject']      = "Add New Subject";
 $lang['course_grades']              = "Manage Grades";
+$lang['schoolclasses']              = "Manage Classes";
 
+$lang['edit_schoolclass']           = "Edit";
+$lang['add_new_schoolclass']           = "Add New Class";
 ?>
