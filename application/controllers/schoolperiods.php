@@ -41,7 +41,7 @@ class Schoolperiods extends CI_Controller
 			
 			$data['username'] = $session_data['username'];
 			$this->lang->load('setup'); // default language option taken from config.php file 	
-			$this->load->view('templates/setupheader');
+			$this->load->view('templates/header');
 			$this->load->view('schoolperiods/schoolperiods_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -73,7 +73,7 @@ class Schoolperiods extends CI_Controller
 			$data['minutesopts'] = 	$availabletimedata['minutes'];
 			$data['allsortopts'] = $availablesortopts['sortopts'];
 			
-		    $this->load->view('templates/setupheader',$data);
+		    $this->load->view('templates/header',$data);
 			$this->load->view('schoolperiods/add', $data);
 			
 			
@@ -143,7 +143,7 @@ class Schoolperiods extends CI_Controller
 				$data['start_time'] = $start_time;
 				$data['end_time'] = $end_time;
 				$data['short_name'] = $short_name;
-			    $this->load->view('templates/setupheader',$data);
+			    $this->load->view('templates/header',$data);
 				$this->load->view('schoolperiods/add', $data);
 			}else{
 				$length=(strtotime(date('m/d/y'). ' ' .$end_time) - (strtotime(date('m/d/y'). ' ' .$start_time))) / 60;
@@ -324,7 +324,7 @@ class Schoolperiods extends CI_Controller
 			    $availablesortopts = $this->schoolperiods_model->GetSortOrder($session_data['currentschoolid'],$session_data['currentsyear']);
 			    $data['allsortopts'] = $availablesortopts['sortopts'];
 							
-			    $this->load->view('templates/setupheader',$data);
+			    $this->load->view('templates/header',$data);
 				$this->load->view('schoolperiods/edit', $data);
 			}else{
 				$length=(strtotime(date('m/d/y'). ' ' .$end_time) - (strtotime(date('m/d/y'). ' ' .$start_time))) / 60;
@@ -403,7 +403,7 @@ class Schoolperiods extends CI_Controller
 				$data['hoursopts'] = 	$availabletimedata['hour'];
 				$data['minutesopts'] = 	$availabletimedata['minutes'];	
 				$data['allsortopts'] = $availablesortopts['sortopts'];
-				$this->load->view('templates/setupheader',$data);
+				$this->load->view('templates/header',$data);
 				$this->load->view('schoolperiods/edit', $data);
 				
 				
@@ -438,7 +438,7 @@ class Schoolperiods extends CI_Controller
 				$data['query'] = $this->schoolperiods_model->listing($data['currentschoolid'],$data['currentsyear']);
 				
 			}	
-			$this->load->view('templates/setupheader', $data);	
+			$this->load->view('templates/header', $data);	
 			$this->load->view('schoolperiods/schoolperiods_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)

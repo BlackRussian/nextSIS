@@ -41,7 +41,7 @@ class Schoolsubjects extends CI_Controller
 			
 			$data['username'] = $session_data['username'];
 			$this->lang->load('setup'); // default language option taken from config.php file 	
-			$this->load->view('templates/setupheader', $data);
+			$this->load->view('templates/header', $data);
 			$this->load->view('schoolsubjects/schoolsubjects_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -70,7 +70,7 @@ class Schoolsubjects extends CI_Controller
 			
 			
 			
-		    $this->load->view('templates/setupheader',$data);
+		    $this->load->view('templates/header',$data);
 			$this->load->view('schoolsubjects/add', $data);
 			
 			
@@ -132,7 +132,7 @@ class Schoolsubjects extends CI_Controller
 				$data['short_name'] = $short_name;
 				
 				
-			    $this->load->view('templates/setupheader',$data);
+			    $this->load->view('templates/header',$data);
 				$this->load->view('schoolsubjects/add', $data);
 			}else{
 				
@@ -290,7 +290,7 @@ class Schoolsubjects extends CI_Controller
 				$date['short_name'] = $short_name;
 			
 							
-			    $this->load->view('templates/setupheader',$data);
+			    $this->load->view('templates/header',$data);
 				$this->load->view('schoolsubjects/edit', $data);
 			}else{
 				
@@ -355,7 +355,7 @@ class Schoolsubjects extends CI_Controller
 					//$data['gradelevels'] = $this->gradelevels_model->GetGradeLevelsExceptCurrent($session_data['currentschoolid'],$id);	
 				}
 				
-				$this->load->view('templates/setupheader',$data);
+				$this->load->view('templates/header',$data);
 				$this->load->view('schoolsubjects/edit', $data);
 				
 				
@@ -390,7 +390,7 @@ class Schoolsubjects extends CI_Controller
 				$data['query'] = $this->schoolsubjects_model->listing($data['currentschoolid']);
 				
 			}	
-			$this->load->view('templates/setupheader',$data);	
+			$this->load->view('templates/header',$data);	
 			$this->load->view('schoolsubjects/schoolsubjects_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
