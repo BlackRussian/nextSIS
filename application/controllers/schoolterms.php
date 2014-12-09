@@ -41,7 +41,7 @@ class Schoolterms extends CI_Controller
 			
 			$data['username'] = $session_data['username'];
 			$this->lang->load('setup'); // default language option taken from config.php file 	
-			$this->load->view('templates/header', $data);
+			$this->load->view('templates/setupheader', $data);
 			$this->load->view('schoolterms/schoolterms_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -70,7 +70,7 @@ class Schoolterms extends CI_Controller
 			
 			
 			
-		    $this->load->view('templates/header',$data);
+		    $this->load->view('templates/setupheader',$data);
 			$this->load->view('schoolterms/add', $data);
 			
 			
@@ -133,7 +133,7 @@ class Schoolterms extends CI_Controller
 				$data['startdate'] = $startdate;
 				$data['enddate'] = $enddate;
 				
-			    $this->load->view('templates/header',$data);
+			    $this->load->view('templates/setupheader',$data);
 				$this->load->view('schoolterms/add', $data);
 			}else{
 				
@@ -302,7 +302,7 @@ class Schoolterms extends CI_Controller
 				$date['db_sdate'] = $db_sdate;
 				$date['db_edate'] = $db_edate;
 							
-			    $this->load->view('templates/header',$data);
+			    $this->load->view('templates/setupheader',$data);
 				$this->load->view('schoolterms/edit', $data);
 			}else{
 				
@@ -375,7 +375,7 @@ class Schoolterms extends CI_Controller
 					//$data['gradelevels'] = $this->gradelevels_model->GetGradeLevelsExceptCurrent($session_data['currentschoolid'],$id);	
 				}
 				
-				$this->load->view('templates/header',$data);
+				$this->load->view('templates/setupheader',$data);
 				$this->load->view('schoolterms/edit', $data);
 				
 				
@@ -410,7 +410,7 @@ class Schoolterms extends CI_Controller
 				$data['query'] = $this->schoolterms_model->listing($data['currentschoolid'],$data['currentsyear']);
 				
 			}	
-			$this->load->view('templates/header',$data);	
+			$this->load->view('templates/setupheader',$data);	
 			$this->load->view('schoolterms/schoolterms_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
