@@ -58,7 +58,8 @@
   					<ul class="nav nav-pills nav-stacked">
   						<li ><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
   						<li><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
-  						<li><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
+  						<li><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li> 
+  						<li><a href="../schoolclasses/listing"><?php echo $this->lang->line("schoolclasses");?></a></li> 
   						<li class="active"><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 
   						<li><a href="../schoolsubjects/listing"><?php echo $this->lang->line("school_subjects");?></a></li> 	 						  						
   					</ul>

@@ -69,7 +69,7 @@
   				
         		<div class="span8">
         		<?php echo form_open('schoolclasses/addrecord'); ?>
-					<h1>Add Person</h1>
+					<h1>Add Class</h1>
 					<table>
 					
 					<?php echo "<input type='hidden' id='school_id' name='school_id' value='" .$currentschoolid ."'  />"?>
