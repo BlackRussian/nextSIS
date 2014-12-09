@@ -32,9 +32,9 @@
 		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
     
      
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
       
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
  				
 	</head>
 	
@@ -44,17 +44,10 @@
   				<div class="container">
   				   	<a class="brand" href="home">nextSIS&gt;</a>
   				   	<div class="navbar-content">
-    					<ul class="nav">
-    						<li class="active"><a href="../home"><i class="icon-home"></i>&nbsp;<?php echo $this->lang->line("home");?></a></li>
-      						<li><a href="person/listing"><i class="icon-user"></i>&nbsp;<?php echo $this->lang->line("people");?></a></li>
-      						<li><a href="course/index"><i class="icon-list-alt"></i>&nbsp;<?php echo $this->lang->line("courses");?></a></li>
-      						<li><a href="setup/index"><i class="icon-wrench"></i>&nbsp;<?php echo $this->lang->line("setup");?></a></li>
-      						<li><a href=""><i class="icon-question-sign"></i>&nbsp;<?php echo $this->lang->line("help");?></a></li>
-      						<li><a href="person/logout"><i class="icon-off"></i>&nbsp;<?php echo $this->lang->line("logout");?></a></li>
-  				   		</ul>
-    					<ul class="nav pull-right">
-      						<li><a href="person/me"><i class="icon-user"></i>&nbsp;<?php echo $username;?></a></li>
-    					</ul>  				   		
+                  <?php if(isset($nav) && !empty($nav)) {echo $nav;}else{echo "nav failed";} ?>
+        					<ul class="nav pull-right">
+          						<li><a href="person/me"><i class="icon-user"></i>&nbsp;<?php echo $username;?></a></li>
+        					</ul>  				   		
   				   	</div>
   				</div>
   			</div>
