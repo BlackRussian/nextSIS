@@ -3,6 +3,10 @@
 *.pyo
 *.ini
 *.project
+*.s
+.metadata/*
 application/config/config.php
 application/config/database.php
 application/logs/*
+.gitignore
+*.prefs
