@@ -22,7 +22,7 @@
 	<!-- Header -->
 	<div class="header">
 		<span><a href="<?php echo base_url();?>"><img alt="nextsis logo" height="90" width="90" src="<?php echo base_url('assets/img/nextsis.logo.90.png');?>"></a></span>
-		<span class="header">Busan International Foreign School<br><?php echo $this->lang->line('student_information_system');?></span>
+		<span class="header"><?php echo $school_title;?><br><?php echo $this->lang->line('student_information_system');?></span>
 	</div>
 		
 	<!-- Calendar box -->
@@ -37,7 +37,7 @@
 			<div class="form"><input id="username" name="username" class="highlight" type="text" maxlength="100" value=""></div>
 			<div class="form"><h3><?php echo $this->lang->line('login_password');?></h3></div><br>
 			<div class="form"><input id="password" name="password" class="highlight" type="password" maxlength="100" value=""></div>
-			<div class="form"></div>
+			<div class="form"><input id="schid" name="schid" class="highlight" type="hidden" value='<?php echo $schid;?>'></div>
 			<div class="form"><button type="submit" class="btn btn-primary"><?php echo $this->lang->line('login_sign_in');?> &gt;</button></div>
 			<!-- <div class="form"><p class="text-error"><i class="icon-remove"></i></p></div> -->
 			<div class="form"></div>

@@ -23,81 +23,96 @@
   
 class Login extends CI_Controller
 {
+	function _remap($method, $params = array()){
+    	if (method_exists($this, $method))
+    	{
+        	return call_user_func_array(array($this, $method), $params);
+    	}else{
+        	$this->index($method);
+        }
+	}
+
 	public function __construct()
  	{
    		parent::__construct();
  	}
 
- 	public function index()
+ 	public function index($param = "none")
  	{
-		$this->load->helper(array('form', 'url')); // load the html form helper
-		$this->lang->load('login'); // load the login language file - the default language option (unused second parameter) is taken from config.php file 		
-		$this->load->view('templates/loginheader'); // load the page's visible header
-		$data['defaultschid'] = $schid;
-		switch ($schid) {
+ 		$stored_anchor = $this->input->cookie("nextsis");//Gets school anchor form cookie set last time valid login page was loaded
+
+ 		if(isset($stored_anchor) && $param == "none"){ 
+ 			redirect('login/'.$stored_anchor, 'refresh'); //Redirects a default login page to stored anchor page
+ 		}
+
+ 		if($this->session->userdata('logged_in')) { //Checks if user is already logged
+ 			redirect('home', 'refresh'); //Redirects to home if user is already logged in
+ 		}
+ 		else{
+
+ 			$this->load->model('school_model','',TRUE); //Load school model
 			
-				case 1:
-					$this->load->view('/allschools/pbhs/login', $data); // load login form for PBH
-					break;
-				 default:
-					 $this->load->view('login_view'); // load the standard login form
+			$school = $this->school_model->GetSchoolByAnchor($param); // Get school details using anchor passed in parameter
+			
+			if(isset($school)){ //check if valid school is found
+
+	       		$cookie = array(
+	   							'name' => 'nextsis',
+	   							'value'  => $school->anchor,
+	   							'expire' => '86500'); //Creates cookie array for storing anchor
+
+				$this->input->set_cookie($cookie); //Store anchor cookie
+
+				//Create view data array
+				$data["schid"] = $school->id;
+				$data["school_title"] = $school->title;
+
+				$this->load->helper(array('form', 'url')); // load the html form helper
+				$this->lang->load('login'); // load the login language file - the default language option (unused second parameter) is taken from config.php file 		
+				$this->load->view('templates/loginheader'); // load the page's visible header
+				$this->load->view('login_view', $data); // load the standard login form
+				$this->load->view('templates/footer'); // load the page's visible footer
+			}else{
+				show_404(); //Shows 404 page if no valid school is found for url anchor
+			}
 		}
-		$this->load->view('templates/footer'); // load the page's visible footer
- 	}
-	
-	public function pbhs()
- 	{
-		$this->load->helper(array('form', 'url')); // load the html form helper
-		$this->lang->load('login'); // load the login language file - the default language option (unused second parameter) is taken from config.php file 		
-		$this->load->view('templates/loginheader'); // load the page's visible header
-		$data['defaultschid'] = 1;
-		$this->load->view('/allschools/pbhs/login', $data); // load the standard login form
-		$this->load->view('templates/footer'); // load the page's visible footer
  	}
 
 	public function authenticate()
 	{
+		
 		$this->load->model('user','',TRUE);
    		
    		// use the CodeIgniter form validation library
    		$this->load->library('form_validation');
-
    		// field is trimmed, required and xss cleaned respectively
    		$this->form_validation->set_rules('username', 'Username', 'trim|required|xss_clean');
 		
 		// apply rules and then callback to validate_password method below
    		$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean|callback_validate_password');
-		$schid = $this->input->post('defaultschid');
-		$data['defaultschid'] = $schid;
    		if($this->form_validation->run() == FALSE) // authentication failed - display the login form 
    		{
 			$this->load->helper(array('form', 'url')); // load the html form helper
 			$this->lang->load('login'); // default language option taken from config.php file 		
-			$this->load->view('templates/loginheader'); // load the page's visible header
-			switch ($schid) {
-				
-				case 1:
-					$this->load->view('/allschools/pbhs/login', $data); // load login form for PBH
-					break;
-				 default:
-					 $this->load->view('login_view'); // load the standard login form
-			}
-			
+			$this->load->view('templates/header'); // load the page's visible header
+			$this->load->view('login_view'); // load the standard login form
 			$this->load->view('templates/footer'); // load the page's visible footer
    		}
 		else // authentication succeeded - display the homepage
    		{
      		redirect('home', 'refresh');
-   		}			
+   		}
 	}
 	
  	public function validate_password($password)
  	{
    		// take the posted username
    		$username = $this->input->post('username');
-		$defaultschid = $this->input->post('defaultschid');
+
+		$schid = $this->input->post('schid');
+   		
    		// return the result of the user model login method (an array if true)
-   		$result = $this->user->login($username, $password, $defaultschid);
+   		$result = $this->user->login($username, $password, 1);
 
    		if($result)
    		{
@@ -115,6 +130,7 @@ class Login extends CI_Controller
        			$session = array('id'=>$row->id,'username'=>$row->username,'defaultschoolid'=>$row->default_schoolId,'currentschoolid'=>$row->default_schoolId,'currentsyear'=>$myyear);
        			$this->session->set_userdata('logged_in', $session);
      		}
+     		log_message('error', "Failed authentication");
      		return TRUE; // validation succeeded
    		}
    		else

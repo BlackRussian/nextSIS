@@ -33,7 +33,7 @@ class Navigation {
 			),							
 			3 => 	array(
 				'text'		=> 	'Reports',	
-				'link'		=> 	base_url() . 'report/dashboard',
+				'link'		=> 	base_url() . 'reports/dashboard',
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-book',
 				'parent'	=>	0

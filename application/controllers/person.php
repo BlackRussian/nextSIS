@@ -236,7 +236,13 @@ class Person extends CI_Controller
 		// log the user out by destroying the session flag, then the session, then redirecting to the login controller		
 		$this->session->unset_userdata('logged_in');
 		session_destroy();
-		redirect('login', 'refresh');
+		
+		$current_school = $this->input->cookie('nextsis',TRUE);
+		
+		if(isset($current_school))
+			redirect('login/'.$current_school, 'refresh');
+		else
+			redirect('login', 'refresh');
 	}
 }
 
