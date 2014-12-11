@@ -43,6 +43,8 @@ class Login extends CI_Controller
 
  		if(isset($stored_anchor) && $param == "none"){ 
  			redirect('login/'.$stored_anchor, 'refresh'); //Redirects a default login page to stored anchor page
+ 		}else{
+ 			show_404();
  		}
 
  		if($this->session->userdata('logged_in')) { //Checks if user is already logged
