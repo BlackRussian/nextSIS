@@ -41,10 +41,8 @@ class Login extends CI_Controller
  	{
  		$stored_anchor = $this->input->cookie("nextsis");//Gets school anchor form cookie set last time valid login page was loaded
 
- 		if(isset($stored_anchor) && $param == "none"){ 
+ 		if($stored_anchor != '' && $param == "none"){ 
  			redirect('login/'.$stored_anchor, 'refresh'); //Redirects a default login page to stored anchor page
- 		}else{
- 			show_404();
  		}
 
  		if($this->session->userdata('logged_in')) { //Checks if user is already logged
