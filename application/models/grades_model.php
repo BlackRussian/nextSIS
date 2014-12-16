@@ -93,6 +93,48 @@ class Grades_model extends CI_Model
 			return FALSE;
 		}
  	}
+	//Get Current Teachers Courses
+	public function GetGradeTypes()
+ 	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('id,typename')->from('gradetypes')->limit(10);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+
+    public function GetStudentsWhoSitCourse($courseid) 
+ 	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('student,studentid,termcourses_id,title')->from('Student_subjects_vw')->where('termcourses_id',$courseid)->limit(10);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
 	//Add person model
  	public function addperson($data,$roledata)
  	{
@@ -196,10 +238,10 @@ class Grades_model extends CI_Model
 		
 	}
  	//Get all Person Genders
-	public function GetPersonGender($langid)
+	public function GetGradeById($id)
  	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,language_id,label')->from('person_gender')->where('language_id',$langid)->limit(10);
+		$this->db->select('id,course_id,gradetype_id,student_id,grade_title,grade,actualscore,weight')->from('course_grade')->where('id',$id)->limit(1);
 
    		// run the query and return the result
    		$query = $this->db->get();

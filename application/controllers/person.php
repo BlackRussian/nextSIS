@@ -40,7 +40,10 @@ class Person extends CI_Controller
 			// set the data associative array that is sent to the home view (and display/send)
 			
 			$data['username'] = $session_data['username'];
+			$data['nav'] = $this->navigation->load('people');
 			$this->lang->load('person'); // default language option taken from config.php file 	
+			$this->load->view('templates/header', $data);	
+			
 			$this->load->view('person_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -66,6 +69,10 @@ class Person extends CI_Controller
 			$data['genders'] = $this->person_model->GetPersonGender(1);
 					$data['titles'] = $this->person_model->GetPersonTitles(1);
 					$data['roles'] = $this->person_model->GetPersonRoles();	
+					
+			$data['nav'] = $this->navigation->load('people');
+			//$this->lang->load('person'); // default language option taken from config.php file 	
+			$this->load->view('templates/header', $data);	
 			$this->load->view('person/add', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -129,6 +136,7 @@ class Person extends CI_Controller
 
 			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] = $session_data['username'];
+			
 			$this->lang->load('person'); // default language option taken from config.php file 	
 			$this->load->view('person_view', $data);
 			
@@ -184,14 +192,17 @@ class Person extends CI_Controller
 						$data['cname'] = $row->common_name;
 						$data['genderid'] = $row->gender_id;
 						$data['titleid'] = $row->title_id;
-						$data['username'] = $row->username;
+						$data['uname'] = $row->username;
 						$data['personid'] = $row->id;
 					}
 					$data['genders'] = $this->person_model->GetPersonGender(1);
 					$data['titles'] = $this->person_model->GetPersonTitles(1);
 					$data['roles'] = $this->person_model->GetPersonRoles();
 					$data['personroles'] = $this->person_model->getpersonrolesbypersonid($id);
-				}		
+				}	
+				$data['nav'] = $this->navigation->load('people');
+			//$this->lang->load('person'); // default language option taken from config.php file 	
+			$this->load->view('templates/header', $data);	
 				$this->load->view('person/edit', $data);
 			}
 			else // not logged in - redirect to login controller (login page)
@@ -210,6 +221,7 @@ class Person extends CI_Controller
 			
 			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] = $session_data['username'];
+			$data['nav'] = $this->navigation->load('people');
 			$this->lang->load('person'); // default language option taken from config.php file 	
 			//$this->load->view('person_view', $data);
 			

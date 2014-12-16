@@ -121,21 +121,37 @@ class Grades extends CI_Controller
 	// The editrecord function edits a person
 	function editrecord()
 	{
+		// use the CodeIgniter form validation library
+   		$this->load->library('form_validation');
+		
 		//$this->load->model('person_model','',TRUE);
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
 			// get session data
 			$session_data = $this->session->userdata('logged_in');
 
+			// apply rules and then callback to validate_password method below
+			   		
+	   		$this->form_validation->set_rules('weight', 'Weighting', 'trim|required|decimal|xss_clean|');
+			//$this->form_validation->set_rules('enddate', 'End Date', 'trim|required|xss_clean|callback_Enddate_check');
+			
 			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] = $session_data['username'];
-			$this->lang->load('person'); // default language option taken from config.php file 	
-			$this->load->view('person_view', $data);
+			$this->lang->load('setup'); // default language option taken from config.php file 	
+			$this->load->view('grades/edit', $data);
 			
 			//Set the id that should be updated
 			$id= $this->input->post('pid');
-			$gid = $this->input->post('gender');
-			
+			$courseid = $this->input->post('course_id');
+			$gradetypeid = $this->input->post('gradetype_id');
+			$studentid = $this->input->post('student_id');
+			$grade_title = $this->input->post('grade_title');
+			$actualscore = $this->input->post('actualscore');
+			$weight = $this->input->post('weight');
+			if($this->form_validation->run() == FALSE) // authentication failed - display the login form 
+   			{
+   				
+			}else{
 			$data = array(
 				'middle_name' => $this->input->post('mname'),
 				'first_name' => $this->input->post('fname'),
@@ -148,6 +164,7 @@ class Grades extends CI_Controller
 			
 			$this->person_model->updateperson($id,$data,$roledata);
 			redirect('person/listing');
+			}
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -171,28 +188,33 @@ class Grades extends CI_Controller
 				//$this->load->view('person_view', $data);
 				
 				// if the person model returns TRUE then call the view
-				if(!$this->load->model('person_model','',TRUE))
+				if(!$this->load->model('grades_model','',TRUE))
 				{
 					echo "this is a test edit";
 					$this->lang->load('person'); // default language option taken from config.php file 	
-					$rows = $this->person_model->getpersonbyid($id);
+					
+					$rows = $this->grades_model->GetGradeById($id);
+					$cid = '';
 					foreach($rows as $row)
 					{
-						$data['fname'] = $row->first_name;
-						$data['mname'] = $row->middle_name;
-						$data['lname'] = $row->surname;
-						$data['cname'] = $row->common_name;
-						$data['genderid'] = $row->gender_id;
-						$data['titleid'] = $row->title_id;
-						$data['username'] = $row->username;
-						$data['personid'] = $row->id;
+						$data['id'] = $row->id;
+						$data['courseid'] = $row->course_id;
+						$cid = $row->course_id;
+						$data['gradetypeid'] = $row->gradetype_id;
+						$data['studentid'] = $row->student_id;
+						$data['grade_title'] = $row->grade_title;
+						$data['grade'] = $row->grade;
+						$data['actualscore'] = $row->actualscore;
+						$data['weight'] = $row->weight;
 					}
-					$data['genders'] = $this->person_model->GetPersonGender(1);
-					$data['titles'] = $this->person_model->GetPersonTitles(1);
-					$data['roles'] = $this->person_model->GetPersonRoles();
-					$data['personroles'] = $this->person_model->getpersonrolesbypersonid($id);
+					
+					$data['teachercourses'] = $this->grades_model->GetTeacherCoursesByYear($session_data['id'],$session_data['currentsyear']);
+					$data['gradetypes'] = $this->grades_model->GetGradeTypes();
+					$data['availablestudents'] = $this->grades_model->GetStudentsWhoSitCourse($cid);
+				//	$data['roles'] = $this->person_model->GetPersonRoles();
+					//$data['personroles'] = $this->person_model->getpersonrolesbypersonid($id);
 				}		
-				$this->load->view('person/edit', $data);
+				$this->load->view('grades/edit', $data);
 			}
 			else // not logged in - redirect to login controller (login page)
 			{
@@ -225,14 +247,15 @@ class Grades extends CI_Controller
 			// if the person model returns TRUE then call the view
 			if(!$this->load->model('grades_model','',TRUE))
 			{
-				echo "this is a test, courseid is:" . $courseid;
+				//echo "this is a test, courseid is:" . $courseid;
 				$this->lang->load('person'); // default language option taken from config.php file 	
 				$data['query'] = $this->grades_model->listing($courseid);
 				$data['courses'] = $this->grades_model->GetTeacherCoursesByYear($data['currentuserid'],$data['currentsyear']);
 				$data['courseid'] = $courseid;
 
 			}	
-			$this->load->view('templates/courseheader', $data);		
+			$data['nav'] = $this->navigation->load('courses');
+			$this->load->view('templates/header', $data);		
 			$this->load->view('grades/view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)

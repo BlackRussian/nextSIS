@@ -68,15 +68,75 @@
   				</div>
   				
         		<div class="span8">
-        		<?php echo form_open('schoolsubjects/editrecord'); ?>
+        		<?php echo form_open('grades/editrecord'); ?>
 					<h1>Edit Subject</h1>
 					<p class="text-error"><?php echo validation_errors();?></p>
 					
 					<table>
 					
-					<?php echo "<input type='hidden' id='subjectid' name='subjectid' value='" .$id ."'  />"?>
-					<?php echo "<input type='hidden' id='school_id' name='school_id' value='" .$school_id ."'  />"?>
+					<?php echo "<input type='hidden' id='courseid' name='courseid' value='" .$id ."'  />"?>
+					<?php //echo "<input type='hidden' id='school_id' name='school_id' value='" .$school_id ."'  />"?>
 					
+					<tr>
+						<td>
+							 Course
+						</td>
+						<td>
+							<select id="course_id" name="course_id">
+						<?php 
+						echo '<option value="n/a" selected>n/a</option>';
+						foreach($teachercourses as $course){ 
+							$selected = False;
+							$value= $course->subjectcourse_id;
+							$text = $course->subjectcourse_title;
+							if($courseid == $value){$selected = 'selected';}
+								
+							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
+							
+						}?>
+						
+						</select>
+					</tr>
+					<tr>
+						<td>
+							 Type of Grade
+						</td>
+						<td>
+							<select id="gradetype_id" name="gradetype_id">
+						<?php 
+						echo '<option value="n/a" selected>n/a</option>';
+						foreach($gradetypes as $gtypes){ 
+							$selected = False;
+							$value= $gtypes->id;
+							$text = $gtypes->typename;
+							if($gradetypeid == $value){$selected = 'selected';}
+								
+							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
+							
+						}?>
+						
+						</select>
+					</tr>
+					<tr>
+						<td>
+							 Student
+						</td>
+						<td>
+							<select id="student_id" name="student_id">
+						<?php 
+						echo '<option value="n/a" selected>n/a</option>';
+						foreach($availablestudents as $astudent){ 
+							$selected = False;
+							$value= $astudent->studentid;
+							$text = $astudent->student;
+							if($studentid == $value){$selected = 'selected';}
+								
+							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
+							
+						}?>
+						
+						</select>
+					</tr>
 					<tr>
 						<td>
 							 Title
@@ -84,26 +144,51 @@
 						<td>
 							<?php 
 							$val="";
-							if(isset($title))
+							if(isset($grade_title))
 							{
-								$val = $title;
+								$val = $grade_title;
 							}
-							echo "<input type='text' id='title' name='title' value='". $val . "' />"?>
+							echo "<input type='text' id='grade_title' name='grade_title' value='". $val . "' />"?>
 					</tr>
 					<tr>
 						<td>
-							 Short Name
+							 Weighted Score
 						</td>
 						<td>
 							<?php 
 							$val="";
-							if(isset($short_name))
+							if(isset($grade))
 							{
-								$val = $short_name;
+								$val = $grade;
 							}
-							echo "<input type='text' id='short_name' name='short_name' value='". $val . "' />"?>
+							echo   $val; ?>
 					</tr>
-					
+					<tr>
+						<td>
+							 Score
+						</td>
+						<td>
+							<?php 
+							$val="";
+							if(isset($actualscore))
+							{
+								$val = $actualscore;
+							}
+							echo "<input type='text' id='actualscore' name='actualscore' value='". $val . "' />"?>
+					</tr>
+					<tr>
+						<td>
+							 weight
+						</td>
+						<td>
+							<?php 
+							$val="";
+							if(isset($weight))
+							{
+								$val = $weight;
+							}
+							echo "<input type='text' id='weight' name='weight' value='". $val . "' />%"?>
+					</tr>
 					
 					
 					<tr>

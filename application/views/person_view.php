@@ -57,7 +57,7 @@
   				<div class="span4 navleft">
   					<ul class="nav nav-pills nav-stacked">
   						<li class="active"><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
-  						<li><a href="person/add"><?php echo $this->lang->line("add_new_person");?></a></li>
+  						<li><a href="add"><?php echo $this->lang->line("add_new_person");?></a></li>
   						<li><a href=""><?php echo $this->lang->line("attendance");?></a></li>
   						<li><a href="grades/listing"><?php echo $this->lang->line("grades");?></a></li>  						  						
   					</ul>

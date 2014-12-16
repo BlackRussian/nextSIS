@@ -19,7 +19,7 @@
  <http://www.gnu.org/licenses/>.
   
  Copyright 2012 http://nextsis.org
--->
+
 
 <html>
 	<head>
@@ -51,7 +51,7 @@
   				   	</div>
   				</div>
   			</div>
-  		</div>
+  </div>-->
   		
   		<div class="container-fluid">
   			<div class="row-fluid">
@@ -137,7 +137,7 @@
 							User Name
 						</td>
 						<td>
-							<?php echo "<input type='text' name='uname' value='". $username ."'/>"?>
+							<?php echo "<input type='text' name='uname' value='". $uname ."'/>"?>
 					</tr>
 					<tr>
 						<td>
