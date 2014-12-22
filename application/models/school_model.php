@@ -22,6 +22,12 @@
 
 class School_model extends CI_Model
 {
+
+	public function __construct()
+    {
+        $this->load->database();
+    }
+
 	//Get School by school id
 	public function GetSchoolByAnchor($school_anchor)
  	{
@@ -43,5 +49,4 @@ class School_model extends CI_Model
 			return null;
 		}
 	}
-
 }

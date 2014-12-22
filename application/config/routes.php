@@ -38,7 +38,7 @@
 |
 */
 
-$route['default_controller'] = "login";
+$route['default_controller'] = "login"; //TODO: review default route. should route to the home and redirect if not logged in
 $route['404_override'] = '';
 
 

@@ -136,27 +136,6 @@ class GradeLevels_model extends CI_Model
 		}
  	}
 	
-	//Get all Person Roles
-	public function GetPersonRoles()
- 	{
-		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,label')->from('role');
-
-   		// run the query and return the result
-   		$query = $this->db->get();
-		
-		// proceed if records are found
-   		if($query->num_rows()>0)
-   		{
-			// return the data (to the calling controller)
-			return $query->result();
-   		}
-		else
-		{
-			// there are no records
-			return FALSE;
-		}
- 	}
 }
 
 ?>

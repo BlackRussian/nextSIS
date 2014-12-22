@@ -40,8 +40,10 @@ class Home extends CI_Controller
 			$data['username'] = $session_data['username'];
 			$data['nav'] = $this->navigation->load('home');
 			$this->lang->load('home'); // default language option taken from config.php file 
+			
 			$this->load->view('templates/header', $data);	
 			$this->load->view('home_view', $data);
+			$this->load->view('templates/footer', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
 		{

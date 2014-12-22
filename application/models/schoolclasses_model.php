@@ -156,12 +156,10 @@ class SchoolClasses_model extends CI_Model
 			return FALSE;
 		}
  	}
-	
-	//Get all Person Roles
-	public function GetPersonRoles()
- 	{
+
+ 	public function GetClassByGradeLevel($gradelevel_id){
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,label')->from('role');
+		$this->db->select('id,title')->from('school_classes')->where('schoolgradelevels_id', $gradelevel_id);
 
    		// run the query and return the result
    		$query = $this->db->get();
