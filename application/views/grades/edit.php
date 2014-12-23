@@ -74,7 +74,7 @@
 					
 					<table>
 					
-					<?php echo "<input type='hidden' id='courseid' name='courseid' value='" .$id ."'  />"?>
+					<?php echo "<input type='hidden' id='gradeid' name='gradeid' value='" .$id ."'  />"?>
 					<?php //echo "<input type='hidden' id='school_id' name='school_id' value='" .$school_id ."'  />"?>
 					
 					<tr>
@@ -155,13 +155,15 @@
 							 Weighted Score
 						</td>
 						<td>
+							<?php //echo "<input type='hidden' id='school_id' name='school_id' value='" .$school_id ."'  />"?>
 							<?php 
 							$val="";
 							if(isset($grade))
 							{
 								$val = $grade;
 							}
-							echo   $val; ?>
+							echo   $val;
+							echo "<input type='hidden' id='grade' name='grade' value='" .$val ."'  />"; ?>
 					</tr>
 					<tr>
 						<td>

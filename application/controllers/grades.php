@@ -141,16 +141,25 @@ class Grades extends CI_Controller
 			$this->load->view('grades/edit', $data);
 			
 			//Set the id that should be updated
-			$id= $this->input->post('pid');
+			$id= $this->input->post('gradeid');
 			$courseid = $this->input->post('course_id');
 			$gradetypeid = $this->input->post('gradetype_id');
 			$studentid = $this->input->post('student_id');
-			$grade_title = $this->input->post('grade_title');
+			$gradetitle = $this->input->post('grade_title');
 			$actualscore = $this->input->post('actualscore');
 			$weight = $this->input->post('weight');
+			$grade = $this->input->post('grade');
 			if($this->form_validation->run() == FALSE) // authentication failed - display the login form 
    			{
-   				
+   				$data['id'] = $id;
+				$data['courseid'] = $courseid;
+				$cid = $courseid;
+				$data['gradetypeid'] = $gradetypeid;
+				$data['studentid'] = $studentid;
+				$data['grade_title'] = $gradetitle;
+				$data['grade'] = $grade;
+				$data['actualscore'] = $actualscore;
+				$data['weight'] = $weight;
 			}else{
 			$data = array(
 				'middle_name' => $this->input->post('mname'),
