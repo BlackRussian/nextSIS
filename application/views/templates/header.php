@@ -30,15 +30,14 @@
     <!-- TODO: merge two style sheets-->
 		<link rel="stylesheet" href="<?php echo base_url('assets/css/nextsis.css');?>" type="text/css">
     <link rel="stylesheet" href="<?php echo base_url('assets/css/styles.css');?>" type="text/css" media="screen">
-
-		<link rel="shortcut icon" href="<?php echo base_url('assets/img/nextsis.favicon.png');?>">
-		<title><?php echo $this->lang->line('student_information_system');?></title>
-		
-		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-
-
+    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="vendors/flot/excanvas.min.js"></script><![endif]-->
+    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+    <!--[if lt IE 9]>
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <script src="/assets/vendors/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+    <link rel="shortcut icon" href="<?php echo base_url('assets/img/nextsis.favicon.png');?>">
+    <title><?php echo $this->lang->line('student_information_system');?></title>
 	</head>
 	
 	<body>

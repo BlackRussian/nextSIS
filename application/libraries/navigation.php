@@ -2,6 +2,7 @@
 class Navigation {
 
   	var $menu = array();  //The array holding all navigation elements
+  	var $sideMenu = array();  //The array holding side navigation elements
 	var $out; // The HTML string to be returned
 	
 	
@@ -40,14 +41,14 @@ class Navigation {
 			),
 			4 => 	array(
 				'text'		=> 	'Courses',	
-				'link'		=> 	base_url() . 'course/index',
+				'link'		=> 	base_url() . 'course',
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-list-alt',
 				'parent'	=>	0
 			),
 			5 => 	array(
 				'text'		=> 	'Setup',	
-				'link'		=> 	base_url() . 'setup/index',
+				'link'		=> 	base_url() . 'setup',
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-wrench',
 				'parent'	=>	0
@@ -68,7 +69,7 @@ class Navigation {
 			)								
 		); 
 	}
-		
+	
 	/*
 	 * load - Return HTML navigation string
 	 */
@@ -118,6 +119,55 @@ class Navigation {
 		return $out;
 	}
 	
+	/*
+	 * load - Return HTML navigation string
+	 */
+	public function load_side_nav($selected = null, $menu_elements = array ())
+	{
+		$out = '<ul class="nav nav-list bs-docs-sidenav nav-collapse collapse">';
+		
+		foreach ( $menu_elements as $i=>$arr )
+		{
+			if ( is_array ( $menu_elements [ $i ] ) ) {//must be by construction but let's keep the errors home
+				if ( $menu_elements [ $i ] [ 'show_condition' ] && $menu_elements [ $i ] [ 'parent' ] == 0 ) //are we allowed to see this menu?
+				{
+					/*** Set class for current nav item ***/
+					(strcasecmp($menu_elements [ $i ] [ 'text' ], $selected) == 0 ) ? $class = "active" : $class = ""; //  Binary safe case-insensitive string comparison
+					
+					if($this->hasChildren($i))
+					{
+						//$class .=" dropdown";
+						$out .= "<li class=\"" . $class . "\">";
+						$out .= "<a href=\"" . $menu_elements [ $i ] [ 'link' ] . "\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">";
+						$out .= $menu_elements [ $i ] [ 'text' ];
+						$out .= '<b class="caret"></b>';
+						$out .= '</a>';
+						$out .= $this->getChildren ( $i ); //loop through children
+						$out .= '</li>' . "\n";
+					}else{
+						$out .= "<li class=\"" . $class . "\">";
+						if($menu_elements [ $i ] [ 'link' ]!=null)	{
+							$out .= "<a href=\"" . $menu_elements [ $i ] [ 'link' ] . "\">";
+							//$out .= "<i class=\"" . $menu_elements[$i]['icon-class'] . "\"></i>&nbsp;";
+							$out .= $menu_elements [ $i ] [ 'text' ];
+							$out .= '</a>';
+						} else {
+							$out .= "<span>".$menu_elements [ $i ] [ 'text' ]."</span>";
+						}
+						$out .= '</li>' . "\n";
+					}
+				}
+			}
+			else 
+			{
+				die ( sprintf ( 'menu nr %s must be an array', $i ) );
+			}
+		}
+
+		$out .= '</ul>';
+		return $out;
+	}
+
 	private function hasChildren($menu_id)
 	{
 		foreach ( $this->menu as $i=>$arr ){

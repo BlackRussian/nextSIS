@@ -35,6 +35,12 @@
                 <fieldset>
                   <legend>Generate Report Cards</legend>
                   <div class="control-group">
+                    <label class="control-label" for="selSemester">Semester</label>
+                    <div class="controls">
+                    <?php echo form_dropdown('selSemester', $gradelevels,'-1','class="required" id="selSemester"');  ?>
+                    </div>
+                  </div>
+                  <div class="control-group">
                     <label class="control-label" for="selGradeLevel">Grade</label>
                     <div class="controls">
                     <?php echo form_dropdown('selGradeLevel', $gradelevels,'-1','class="required" id="selGradeLevel"');  ?>

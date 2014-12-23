@@ -42,6 +42,7 @@ class Home extends CI_Controller
 			$this->lang->load('home'); // default language option taken from config.php file 
 			
 			$this->load->view('templates/header', $data);	
+			$this->load->view('templates/sidenav');
 			$this->load->view('home_view', $data);
 			$this->load->view('templates/footer', $data);
 		}

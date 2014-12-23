@@ -24,12 +24,60 @@ session_start();
 
 class Setup extends CI_Controller
 {
+
+	var $side_menu = array(); //array to hold side nav
+
 	function __construct()
 	{
 		parent::__construct();
-		
+		$this->lang->load('setup');
+		$this->init_side_menu();
 	}
 	
+
+	function init_side_menu(){
+		$this->side_menu = array
+		(
+			1 => 	array(
+				'text'		=> 	$this->lang->line("school_terms"),	
+				'link'		=> 	base_url().'schoolterms/listing',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	0
+			),
+			2 => 	array(
+				'text'		=> 	 $this->lang->line("grade_levels"),	
+				'link'		=> 	base_url().'gradelevels/listing',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	0
+			),
+			3 => 	array(
+				'text'		=> 	$this->lang->line("schoolclasses"),	
+				'link'		=> 	base_url().'schoolclasses/listing',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	0
+			),
+			4 => 	array(
+				'text'		=> 	$this->lang->line("school_periods"),	
+				'link'		=> 	base_url().'schoolperiods/listing',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	0
+			),
+			5 => 	array(
+				'text'		=> 	$this->lang->line("school_subjects"),	
+				'link'		=> 	base_url().'schoolsubjects/listing',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	0
+			)
+		);
+	}
+
+
+
 	function index()
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
@@ -41,8 +89,11 @@ class Setup extends CI_Controller
 			
 			$data['username'] = $session_data['username'];
 			$data['nav'] = $this->navigation->load('setup');
+			$data['sidenav'] = $this->navigation->load_side_nav('home', $this->side_menu);
+
 			$this->lang->load('setup'); // default language option taken from config.php file 	
 			$this->load->view('templates/header',$data);
+			$this->load->view('templates/sidenav',$data);
 			$this->load->view('setup_view', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -119,7 +170,6 @@ class Setup extends CI_Controller
 				// if the person model returns TRUE then call the view
 				if(!$this->load->model('person_model','',TRUE))
 				{
-					echo "this is a test edit";
 					$this->lang->load('person'); // default language option taken from config.php file 	
 					$rows = $this->person_model->getpersonbyid($id);
 					foreach($rows as $row)

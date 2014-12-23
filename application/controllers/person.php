@@ -42,9 +42,10 @@ class Person extends CI_Controller
 			$data['username'] = $session_data['username'];
 			$data['nav'] = $this->navigation->load('people');
 			$this->lang->load('person'); // default language option taken from config.php file 	
-			$this->load->view('templates/header', $data);	
-			
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/sidenav');	
 			$this->load->view('person_view', $data);
+			$this->load->view('templates/footer');	
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -66,14 +67,32 @@ class Person extends CI_Controller
 			$data['username'] = $session_data['username'];
 			$this->load->helper(array('form', 'url')); // load the html form helper
 			$this->lang->load('person'); // default language option taken from config.php file 
-			$data['genders'] = $this->person_model->GetPersonGender(1);
-					$data['titles'] = $this->person_model->GetPersonTitles(1);
-					$data['roles'] = $this->person_model->GetPersonRoles();	
-					
+			
+			$result = $this->person_model->GetPersonGender(1);
+			$genders[""]="Select Gender";
+			foreach($result as $row){
+            	$genders[$row->id]=$row->label;
+        	}
+
+			$data['genders'] = $genders;
+
+			$result = $this->person_model->GetPersonTitles(1);
+
+			$titles[""]="Select Title";
+			foreach($result as $row){
+            	$titles[$row->id]=$row->label;
+        	}
+
+			$data['titles'] = $titles;
+
+			$data['roles'] = $this->person_model->GetPersonRoles();	
+
 			$data['nav'] = $this->navigation->load('people');
-			//$this->lang->load('person'); // default language option taken from config.php file 	
-			$this->load->view('templates/header', $data);	
+
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/sidenav');	
 			$this->load->view('person/add', $data);
+			$this->load->view('templates/footer');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -181,7 +200,6 @@ class Person extends CI_Controller
 				// if the person model returns TRUE then call the view
 				if(!$this->load->model('person_model','',TRUE))
 				{
-					echo "this is a test edit";
 					$this->lang->load('person'); // default language option taken from config.php file 	
 					$rows = $this->person_model->getpersonbyid($id);
 					foreach($rows as $row)
@@ -200,10 +218,13 @@ class Person extends CI_Controller
 					$data['roles'] = $this->person_model->GetPersonRoles();
 					$data['personroles'] = $this->person_model->getpersonrolesbypersonid($id);
 				}	
+				
 				$data['nav'] = $this->navigation->load('people');
-			//$this->lang->load('person'); // default language option taken from config.php file 	
-			$this->load->view('templates/header', $data);	
+
+				$this->load->view('templates/header', $data);
+				$this->load->view('templates/sidenav');	
 				$this->load->view('person/edit', $data);
+				$this->load->view('templates/footer');
 			}
 			else // not logged in - redirect to login controller (login page)
 			{
@@ -228,13 +249,15 @@ class Person extends CI_Controller
 			// if the person model returns TRUE then call the view
 			if(!$this->load->model('person_model','',TRUE))
 			{
-				echo "this is a test";
-				$this->lang->load('person'); // default language option taken from config.php file 	
-				$data['query'] = $this->person_model->listing();
+				$this->lang->load('person'); // default language option taken from config.php file
 
-			}	
-			$this->load->view('templates/header', $data);		
+				$data['query'] = $this->person_model->listing();
+			}
+
+			$this->load->view('templates/header', $data);
+			$this->load->view('templates/sidenav');			
 			$this->load->view('person_view', $data);
+			$this->load->view('templates/footer');	
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
