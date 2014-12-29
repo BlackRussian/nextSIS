@@ -36,44 +36,7 @@ class Setup extends CI_Controller
 	
 
 	function init_side_menu(){
-		$this->side_menu = array
-		(
-			1 => 	array(
-				'text'		=> 	$this->lang->line("school_terms"),	
-				'link'		=> 	base_url().'schoolterms/listing',
-				'show_condition'=>	1,
-				'icon-class'=>	'icon-home',
-				'parent'	=>	0
-			),
-			2 => 	array(
-				'text'		=> 	 $this->lang->line("grade_levels"),	
-				'link'		=> 	base_url().'gradelevels/listing',
-				'show_condition'=>	1,
-				'icon-class'=>	'icon-home',
-				'parent'	=>	0
-			),
-			3 => 	array(
-				'text'		=> 	$this->lang->line("schoolclasses"),	
-				'link'		=> 	base_url().'schoolclasses/listing',
-				'show_condition'=>	1,
-				'icon-class'=>	'icon-home',
-				'parent'	=>	0
-			),
-			4 => 	array(
-				'text'		=> 	$this->lang->line("school_periods"),	
-				'link'		=> 	base_url().'schoolperiods/listing',
-				'show_condition'=>	1,
-				'icon-class'=>	'icon-home',
-				'parent'	=>	0
-			),
-			5 => 	array(
-				'text'		=> 	$this->lang->line("school_subjects"),	
-				'link'		=> 	base_url().'schoolsubjects/listing',
-				'show_condition'=>	1,
-				'icon-class'=>	'icon-home',
-				'parent'	=>	0
-			)
-		);
+		$this->side_menu = array();
 	}
 
 

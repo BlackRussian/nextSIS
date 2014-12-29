@@ -20,13 +20,13 @@
  * Copyright 2012 http://nextsis.org
  */
 
-class Schoolsubjects_model extends CI_Model
+class Subjects_model extends CI_Model
 {
 	// The listing method takes gets a list of people in the database 
 	public function listing($schoolid)
  	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,school_id,title,short_name')->from('subject')->where('school_id',$schoolid)->limit(10);
+		$this->db->select('subject_id,school_id,title,short_name,course_count')->from('subject_course_count')->where('school_id',$schoolid)->limit(10);
 
    		// run the query and return the result
    		$query = $this->db->get();

@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
-class Navigation {
+
+class Navigation{
 
   	var $menu = array();  //The array holding all navigation elements
   	var $sideMenu = array();  //The array holding side navigation elements
@@ -66,7 +67,42 @@ class Navigation {
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-off',
 				'parent'	=>	0
-			)								
+			),
+			8 => 	array(
+				'text'		=> "Manage School Terms",	
+				'link'		=> 	base_url().'schoolterms/listing',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	5
+			),
+			9 => 	array(
+				'text'		=> 	 "Manage Grade Levels",	
+				'link'		=> 	base_url().'gradelevels/listing',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	5
+			),
+			10 => 	array(
+				'text'		=> 	"Manage Classes",	
+				'link'		=> 	base_url().'schoolclasses/listing',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	5
+			),
+			11 => 	array(
+				'text'		=> 	"Manage Class Periods",	
+				'link'		=> 	base_url().'schoolperiods/listing',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	5
+			),
+			12 => 	array(
+				'text'		=> 	"Subject Manager",	
+				'link'		=> 	base_url().'subjects',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	5
+			)			
 		); 
 	}
 	
@@ -90,6 +126,7 @@ class Navigation {
 						$class .=" dropdown";
 						$out .= "<li class=\"" . $class . "\">";
 						$out .= "<a href=\"" . $this->menu [ $i ] [ 'link' ] . "\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">";
+						$out .= "<i class=\"" . $this->menu[$i]['icon-class'] . "\"></i>&nbsp;";
 						$out .= $this->menu [ $i ] [ 'text' ];
 						$out .= '<b class="caret"></b>';
 						$out .= '</a>';
@@ -148,7 +185,6 @@ class Navigation {
 						$out .= "<li class=\"" . $class . "\">";
 						if($menu_elements [ $i ] [ 'link' ]!=null)	{
 							$out .= "<a href=\"" . $menu_elements [ $i ] [ 'link' ] . "\">";
-							//$out .= "<i class=\"" . $menu_elements[$i]['icon-class'] . "\"></i>&nbsp;";
 							$out .= $menu_elements [ $i ] [ 'text' ];
 							$out .= '</a>';
 						} else {

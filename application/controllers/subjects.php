@@ -22,12 +22,13 @@
 
 session_start();
 
-class Schoolsubjects extends CI_Controller
+class Subjects extends CI_Controller
 {
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->model('schoolsubjects_model');
+		$this->load->model('subjects_model');
+		$this->lang->load('setup');
 	}
 	
 	function index()
@@ -39,16 +40,24 @@ class Schoolsubjects extends CI_Controller
 			
 			// set the data associative array that is sent to the home view (and display/send)
 			
+			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] = $session_data['username'];
-			$this->lang->load('setup'); // default language option taken from config.php file 	
+			$data['currentschoolid'] = $session_data['currentschoolid'];
+			$data['currentsyear'] = $session_data['currentsyear'];
+			$data['query'] = $this->subjects_model->listing($data['currentschoolid']);	
+			$data['nav'] = $this->navigation->load('setup');
+
 			$this->load->view('templates/header', $data);
-			$this->load->view('schoolsubjects/schoolsubjects_view', $data);
+			$this->load->view('templates/sidenav', $data);
+			$this->load->view('subjects/subjects_view', $data);
+			$this->load->view('templates/footer', $data);
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
 			redirect('login','refresh');
 		}
 	}
+
 	
 	// The add function returns the view used to add a new period
 	function add()
@@ -64,14 +73,17 @@ class Schoolsubjects extends CI_Controller
 			$data['username'] = $session_data['username'];
 			$data['currentschoolid'] = $session_data['currentschoolid'];
 			$data['currentsyear'] = $session_data['currentsyear'];
-			
+			$data['nav'] = $this->navigation->load('setup');
+
 			$this->load->helper(array('form', 'url')); // load the html form helper
 			$this->lang->load('setup'); // default language option taken from config.php file 
 			
 			
 			
 		    $this->load->view('templates/header',$data);
-			$this->load->view('schoolsubjects/add', $data);
+		    $this->load->view('templates/sidenav',$data);
+			$this->load->view('subjects/add', $data);
+			$this->load->view('templates/footer');
 			
 			
 		}
@@ -112,28 +124,23 @@ class Schoolsubjects extends CI_Controller
 			$short_name=$this->input->post('short_name');
 			
 			
-			//echo strtotime(date('m/d/y'). ' ' .$end_time) . " - " . strtotime(date('m/d/y'). ' ' .$start_time). " " . $length;
-			
-			
-			if($this->form_validation->run() == FALSE) // authentication failed - display the login form 
+			if($this->form_validation->run() == FALSE) 
    			{
 					// get session data
 				$session_data = $this->session->userdata('logged_in');
 				
-				// set the data associative array that is sent to the home view (and display/send)
-				//$this->session->userdata('currentschoolid')
 				$data['username'] = $session_data['username'];
 				$data['currentschoolid'] = $session_data['currentschoolid'];
 				$data['currentsyear'] = $session_data['currentsyear'];
+				$data['nav'] = $this->navigation->load('setup');
+
 				$this->load->helper(array('form', 'url')); // load the html form helper
-				$this->lang->load('setup'); // default language option taken from config.php file 
-				
-				$data['title'] = $title;
-				$data['short_name'] = $short_name;
-				
+				$this->lang->load('setup');
 				
 			    $this->load->view('templates/header',$data);
-				$this->load->view('schoolsubjects/add', $data);
+			    $this->load->view('templates/sidenav',$data);
+				$this->load->view('subjects/add', $data);
+				$this->load->view('templates/footer');
 			}else{
 				
 								
@@ -145,8 +152,8 @@ class Schoolsubjects extends CI_Controller
 					
 				);
 				
-				$this->schoolsubjects_model->addschoolsubject($newdata);
-			    redirect('schoolsubjects/listing');
+				$this->subjects_model->addschoolsubject($newdata);
+			    redirect('subjects/listing');
 			}
 
 			//$this->gradelevels_model->addgradelevel($data);
@@ -291,7 +298,7 @@ class Schoolsubjects extends CI_Controller
 			
 							
 			    $this->load->view('templates/header',$data);
-				$this->load->view('schoolsubjects/edit', $data);
+				$this->load->view('subjects/edit', $data);
 			}else{
 				
 			
@@ -303,8 +310,8 @@ class Schoolsubjects extends CI_Controller
 					
 				);
 				
-				$this->schoolsubjects_model->updateschoolsubject($id,$newdata);
-			    redirect('schoolsubjects/listing');
+				$this->subjects_model->updateschoolsubject($id,$newdata);
+			    redirect('subjects/listing');
 			}
 			
 			
@@ -337,11 +344,11 @@ class Schoolsubjects extends CI_Controller
 				//$this->load->view('person_view', $data);
 				
 				// if the person model returns TRUE then call the view
-				if(!$this->load->model('schoolsubjects_model','',TRUE))
+				if(!$this->load->model('subjects_model','',TRUE))
 				{
 					
 						
-					$rows = $this->schoolsubjects_model->GetSchoolSubjectById($id);
+					$rows = $this->subjects_model->GetSchoolSubjectById($id);
 					foreach($rows as $row)
 					{
 						$data['title'] = $row->title;
@@ -356,7 +363,7 @@ class Schoolsubjects extends CI_Controller
 				}
 				
 				$this->load->view('templates/header',$data);
-				$this->load->view('schoolsubjects/edit', $data);
+				$this->load->view('subjects/edit', $data);
 				
 				
 				
@@ -365,38 +372,6 @@ class Schoolsubjects extends CI_Controller
 			{
 				redirect('login','refresh');
 			}
-	}
-	
-	// The listing function displays a list of people in the database
-	function listing()
-	{
-		if($this->session->userdata('logged_in')) // user is logged in
-		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
-			
-			// set the data associative array that is sent to the home view (and display/send)
-			$data['username'] = $session_data['username'];
-			$data['currentschoolid'] = $session_data['currentschoolid'];
-			$data['currentsyear'] = $session_data['currentsyear'];
-			$this->lang->load('setup'); // default language option taken from config.php file 	
-			
-			
-			// if the person model returns TRUE then call the view
-			if(!$this->load->model('schoolsubjects_model','',TRUE))
-			{
-				//echo "this is a test";
-				$this->lang->load('setup'); // default language option taken from config.php file 	
-				$data['query'] = $this->schoolsubjects_model->listing($data['currentschoolid']);
-				
-			}	
-			$this->load->view('templates/header',$data);	
-			$this->load->view('schoolsubjects/schoolsubjects_view', $data);
-		}
-		else // not logged in - redirect to login controller (login page)
-		{
-			redirect('login','refresh');
-		}
 	}
 	
 	// The logout function logs out a person from the database
