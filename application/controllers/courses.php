@@ -48,9 +48,9 @@ class Courses extends CI_Controller
 			
 			$this->lang->load('course'); // load language file
 			
-			$this->load->view('templates/header', $this->data);
+			$this->load->view('templates/header', $this->viewdata);
 			$this->load->view('templates/sidenav');
-			$this->load->view('courses_view', $this->data);
+			$this->load->view('courses_view', $this->viewdata);
 			$this->load->view('templates/footer');
 		}
 		else // not logged in - redirect to login controller (login page)

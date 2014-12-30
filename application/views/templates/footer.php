@@ -1,6 +1,7 @@
   			</div>
   		</div>
-  		
+        
+  		<script src="/assets/vendors/jquery-1.9.1.min.js"></script>
   		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
     	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
 
@@ -10,7 +11,6 @@
 
         <link href="/assets/vendors/wysiwyg/bootstrap-wysihtml5.css" rel="stylesheet" media="screen">
 
-        <script src="/assets/vendors/jquery-1.9.1.min.js"></script>
         <script src="/assets/js/bootstrap.min.js"></script>
         <script src="/assets/vendors/jquery.uniform.min.js"></script>
         <script src="/assets/vendors/chosen.jquery.min.js"></script>
