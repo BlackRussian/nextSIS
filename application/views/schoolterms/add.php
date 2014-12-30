@@ -114,6 +114,7 @@
 													$val = $syear_markingperiodid;
 												}
 												echo form_hidden('syear_markingperiodid',$val);
+												echo form_hidden('syear_isnew','true');
                                             	
                                             	?>
                                             	<?php //echo "<input type='hidden' id='addsyear_schoolid' name='addsyear_schoolid' value='" .$currentschoolid ."'  />"
@@ -160,7 +161,7 @@
 														<?php 
 														$years = explode(",", $years);
 														
-														echo"<option value='n/a' selected>n/a</option>";
+														echo"<option value='0' selected>n/a</option>";
 														 foreach($years as $year){ 
 															$selected = False;
 															//if($time[0] == $hr)
@@ -363,10 +364,10 @@
 	
 
         $(function() {
-            //$(".datepicker").datepicker();
-            $(".uniform_on").uniform();
-            $(".chzn-select").chosen();
-            $('.textarea').wysihtml5();
+           //$(".datepicker").datepicker();
+           // $(".uniform_on").uniform();
+           //$(".chzn-select").chosen();
+           //$('.textarea').wysihtml5();
 
             $('#rootwizard').bootstrapWizard({onTabShow: function(tab, navigation, index) {
                 var $total = navigation.find('li').length;
