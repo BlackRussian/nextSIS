@@ -68,7 +68,19 @@ class Schoolterms extends CI_Controller
 			$this->load->helper(array('form', 'url')); // load the html form helper
 			$this->lang->load('setup'); // default language option taken from config.php file 
 			
+			$yearoptions ="";
+			$cdate =  date("Y");
+			$i=0;
+			for($x=$cdate-2;$x<=$cdate+5;$x++)
+			{
 			
+				$yearoptions = $yearoptions . $x . ",";
+				$i++;
+			}
+			//$yearoptions = rtrim($yearoptions,',');
+			//$options = array($yearoptions);
+			//echo $options;
+			$data['years'] =$yearoptions;
 			
 		    $this->load->view('templates/header',$data);
 			$this->load->view('schoolterms/add', $data);

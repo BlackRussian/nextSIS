@@ -66,6 +66,8 @@ class Schoolperiods extends CI_Controller
 			$data['currentsyear'] = $session_data['currentsyear'];
 			echo "current school year is" .$session_data['currentsyear'] . $session_data['currentschoolid'];
 			$this->load->helper(array('form', 'url')); // load the html form helper
+			
+			
 			$this->lang->load('setup'); // default language option taken from config.php file 
 			$availabletimedata = $this->schoolperiods_model->GetAvailableTimes();
 			$availablesortopts = $this->schoolperiods_model->GetSortOrder($session_data['currentschoolid'],$session_data['currentsyear']);
