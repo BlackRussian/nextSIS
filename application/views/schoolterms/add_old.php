@@ -52,7 +52,20 @@
   				</div>
   			</div>
   		</div>-->
-  	
+  		<script type="text/javascript">
+               $(document).ready(function(){
+                     $("#startdate").datepicker({
+                     	dateFormat:"yy-MM-dd"
+                     }      	
+                     );
+               });
+               $(document).ready(function(){
+                     $("#enddate").datepicker({
+                     	dateFormat:"yy-MM-dd"
+                     });
+               });
+       </script>
+  		
   		<div class="container-fluid">
   			<div class="row-fluid">
   				<div class="span4 navleft">
@@ -68,75 +81,13 @@
   				</div>
   				
         		<div class="span8">
-        		<?php echo form_open('grades/editrecord'); ?>
-					<h1>Edit Subject</h1>
+        		<?php echo form_open('schoolterms/addrecord'); ?>
+					<h1>Add School Term</h1>
 					<p class="text-error"><?php echo validation_errors();?></p>
-					
 					<table>
 					
-					<?php echo "<input type='hidden' id='gradeid' name='gradeid' value='" .$id ."'  />"?>
-					<?php //echo "<input type='hidden' id='school_id' name='school_id' value='" .$school_id ."'  />"?>
-					
-					<tr>
-						<td>
-							 Course
-						</td>
-						<td>
-							<select id="course_id" name="course_id">
-						<?php 
-						echo '<option value="n/a" selected>n/a</option>';
-						foreach($teachercourses as $course){ 
-							$selected = False;
-							$value= $course->subjectcourse_id;
-							$text = $course->subjectcourse_title;
-							if($courseid == $value){$selected = 'selected';}
-								
-							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
-							
-						}?>
-						
-						</select>
-					</tr>
-					<tr>
-						<td>
-							 Type of Grade
-						</td>
-						<td>
-							<select id="gradetype_id" name="gradetype_id">
-						<?php 
-						echo '<option value="n/a" selected>n/a</option>';
-						foreach($gradetypes as $gtypes){ 
-							$selected = False;
-							$value= $gtypes->id;
-							$text = $gtypes->typename;
-							if($gradetypeid == $value){$selected = 'selected';}
-								
-							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
-							
-						}?>
-						
-						</select>
-					</tr>
-					<tr>
-						<td>
-							 Student
-						</td>
-						<td>
-							<select id="student_id" name="student_id">
-						<?php 
-						echo '<option value="n/a" selected>n/a</option>';
-						foreach($availablestudents as $astudent){ 
-							$selected = False;
-							$value= $astudent->studentid;
-							$text = $astudent->student;
-							if($studentid == $value){$selected = 'selected';}
-								
-							echo '<option value="'. $value .'" '.$selected.'>'. $text . '</option>';
-							
-						}?>
-						
-						</select>
-					</tr>
+					<?php echo "<input type='hidden' id='school_id' name='school_id' value='" .$currentschoolid ."'  />"?>
+					<?php echo "<input type='hidden' id='syear' name='syear' value='" .$currentsyear ."'  />"?>
 					<tr>
 						<td>
 							 Title
@@ -144,52 +95,38 @@
 						<td>
 							<?php 
 							$val="";
-							if(isset($grade_title))
+							if(isset($title))
 							{
-								$val = $grade_title;
+								$val = $title;
 							}
-							echo "<input type='text' id='grade_title' name='grade_title' value='". $val . "' />"?>
+							echo "<input type='text' id='title' name='title' value='". $val . "' />"?>
 					</tr>
 					<tr>
 						<td>
-							 Weighted Score
+							Start Date
 						</td>
 						<td>
-							<?php //echo "<input type='hidden' id='school_id' name='school_id' value='" .$school_id ."'  />"?>
 							<?php 
+							
 							$val="";
-							if(isset($grade))
+							if(isset($startdate))
 							{
-								$val = $grade;
+								$val = $startdate;
 							}
-							echo   $val;
-							echo "<input type='hidden' id='grade' name='grade' value='" .$val ."'  />"; ?>
+							echo "<input type='text' id='startdate' name='startdate' value='". $val . "'  />"?>
 					</tr>
 					<tr>
+						<td>End Date</td>
 						<td>
-							 Score
-						</td>
-						<td>
-							<?php 
+						<?php 
+							
 							$val="";
-							if(isset($actualscore))
+							if(isset($enddate))
 							{
-								$val = $actualscore;
+								$val = $enddate;
 							}
-							echo "<input type='text' id='actualscore' name='actualscore' value='". $val . "' />"?>
-					</tr>
-					<tr>
-						<td>
-							 weight
+							echo "<input type='text' id='enddate' name='enddate' value='". $val . "'  />"?>
 						</td>
-						<td>
-							<?php 
-							$val="";
-							if(isset($weight))
-							{
-								$val = $weight;
-							}
-							echo "<input type='text' id='weight' name='weight' value='". $val . "' />%"?>
 					</tr>
 					
 					
