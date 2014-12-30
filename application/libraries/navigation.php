@@ -42,7 +42,7 @@ class Navigation{
 			),
 			4 => 	array(
 				'text'		=> 	'Courses',	
-				'link'		=> 	base_url() . 'course',
+				'link'		=> 	base_url() . 'courses',
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-list-alt',
 				'parent'	=>	0
