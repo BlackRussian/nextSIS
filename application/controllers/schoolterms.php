@@ -84,7 +84,7 @@ class Schoolterms extends CI_Controller
 			
 		    $this->load->view('templates/header',$data);
 			$this->load->view('schoolterms/add', $data);
-			
+			 $this->load->view('templates/footer',$data);
 			
 		}
 		else // not logged in - redirect to login controller (login page)
