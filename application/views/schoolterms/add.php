@@ -1,29 +1,46 @@
+		<script type="text/javascript">
+			$(document).ready(function() { 
+			     $("#startdate").datepicker({
+			     	dateFormat:"yy-MM-dd"
+			     }      	
+			     );
 
+			     $("#enddate").datepicker({
+			     	dateFormat:"yy-MM-dd"
+			     });
 
-  		<script type="text/javascript">
-               $(document).ready(function(){
-                     $("#startdate").datepicker({
-                     	dateFormat:"yy-MM-dd"
-                     }      	
-                     );
-               });
-               $(document).ready(function(){
-                     $("#enddate").datepicker({
-                     	dateFormat:"yy-MM-dd"
-                     });
-               });
-                $(document).ready(function(){
-                     $("#syearstartdate").datepicker({
-                     	dateFormat:"yy-MM-dd"
-                     });
-               });
-                $(document).ready(function(){
-                     $("#syearenddate").datepicker({
-                     	dateFormat:"yy-MM-dd"
-                     });
-               });
-       </script>
-       
+			     $("#syearstartdate").datepicker({
+			     	dateFormat:"yy-MM-dd"
+			     });
+
+			     $("#syearenddate").datepicker({
+			     	dateFormat:"yy-MM-dd"
+			     });
+
+			    $(".datepicker").datepicker();
+
+			    $('#rootwizard').bootstrapWizard({onTabShow: function(tab, navigation, index) {
+			        var $total = navigation.find('li').length;
+			        var $current = index+1;
+			        var $percent = ($current/$total) * 100;
+			        $('#rootwizard').find('.bar').css({width:$percent+'%'});
+			        // If it's the last tab then hide the last button and show the finish instead
+			        if($current >= $total) {
+			            $('#rootwizard').find('.pager .next').hide();
+			            $('#rootwizard').find('.pager .finish').show();
+			            $('#rootwizard').find('.pager .finish').removeClass('disabled');
+			        } else {
+			            $('#rootwizard').find('.pager .next').show();
+			            $('#rootwizard').find('.pager .finish').hide();
+			        }
+			    }});
+			    $('#rootwizard .finish').click(function() {
+			        alert('Finished!, Starting over!');
+			        $('#rootwizard').find("a[href*='tab1']").trigger('click');
+			    });
+			});
+		</script>
+		       
        <div class="span9">
 		  <div class="row-fluid section">
 		     <div class="block">
@@ -302,38 +319,3 @@
         		  				
   			</div>
   		</div>
-  		
-  		
-  		 <script>
-
-	
-	
-
-        $(function() {
-           $(".datepicker").datepicker();
-           // $(".uniform_on").uniform();
-           //$(".chzn-select").chosen();
-           //$('.textarea').wysihtml5();
-
-            $('#rootwizard').bootstrapWizard({onTabShow: function(tab, navigation, index) {
-                var $total = navigation.find('li').length;
-                var $current = index+1;
-                var $percent = ($current/$total) * 100;
-                $('#rootwizard').find('.bar').css({width:$percent+'%'});
-                // If it's the last tab then hide the last button and show the finish instead
-                if($current >= $total) {
-                    $('#rootwizard').find('.pager .next').hide();
-                    $('#rootwizard').find('.pager .finish').show();
-                    $('#rootwizard').find('.pager .finish').removeClass('disabled');
-                } else {
-                    $('#rootwizard').find('.pager .next').show();
-                    $('#rootwizard').find('.pager .finish').hide();
-                }
-            }});
-            $('#rootwizard .finish').click(function() {
-                alert('Finished!, Starting over!');
-                $('#rootwizard').find("a[href*='tab1']").trigger('click');
-            });
-        });
-        </script>
-	
