@@ -141,7 +141,7 @@ class Subjects_model extends CI_Model
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
 		//$where = 'subject_id = '. $id . ' AND school_id = ' . $school_id;
-		$this->db->select('subject_id,syear,grade_level,title,short_name');
+		$this->db->select('course_id,subject_id,syear,grade_level,title,short_name');
 		$this->db->from('subject_course');
 		$this->db->where('course_id',$course_id);
 
@@ -159,33 +159,7 @@ class Subjects_model extends CI_Model
 			// there are no records
 			return FALSE;
 		}
- 	}
-
-	public function GetSubjectCourseById($id)
- 	{
- 		
-		// select all the information from the table we want to use with a 10 row limit (for display)
-		//$where = 'subject_id = '. $id . ' AND school_id = ' . $school_id;
-		$this->db->select('course_id,subject_id,short_name,title,grade_level')->from('subject_course')->where('course_id', $id);
-
-   		// run the query and return the result
-   		$query = $this->db->get();
-		
-		// proceed if records are found
-   		if($query->num_rows()>0)
-   		{
-			// return the data (to the calling controller)
-			return $query->row();
-   		}
-		else
-		{
-			// there are no records
-			return FALSE;
-		}
- 	}
- 
-	
-	
+ 	}	
 }
 
 ?>
