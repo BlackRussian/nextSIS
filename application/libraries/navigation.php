@@ -102,7 +102,14 @@ class Navigation{
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-home',
 				'parent'	=>	5
-			)			
+			),
+			13 => 	array(
+				'text'		=> 	"Gradebook Manager",	
+				'link'		=> 	base_url().'gradebook',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-briefcase',
+				'parent'	=>	0
+			)				
 		); 
 	}
 	
