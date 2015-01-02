@@ -39,6 +39,8 @@ class Courses extends CI_Controller
 		$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
 		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
 		$this->viewdata['nav'] 				= $this->navigation->load('courses');
+
+		$this->load->model('subjects_model');
 	}
 	
 	function index()
@@ -72,12 +74,11 @@ class Courses extends CI_Controller
 			// set the data associative array that is sent to the home view (and display/send)
 			//$this->session->userdata('currentschoolid')
 			$this->viewdata['subject_id'] 		= $subject_id;
-
 			
-			$result		= $this->gradelevels_model->GetGradeLevels($this->viewdata['currentschoolid']);
+			
 			$subject 	= $this->subjects_model->GetSubjectById($subject_id, $this->viewdata['currentschoolid']);
-
-			$gradelevels["-1"] = "Select Grade";
+			$result		= $this->gradelevels_model->GetGradeLevels($this->viewdata['currentschoolid']);
+			$gradelevels[""] = "Select Grade";
 
 			foreach($result as $row){
             	$gradelevels[$row->id] = $row->title;
@@ -115,24 +116,24 @@ class Courses extends CI_Controller
    			$this->form_validation->set_rules('short_name', 'Short Name', 'trim|required|xss_clean');
 			
 			// field is trimmed, required and xss cleaned respectively
-			$this->form_validation->set_rules('selGradeLevel', 'Short Name', 'trim|required|xss_clean');
-			
+			$this->form_validation->set_rules('selGradeLevel', 'Grade Level', 'trim|required|xss_clean');
 			
 			if($this->form_validation->run() == FALSE) 
    			{
-
-				$this->add();
+				$this->add($this->input->post('subject_id'));
 			}else{		
 				$newdata = array(
 					
-					'title' => $title,
-					'grade_level' => $school_id,
-					'short_name' => $short_name
+					'title' => 			$this->input->post('title'),
+					'grade_level' =>	$this->input->post('selGradeLevel'),
+					'short_name' => 	$this->input->post('short_name'),
+					'subject_id' => 	$this->input->post('subject_id'),
+					'syear' =>			$this->viewdata['currentsyear']
 					
 				);
 				
-				$this->subjects_model->AddSubject($newdata);
-			    redirect('subjects');
+				$this->subjects_model->AddSubjectCourse($newdata);
+			    redirect('subjects/courses/' . $this->input->post('subject_id'));
 			}
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -145,8 +146,41 @@ class Courses extends CI_Controller
 	function edit($id)
 	{
 		    if($this->session->userdata('logged_in')) // user is logged in
-			{
+			{	
+				
+				$this->load->model('gradelevels_model');
 
+				$course = $this->subjects_model->GetSubjectCourseById($id);
+				
+				if($course){
+					$result		= $this->gradelevels_model->GetGradeLevels($this->viewdata['currentschoolid']);
+					$gradelevels[""] = "Select Grade";
+
+					foreach($result as $row){
+		            	$gradelevels[$row->id] = $row->title;
+		        	}
+
+					$this->viewdata['gradelevels'] 	= $gradelevels;
+
+
+					$this->viewdata['page_title'] 	= "Edit";
+
+					$this->viewdata['title']		= $course->title;
+					$this->viewdata['grade_level']	= $course->grade_level;
+					$this->viewdata['short_name'] 	= $course->short_name;
+					$this->viewdata['subject_id'] 	= $course->subject_id;
+					$this->viewdata['course_id'] 	= $course->course_id;
+
+					$this->load->view('templates/header',$this->viewdata);
+					$this->load->view('templates/sidenav', $this->viewdata);
+					$this->load->view('subjects/edit_course_view', $this->viewdata);
+					$this->load->view('templates/footer');
+
+				}else{
+
+					$this->session->set_flashdata('msgerr', 'Record not found!!');
+					redirect('subjects','refresh');
+				}
 			}
 			else // not logged in - redirect to login controller (login page)
 			{
@@ -157,10 +191,53 @@ class Courses extends CI_Controller
 	// The editrecord function updates a course
 	function editrecord()
 	{
+
 		//$this->load->model('person_model','',TRUE);
+		
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
+			
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+			
+			$data['username']			= $session_data['username'];
+			$data['currentschoolid']	= $session_data['currentschoolid'];
+			$data['currentsyear']		= $session_data['currentsyear'];
+			$data['nav'] 				= $this->navigation->load('setup');
 
+			// use the CodeIgniter form validation library
+   			$this->load->library('form_validation');
+
+			// field is trimmed, required and xss cleaned respectively
+   			$this->form_validation->set_rules('title', 'Title', 'trim|required|xss_clean');
+
+			// field is trimmed, required and xss cleaned respectively
+   			$this->form_validation->set_rules('short_name', 'Short Name', 'trim|required|xss_clean');
+			
+			// field is trimmed, required and xss cleaned respectively
+			$this->form_validation->set_rules('selGradeLevel', 'Grade Level', 'trim|required|xss_clean');
+
+			//Set the id that should be updated
+			$title 			= $this->input->post('title');
+			$short_name 	= $this->input->post('short_name');
+			$grade_level 	= $this->input->post('selGradeLevel');
+			$subject_id 	= $this->input->post('subject_id');
+			$course_id		= $this->input->post('course_id');
+			if($this->form_validation->run() == FALSE) // authentication failed - display the login form 
+   			{
+				$this->edit($subject_id);
+			}else{
+				
+			
+				$newdata = array(
+					'title' => $title,
+					'short_name' => $short_name,
+					'grade_level' => $grade_level
+				);
+				
+				$this->subjects_model->UpdateSubjectCourse($course_id, $newdata);
+			    redirect('subjects/courses/'.$subject_id);
+			}
 		}
 		else // not logged in - redirect to login controller (login page)
 		{

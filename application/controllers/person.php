@@ -24,13 +24,70 @@ session_start();
 
 class Person extends CI_Controller
 {
+
+
+	var $viewdata = null;
+
+
+
+	function _remap($method, $params = array()){
+    	if (method_exists($this, $method))
+    	{
+        	return call_user_func_array(array($this, $method), $params);
+    	}else{
+        	$this->index($method);
+        }
+	}
+
 	function __construct()
 	{
 		parent::__construct();
 		$this->load->model('person_model');
+		$this->viewdata['nav'] = $this->navigation->load('people');
+		
+		
+		$this->sidemenu = array
+		(
+			0 => 	array(
+				'text'		=> 	'All People',	
+				'link'		=> 	base_url() . 'person',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-list-alt',
+				'parent'	=>	0
+			),
+			3 => 	array(
+				'text'		=> 	'List Students',	
+				'link'		=> 	base_url().'person/3',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	0
+			),
+			2 => 	array(
+				'text'		=> 	'List Teachers',	
+				'link'		=> 	base_url() . 'person/2',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-user',
+				'parent'	=>	0
+			),							
+			4 => 	array(
+				'text'		=> 	'List Parents',	
+				'link'		=> 	base_url() . 'person/4',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-book',
+				'parent'	=>	0
+			),
+			1 => 	array(
+				'text'		=> 	'Administrators',	
+				'link'		=> 	base_url() . 'person/1',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-list-alt',
+				'parent'	=>	0
+			)
+			
+		);
 	}
-	
-	function index()
+
+	function index($filter = FALSE)
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
@@ -38,13 +95,24 @@ class Person extends CI_Controller
 			$session_data = $this->session->userdata('logged_in');
 			
 			// set the data associative array that is sent to the home view (and display/send)
-			
-			$data['username'] = $session_data['username'];
-			$data['nav'] = $this->navigation->load('people');
+			$this->viewdata['username'] = $session_data['username'];
+
 			$this->lang->load('person'); // default language option taken from config.php file 	
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/sidenav');	
-			$this->load->view('person_view', $data);
+			//$this->load->view('person_view', $data);
+			
+			// if the person model returns TRUE then call the view
+			if(!$this->load->model('person_model','',TRUE))
+			{
+				$this->lang->load('person'); // default language option taken from config.php file
+
+				$this->viewdata['query'] = $this->person_model->listing($filter);
+			}
+
+			$this->viewdata['sidenav'] = $this->navigation->load_side_nav($filter, $this->sidemenu);
+			
+			$this->load->view('templates/header', $this->viewdata);
+			$this->load->view('templates/sidenav', $this->viewdata);			
+			$this->load->view('person_view', $this->viewdata);
 			$this->load->view('templates/footer');	
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -235,34 +303,7 @@ class Person extends CI_Controller
 	// The listing function displays a list of people in the database
 	function listing()
 	{
-		if($this->session->userdata('logged_in')) // user is logged in
-		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
-			
-			// set the data associative array that is sent to the home view (and display/send)
-			$data['username'] = $session_data['username'];
-			$data['nav'] = $this->navigation->load('people');
-			$this->lang->load('person'); // default language option taken from config.php file 	
-			//$this->load->view('person_view', $data);
-			
-			// if the person model returns TRUE then call the view
-			if(!$this->load->model('person_model','',TRUE))
-			{
-				$this->lang->load('person'); // default language option taken from config.php file
-
-				$data['query'] = $this->person_model->listing();
-			}
-
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/sidenav');			
-			$this->load->view('person_view', $data);
-			$this->load->view('templates/footer');	
-		}
-		else // not logged in - redirect to login controller (login page)
-		{
-			redirect('login','refresh');
-		}
+		
 	}
 	
 	// The logout function logs out a person from the database

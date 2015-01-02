@@ -23,13 +23,22 @@
 class Person_model extends CI_Model
 {
 	// The listing method takes gets a list of people in the database 
-	public function listing()
+	public function listing($filter)
  	{
-		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id')->from('person')->limit(10);
+ 		$sql = "select person.id, first_name, surname,username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles
+	 					from person inner join person_role on person.id = person_role.person_id
+						inner join role on person_role.role_id = role.id
+						group by first_name,surname,person.id";
 
-   		// run the query and return the result
-   		$query = $this->db->get();
+ 		if($filter){
+			$sql = "select person.id, first_name, surname,username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles
+	 					from person inner join person_role on person.id = person_role.person_id
+						inner join role on person_role.role_id = role.id
+						where person_role.role_id = $filter
+						group by first_name,surname,person.id";
+		}
+   		
+   		$query = $this->db->query($sql);
 		
 		// proceed if records are found
    		if($query->num_rows()>0)

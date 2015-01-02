@@ -10,26 +10,15 @@
                     		<a href="/courses/add/<?php echo $subject_id;?>"><button class="btn btn-success">Add New Course <i class="icon-plus icon-white"></i></button></a>
                     	</div>
 					</div>					
-					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered" id="myTable">
 						<thead>
 							<tr>
 								<th>Title</th>
 								<th>Short Name</th>
 								<th>Grade Level</th>
-								<th colspan="2">&nbsp;</th>
+								<th></th>
 							</tr>
 						</thead>
-						<tbody>
-					 	<?php foreach($query as $course) { ?>
-							<tr>
-								<td><?php echo $course->subject_title ?></td>
-								<td><?php echo $course->short_name ?></td>
-								<td><?php echo $course->grade_title ?></td>
-								<td><a href='/courses/edit/<?php echo urlencode($course->course_id); ?>'><?php echo $this->lang->line("editoption");?></a></td>
-								<td><a href='/courses/details/<?php echo urlencode($course->course_id); ?>'>view details</a></td>
-							</tr>
-						<?php } ?>
-						<tbody>
 					</table>
         		</div>  			
   				  				
@@ -37,3 +26,21 @@
   		</div>
 	</div>
 </div>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#myTable').dataTable( {
+			"processing": true,
+        	"serverSide": true,
+        	"ajax": {"url":"<?php echo base_url(); ?>ajaxcallbacks/getSubjectCourses","type":"POST", "data":{"subject_id":"<?php echo $subject_id?>", "school_id":"1"}},
+        	"columns":[
+        				{"data":"subject_title"},
+        				{"data":"short_name"},
+        				{"data":"grade_title"},
+        				{	"data":"edit",
+        					"sortable":false,
+        					"searchable":false
+        				}
+        	]
+		} );
+	} );
+</script>

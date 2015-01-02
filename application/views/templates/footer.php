@@ -1,7 +1,7 @@
   			</div>
   		</div>
-  		<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
-    	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+  		<link rel="stylesheet" href="/assets/css/jquery-ui.min.css" />
+    	<script src="/assets/js/jquery-ui.min.js"></script>
 
 		<link href="/assets/vendors/datepicker.css" rel="stylesheet" media="screen">
         <link href="/assets/vendors/uniform.default.css" rel="stylesheet" media="screen">

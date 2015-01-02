@@ -13,7 +13,7 @@
                   <div class="control-group">
                     <label class="control-label" for="selGradeLevel">Grade Level</label>
                     <div class="controls">
-                      <?php echo form_dropdown('selGradeLevel', $gradelevels,'-1','id="selGradeLevel"'); ?>
+                      <?php echo form_dropdown('selGradeLevel', $gradelevels,'','id="selGradeLevel"'); ?>
                     </div>
                   </div>
                   <div class="control-group">
@@ -33,7 +33,7 @@
 						          <?php echo form_submit('submit','Submit', 'class="btn btn-primary"'); ?>
 						          <?php echo form_close(); ?>
 				          </div>
-				</fieldset>
+				        </fieldset>
         		</div>  			
   				  				
   			</div>

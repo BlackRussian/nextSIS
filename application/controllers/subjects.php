@@ -282,10 +282,12 @@ class Subjects extends CI_Controller
 			$data['currentsyear'] = $session_data['currentsyear'];
 			$data['subject_id'] = $subject_id;
 
-			$data['query'] = $this->subjects_model->GetSubjectCourses($subject_id, $data['currentschoolid']);	
+			//$data['query'] = $this->subjects_model->GetSubjectCourses($subject_id, $data['currentschoolid']);
+			
+			$subject = $this->subjects_model->GetSubjectById($subject_id, $data['currentschoolid']);	
 			
 			$data['nav'] = $this->navigation->load('courses');
-			$data['page_title'] = "Manage %s Courses";
+			$data['page_title'] = "Manage ". $subject->title . " Courses";
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/sidenav', $data);

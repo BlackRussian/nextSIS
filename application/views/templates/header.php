@@ -50,11 +50,24 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
               </a>
-              <a class="brand" href="home">nextSIS&gt;</a>
+              <a class="brand" href="/home">nextSIS&gt;</a>
   				   	<div class="nav-collapse collapse">
-                  <ul class="nav pull-right">
-                      <li><a href="person/me"><i class="icon-user"></i>&nbsp;<?php echo $username;?></a></li>
-                  </ul>     
+                <ul class="nav pull-right">
+                            <li class="dropdown">
+                                <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-user"></i>&nbsp;<?php echo $username;?>&nbsp;<i class="caret"></i>
+
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a tabindex="-1" href="/person/profile">Profile</a>
+                                    </li>
+                                    <li class="divider"></li>
+                                    <li>
+                                        <a tabindex="-1" href="/person/logout">Logout</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>    
                   <?php if(isset($nav) && !empty($nav)) {echo $nav;}else{echo "nav failed";} ?>		   		
   				   	</div>
   				</div>

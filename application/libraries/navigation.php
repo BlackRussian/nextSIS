@@ -28,7 +28,7 @@ class Navigation{
 			),
 			2 => 	array(
 				'text'		=> 	'People',	
-				'link'		=> 	base_url() . 'person/listing',
+				'link'		=> 	base_url() . 'person',
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-user',
 				'parent'	=>	0
@@ -47,6 +47,13 @@ class Navigation{
 				'icon-class'=>	'icon-list-alt',
 				'parent'	=>	0
 			),
+			7 => 	array(
+				'text'		=> 	"Gradebook Manager",	
+				'link'		=> 	base_url().'gradebook',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-briefcase',
+				'parent'	=>	0
+			),
 			5 => 	array(
 				'text'		=> 	'Setup',	
 				'link'		=> 	base_url() . 'setup',
@@ -59,13 +66,6 @@ class Navigation{
 				'link'		=> 	base_url() . 'home',
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-question-sign',
-				'parent'	=>	0
-			),
-			7 => 	array(
-				'text'		=> 	'Logout',	
-				'link'		=> 	base_url() . 'person/logout',
-				'show_condition'=>	1,
-				'icon-class'=>	'icon-off',
 				'parent'	=>	0
 			),
 			8 => 	array(
@@ -102,14 +102,7 @@ class Navigation{
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-home',
 				'parent'	=>	5
-			),
-			13 => 	array(
-				'text'		=> 	"Gradebook Manager",	
-				'link'		=> 	base_url().'gradebook',
-				'show_condition'=>	1,
-				'icon-class'=>	'icon-briefcase',
-				'parent'	=>	0
-			)				
+			)
 		); 
 	}
 	
@@ -176,19 +169,19 @@ class Navigation{
 				if ( $menu_elements [ $i ] [ 'show_condition' ] && $menu_elements [ $i ] [ 'parent' ] == 0 ) //are we allowed to see this menu?
 				{
 					/*** Set class for current nav item ***/
-					(strcasecmp($menu_elements [ $i ] [ 'text' ], $selected) == 0 ) ? $class = "active" : $class = ""; //  Binary safe case-insensitive string comparison
+					($i == $selected) ? $class = "active" : $class = ""; //  Binary safe case-insensitive string comparison
 					
-					if($this->hasChildren($i))
-					{
+					//if($this->hasChildren($i))
+					//{
 						//$class .=" dropdown";
-						$out .= "<li class=\"" . $class . "\">";
-						$out .= "<a href=\"" . $menu_elements [ $i ] [ 'link' ] . "\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">";
-						$out .= $menu_elements [ $i ] [ 'text' ];
-						$out .= '<b class="caret"></b>';
-						$out .= '</a>';
-						$out .= $this->getChildren ( $i ); //loop through children
-						$out .= '</li>' . "\n";
-					}else{
+					//	$out .= "<li class=\"" . $class . "\">";
+					//	$out .= "<a href=\"" . $menu_elements [ $i ] [ 'link' ] . "\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">";
+				//		$out .= $menu_elements [ $i ] [ 'text' ];
+				//		$out .= '<b class="caret"></b>';
+				//		$out .= '</a>';
+			//			$out .= $this->getChildren ( $i ); //loop through children
+		//				$out .= '</li>' . "\n";
+		
 						$out .= "<li class=\"" . $class . "\">";
 						if($menu_elements [ $i ] [ 'link' ]!=null)	{
 							$out .= "<a href=\"" . $menu_elements [ $i ] [ 'link' ] . "\">";
@@ -198,7 +191,6 @@ class Navigation{
 							$out .= "<span>".$menu_elements [ $i ] [ 'text' ]."</span>";
 						}
 						$out .= '</li>' . "\n";
-					}
 				}
 			}
 			else 

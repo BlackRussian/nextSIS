@@ -35,6 +35,7 @@ class Login extends CI_Controller
 	public function __construct()
  	{
    		parent::__construct();
+   		$this->load->model('school_model','',TRUE); //Load school model
  	}
 
  	public function index($param = "none")
@@ -49,9 +50,6 @@ class Login extends CI_Controller
  			redirect('home', 'refresh'); //Redirects to home if user is already logged in
  		}
  		else{
-
- 			$this->load->model('school_model','',TRUE); //Load school model
-			
 			$school = $this->school_model->GetSchoolByAnchor($param); // Get school details using anchor passed in parameter
 			
 			if(isset($school)){ //check if valid school is found
@@ -69,9 +67,7 @@ class Login extends CI_Controller
 
 				$this->load->helper(array('form', 'url')); // load the html form helper
 				$this->lang->load('login'); // load the login language file - the default language option (unused second parameter) is taken from config.php file 		
-				$this->load->view('templates/loginheader'); // load the page's visible header
 				$this->load->view('login_view', $data); // load the standard login form
-				$this->load->view('templates/footer'); // load the page's visible footer
 			}else{
 				show_404(); //Shows 404 page if no valid school is found for url anchor
 			}
@@ -80,7 +76,6 @@ class Login extends CI_Controller
 
 	public function authenticate()
 	{
-		
 		$this->load->model('user','',TRUE);
    		
    		// use the CodeIgniter form validation library
@@ -92,11 +87,8 @@ class Login extends CI_Controller
    		$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean|callback_validate_password');
    		if($this->form_validation->run() == FALSE) // authentication failed - display the login form 
    		{
-			$this->load->helper(array('form', 'url')); // load the html form helper
-			$this->lang->load('login'); // default language option taken from config.php file 		
-			$this->load->view('templates/header'); // load the page's visible header
-			$this->load->view('login_view'); // load the standard login form
-			$this->load->view('templates/footer'); // load the page's visible footer
+   			$this->session->set_flashdata('msgerr', 'Login Failed!!');
+   			$this->load->view('login_view'); // load the standard login form
    		}
 		else // authentication succeeded - display the homepage
    		{
