@@ -86,6 +86,29 @@ class User extends CI_Model
 		
 	}
 
+	public function GetRoles($person_id)
+	{
+		
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('role_id')->from('person_role')->where('person_id',$person_id);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+		
+	}
+
 }
 
 ?>

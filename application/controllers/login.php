@@ -126,8 +126,10 @@ class Login extends CI_Controller
 					
 					$myyear= $srow->syear;
 				}
+
+				$arrResult = $this->user->GetRoles($row->id);
 				
-       			$session = array('id'=>$row->id,'username'=>$row->username,'defaultschoolid'=>$row->default_schoolId,'currentschoolid'=>$row->default_schoolId,'currentsyear'=>$myyear);
+       			$session = array('id'=>$row->id,'username'=>$row->username,'defaultschoolid'=>$row->default_schoolId,'currentschoolid'=>$row->default_schoolId,'currentsyear'=>$myyear,'roles'=>$arrResult);
        			$this->session->set_userdata('logged_in', $session);
      		}
      		log_message('error', "Failed authentication");
