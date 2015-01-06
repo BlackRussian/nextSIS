@@ -1,8 +1,8 @@
-<div class="span9">
+<div class="span9" id="content">
 <div class="row-fluid">
      <div class="block">
         <div class="block-content collapse in">
-          <div class="span12" id="content">
+          <div class="span12" >
           		<?php 
           		$hiddenflds = array('pid' => $personid);
           		echo form_open('person/editrecord', 'method="post" class="form-horizontal"',$hiddenflds); ?>

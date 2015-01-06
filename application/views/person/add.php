@@ -3,8 +3,7 @@
      <?php echo $this->load->view('templates/breadcrumb.php');?>
      <div class="block">
         <div class="block-content collapse in">
-<<<<<<< HEAD
-          <div class="span12" id="content">
+          <div class="span12">
         		<?php echo form_open('person/addrecord', 'method="post" class="form-horizontal"'); ?>
 					<fieldset>
 		                <?php $this->load->view('shared/display_errors');?>

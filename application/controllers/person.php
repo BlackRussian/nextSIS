@@ -154,18 +154,11 @@ class Person extends CI_Controller
             	$titles[$row->id]	= $row->label;
         	}
 
-
-			$this->viewdata['titles'] 		= $titles;
-
-			$this->viewdata['roles'] 		= $this->person_model->GetPersonRoles();	
-
-			$this->viewdata['nav'] 			= $this->navigation->load('people');
-
 			$this->viewdata['page_title']	= "Add New User";
 
 			//UDF setup
 			$this->viewdata['currentschoolid'] 			= $session_data['currentschoolid'];
-			$this->viewdata['udf'] 						= $this->udf_model->GetUdfs($data['currentschoolid'],1);
+			$this->viewdata['udf'] 						= $this->udf_model->GetUdfs($session_data['currentschoolid'],1);
 
 			$this->viewdata['titles'] 	= $titles;
 			$this->viewdata['roles'] 	= $this->person_model->GetPersonRoles();
@@ -329,7 +322,7 @@ class Person extends CI_Controller
 				
 				// set the data associative array that is sent to the home view (and display/send)
 				$this->load->helper(array('form', 'url')); // load the html form helper
-				$data['username'] 			= $session_data['username'];
+				$this->viewdata['username'] 			= $session_data['username'];
 				$this->lang->load('person'); // default language option taken from config.php file 	
 				//$this->load->view('person_view', $data);
 				
@@ -340,55 +333,49 @@ class Person extends CI_Controller
 					$rows 					= $this->person_model->getpersonbyid($id);
 					foreach($rows as $row)
 					{
-						$data['fname'] 		= $row->first_name;
-						$data['mname'] 		= $row->middle_name;
-						$data['lname']		= $row->surname;
-						$data['cname'] 		= $row->common_name;
-						$data['genderid']	= $row->gender_id;
-						$data['titleid'] 	= $row->title_id;
-						$data['uname'] 		= $row->username;
-						$data['personid'] 	= $row->id;
+						$this->viewdata['fname'] 		= $row->first_name;
+						$this->viewdata['mname'] 		= $row->middle_name;
+						$this->viewdata['lname']		= $row->surname;
+						$this->viewdata['cname'] 		= $row->common_name;
+						$this->viewdata['genderid']		= $row->gender_id;
+						$this->viewdata['titleid'] 		= $row->title_id;
+						$this->viewdata['uname'] 		= $row->username;
+						$this->viewdata['personid'] 	= $row->id;
 					}
 					$result 				= $this->person_model->GetPersonGender(1);
 					$genders[""]			="Select Gender";
 					foreach($result as $row){
 		            	$genders[$row->id]=$row->label;
 		        	}
+					$this->viewdata['genders'] 		= $genders;
 
-					$data['genders'] 		= $genders;
-
-					$data['genders'] 		= $genders;
-
-					$result 				= $this->person_model->GetPersonTitles(1);
-
-					$titles[""]				="Select Title";
+					$result 						= $this->person_model->GetPersonTitles(1);
+					$titles[""]						="Select Title";
 					foreach($result as $row){
 		            	$titles[$row->id]	= $row->label;
 		        	}
+					$this->viewdata['titles'] 		= $titles;
 
-					$data['titles'] 		= $titles;
-					$data['roles'] 			= $this->person_model->GetPersonRoles();
+					$this->viewdata['roles'] 		= $this->person_model->GetPersonRoles();
 
-					$result 				= $this->person_model->getpersonrolesbypersonid($id);
-					
+					$result 						= $this->person_model->getpersonrolesbypersonid($id);					
 					foreach($result as $row){
 		            	$personroles[$row->role_id]	= $row->role_id;
 		        	}
-
-		        	$data['personroles'] 	= $personroles;
+		        	$this->viewdata['personroles'] 	= $personroles;
 				}	
 				
-				$data['nav'] 				= $this->navigation->load('people');
-				$data['page_title']			= "Edit User";				
+				$this->viewdata['nav'] 				= $this->navigation->load('people');
+				$this->viewdata['page_title']		= "Edit User";				
 
 				//UDF setup
 				$this->load->model('udf_model');
-				$this->data['currentschoolid'] 		= $session_data['currentschoolid'];
-				$data['udf'] 						= $this->udf_model->GetUdfs($this->data['currentschoolid'],1,$id);
+				$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
+				$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['currentschoolid'],1,$id);
 
-				$this->load->view('templates/header', $data);
+				$this->load->view('templates/header', $this->viewdata);
 				$this->load->view('templates/sidenav');	
-				$this->load->view('person/edit', $data);
+				$this->load->view('person/edit', $this->viewdata);
 				$this->load->view('templates/footer');
 			}
 			else // not logged in - redirect to login controller (login page)

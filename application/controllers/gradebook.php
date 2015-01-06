@@ -105,7 +105,7 @@ class Gradebook extends CI_Controller
 		{	
 			$this->load->model('subjects_model');
 			$subject 					= $this->subjects_model->GetSubjectCourseById($id);
-			$this->data['page_title'] 	= "Adding Grade Type for \"". $subject->title . "\"";
+			$this->data['page_title'] 	= "Adding Grade Type for \"". $subject->course_title . "\"";
 			$this->data['course_id'] 	= $id;
 
 		    $this->load->view('templates/header',$this->data);
@@ -131,7 +131,7 @@ class Gradebook extends CI_Controller
 			$this->load->model('subjects_model');
 			$subject 						= $this->subjects_model->GetSubjectCourseById($course_id);
 			$grade_type 					= $this->gradebook_model->GetGradeTypeByID($grade_type_id);
-			$this->data['page_title'] 		= "Editing Grade Type for \"". $subject->title . "\"";
+			$this->data['page_title'] 		= "Editing Grade Type for \"". $subject->course_title . "\"";
 			$this->data['grade_type'] 		= $grade_type;
 			$this->data['course_id'] 		= $course_id;
 
