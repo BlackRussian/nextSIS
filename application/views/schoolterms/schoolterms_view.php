@@ -8,7 +8,7 @@
 					<h3>People</h3>
 					<div class="table-toolbar">
                     	<div class="btn-group">
-                    		<a href="add"><button class="btn btn-success"><?php echo $this->lang->line("add_new_schoolterm");?><i class="icon-plus icon-white"></i></button></a>
+                    		<a href="/schoolterms/add"><button class="btn btn-success"><?php echo $this->lang->line("add_new_schoolterm");?><i class="icon-plus icon-white"></i></button></a>
                     	</div>
 					</div>	
 					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
