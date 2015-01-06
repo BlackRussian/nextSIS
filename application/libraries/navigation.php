@@ -70,7 +70,7 @@ class Navigation{
 			),
 			8 => 	array(
 				'text'		=> "Manage School Terms",	
-				'link'		=> 	base_url().'schoolterms/listing',
+				'link'		=> 	base_url().'schoolterms',
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-home',
 				'parent'	=>	5
