@@ -50,6 +50,7 @@ class Person extends CI_Controller
 		$this->viewdata['username'] 		= $session_data['username'];
 		$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
 		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
+		$this->viewdata['defaultschoolid']  = $session_data['defaultschoolid'];
 		$this->viewdata['nav'] 				= $this->navigation->load('people');
 		
 		$this->breadcrumbcomponent->add('People', '/people');
@@ -188,6 +189,7 @@ class Person extends CI_Controller
 				'first_name' => $this->input->post('fname'),
 				'surname' => $this->input->post('lname'),
 				'common_name' => $this->input->post('cname'),
+				'default_schoolId' => $this->viewdata['defaultschoolid'],
 				'gender_id' => $this->input->post('Gender'),
 				'title_id' => $this->input->post('Title'),
 				'username' => $this->input->post('uname'),
