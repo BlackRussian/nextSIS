@@ -29,7 +29,7 @@ class ajaxcallbacks extends CI_Controller
 		parent::__construct();
 		$this->load->model('school_model');
 		$this->load->model('gradelevels_model');
-		$this->load->model('schoolclasses_model');
+		$this->load->model('schoolclass_model');
 		$this->load->model('student_model');
         $this->load->model('subjects_model');
 	}
@@ -40,7 +40,7 @@ class ajaxcallbacks extends CI_Controller
 
     	$gradelevel_id = $this->input->post('id');
 
-        $query = $this->schoolclasses_model->GetClassByGradeLevel($gradelevel_id);
+        $query = $this->schoolclass_model->GetClassByGradeLevel($gradelevel_id);
         
         $classes["-1"]="Select Class";
          

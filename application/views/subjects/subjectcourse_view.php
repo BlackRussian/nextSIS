@@ -1,13 +1,11 @@
 <div class="span9">
 	<div class="row-fluid">
+      <?php echo $this->load->view('templates/breadcrumb.php');?>
      	<div class="block">
        		<div class="block-content collapse in">
           		<div class="span12">
           			<?php $this->load->view('shared/display_notification.php');?>
-          			<div class="table-header-nav">
-                    <a href="/subjects"><i class="icon-chevron-left icon-black"></i>Back to Subjects</a>
-                    <h3><?php echo $page_title;?></h3>
-                </div>
+                <h3><?php echo $page_title;?></h3>
           			<div class="table-toolbar">
                     	<div class="btn-group">
                     		<a href="/courses/add/<?php echo $subject_id;?>"><button class="btn btn-success">Add New Course <i class="icon-plus icon-white"></i></button></a>
