@@ -102,6 +102,13 @@ class Navigation{
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-home',
 				'parent'	=>	5
+			),
+			13 => 	array(
+				'text'		=> 	"Uer Defined Fields",	
+				'link'		=> 	base_url().'udf',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	5
 			)
 		); 
 	}

@@ -128,34 +128,41 @@ class Person extends CI_Controller
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
 			// get session data
-			$session_data = $this->session->userdata('logged_in');
+			$session_data 			= $this->session->userdata('logged_in');
+			$this->load->model('udf_model');
 			
 			// set the data associative array that is sent to the home view (and display/send)
 			
-			$data['username'] = $session_data['username'];
+			$data['username'] 		= $session_data['username'];
 			$this->load->helper(array('form', 'url')); // load the html form helper
 			$this->lang->load('person'); // default language option taken from config.php file 
 			
-			$result = $this->person_model->GetPersonGender(1);
-			$genders[""]="Select Gender";
+			$result 				= $this->person_model->GetPersonGender(1);
+			$genders[""]			="Select Gender";
 			foreach($result as $row){
             	$genders[$row->id]=$row->label;
         	}
 
-			$data['genders'] = $genders;
+			$data['genders'] 		= $genders;
 
-			$result = $this->person_model->GetPersonTitles(1);
+			$result 				= $this->person_model->GetPersonTitles(1);
 
-			$titles[""]="Select Title";
+			$titles[""]				="Select Title";
 			foreach($result as $row){
-            	$titles[$row->id]=$row->label;
+            	$titles[$row->id]	= $row->label;
         	}
 
-			$data['titles'] = $titles;
+			$data['titles'] 		= $titles;
 
-			$data['roles'] = $this->person_model->GetPersonRoles();	
+			$data['roles'] 			= $this->person_model->GetPersonRoles();	
 
-			$data['nav'] = $this->navigation->load('people');
+			$data['nav'] 			= $this->navigation->load('people');
+
+			$data['page_title']		= "Add New User";
+
+			//UDF setup
+			$data['currentschoolid'] 			= $session_data['currentschoolid'];
+			$data['udf'] 						= $this->udf_model->GetUdfs($data['currentschoolid'],1);
 
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/sidenav');	
@@ -169,17 +176,18 @@ class Person extends CI_Controller
 	}
 	//This will save entry to the database
 	function addrecord()
-	{
+	{		
 		//$this->load->model('person_model','',TRUE);
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
+			$this->load->library('form_validation');
+
 			// get session data
 			$session_data = $this->session->userdata('logged_in');
 
 			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] = $session_data['username'];
 			$this->lang->load('person'); // default language option taken from config.php file 	
-			$this->load->view('person_view', $data);
 			
 			//Set the id that should be updated
 			$id= $this->input->post('pid');
@@ -189,22 +197,39 @@ class Person extends CI_Controller
 			$this->load->library('tcrypt');
  			$tcrypt = new Tcrypt;
 			$upwd = $tcrypt->password_hash('g66k2q2@d');
+
+			$this->form_validation->set_rules('fname', 'First Name', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('lname', 'Last Name', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('mname', 'Middle Name', 'trim|xss_clean');
+			$this->form_validation->set_rules('cname', 'Common Name', 'trim|xss_clean');
+			$this->form_validation->set_rules('Gender', 'Gender', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('Title', 'Title', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('uname', 'User Name', 'trim|required|xss_clean|is_unique[person.username]');
+			$this->form_validation->set_rules('userrole[]', 'User Roles', 'trim|required|xss_clean');
 			
-			
-			$data = array(
-				'middle_name' => $this->input->post('mname'),
-				'first_name' => $this->input->post('fname'),
-				'surname' => $this->input->post('lname'),
-				'common_name' => $this->input->post('cname'),
-				'gender_id' => $this->input->post('Gender'),
-				'title_id' => $this->input->post('Title'),
-				'username' => $this->input->post('uname'),
-				'password' => $upwd
-			);
-			$roledata = $this->input->post('userrole');
-			
-			$this->person_model->addperson($data,$roledata);
-			redirect('person','listing');
+			$this->UDF_Validation();
+
+			if($this->form_validation->run() == FALSE) 
+   			{
+				$this->add();
+			}else{
+				$data = array(
+					'middle_name' => $this->input->post('mname'),
+					'first_name' => $this->input->post('fname'),
+					'surname' => $this->input->post('lname'),
+					'common_name' => $this->input->post('cname'),
+					'gender_id' => $this->input->post('Gender'),
+					'title_id' => $this->input->post('Title'),
+					'username' => $this->input->post('uname'),
+					'password' => $upwd,
+					'default_schoolid' => $session_data["currentschoolid"]
+				);
+				$roledata 		= $this->input->post('userrole');
+				$person_id 		= $this->person_model->addperson($data,$roledata);
+
+				$this->Insert_Update_UDF($person_id);
+				redirect('person','listing');
+			}
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -220,29 +245,47 @@ class Person extends CI_Controller
 		{
 			// get session data
 			$session_data = $this->session->userdata('logged_in');
+			$this->load->library('form_validation');
 
 			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] = $session_data['username'];
 			
-			$this->lang->load('person'); // default language option taken from config.php file 	
-			$this->load->view('person_view', $data);
+			$this->lang->load('person'); // default language option taken from config.php file 				
 			
 			//Set the id that should be updated
 			$id= $this->input->post('pid');
 			$gid = $this->input->post('gender');
 			
-			$data = array(
-				'middle_name' => $this->input->post('mname'),
-				'first_name' => $this->input->post('fname'),
-				'surname' => $this->input->post('lname'),
-				'common_name' => $this->input->post('cname'),
-				'gender_id' => $this->input->post('Gender'),
-				'title_id' => $this->input->post('Title')
-			);
-			$roledata = $this->input->post('userrole');
+			$this->form_validation->set_rules('fname', 'First Name', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('lname', 'Last Name', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('mname', 'Middle Name', 'trim|xss_clean');
+			$this->form_validation->set_rules('cname', 'Common Name', 'trim|xss_clean');
+			$this->form_validation->set_rules('Gender', 'Gender', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('Title', 'Title', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('uname', 'User Name', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('userrole[]', 'User Roles', 'trim|required|xss_clean');
 			
-			$this->person_model->updateperson($id,$data,$roledata);
-			redirect('person/listing');
+			$this->UDF_Validation();
+
+			if($this->form_validation->run() == FALSE) 
+   			{
+				$this->edit($id);
+			}else{
+				$data = array(
+					'middle_name' => $this->input->post('mname'),
+					'first_name' => $this->input->post('fname'),
+					'surname' => $this->input->post('lname'),
+					'common_name' => $this->input->post('cname'),
+					'gender_id' => $this->input->post('Gender'),
+					'title_id' => $this->input->post('Title'),
+					'default_schoolid' => $session_data["currentschoolid"]
+				);
+				$roledata = $this->input->post('userrole');
+				
+				$this->person_model->updateperson($id,$data,$roledata);
+				$this->Insert_Update_UDF($id);
+				redirect('person','listing');
+			}
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -257,11 +300,11 @@ class Person extends CI_Controller
 		    if($this->session->userdata('logged_in')) // user is logged in
 			{
 				// get session data
-				$session_data = $this->session->userdata('logged_in');
+				$session_data 				= $this->session->userdata('logged_in');
 				
 				// set the data associative array that is sent to the home view (and display/send)
 				$this->load->helper(array('form', 'url')); // load the html form helper
-				$data['username'] = $session_data['username'];
+				$data['username'] 			= $session_data['username'];
 				$this->lang->load('person'); // default language option taken from config.php file 	
 				//$this->load->view('person_view', $data);
 				
@@ -269,25 +312,54 @@ class Person extends CI_Controller
 				if(!$this->load->model('person_model','',TRUE))
 				{
 					$this->lang->load('person'); // default language option taken from config.php file 	
-					$rows = $this->person_model->getpersonbyid($id);
+					$rows 					= $this->person_model->getpersonbyid($id);
 					foreach($rows as $row)
 					{
-						$data['fname'] = $row->first_name;
-						$data['mname'] = $row->middle_name;
-						$data['lname'] = $row->surname;
-						$data['cname'] = $row->common_name;
-						$data['genderid'] = $row->gender_id;
-						$data['titleid'] = $row->title_id;
-						$data['uname'] = $row->username;
-						$data['personid'] = $row->id;
+						$data['fname'] 		= $row->first_name;
+						$data['mname'] 		= $row->middle_name;
+						$data['lname']		= $row->surname;
+						$data['cname'] 		= $row->common_name;
+						$data['genderid']	= $row->gender_id;
+						$data['titleid'] 	= $row->title_id;
+						$data['uname'] 		= $row->username;
+						$data['personid'] 	= $row->id;
 					}
-					$data['genders'] = $this->person_model->GetPersonGender(1);
-					$data['titles'] = $this->person_model->GetPersonTitles(1);
-					$data['roles'] = $this->person_model->GetPersonRoles();
-					$data['personroles'] = $this->person_model->getpersonrolesbypersonid($id);
+					$result 				= $this->person_model->GetPersonGender(1);
+					$genders[""]			="Select Gender";
+					foreach($result as $row){
+		            	$genders[$row->id]=$row->label;
+		        	}
+
+					$data['genders'] 		= $genders;
+
+					$data['genders'] 		= $genders;
+
+					$result 				= $this->person_model->GetPersonTitles(1);
+
+					$titles[""]				="Select Title";
+					foreach($result as $row){
+		            	$titles[$row->id]	= $row->label;
+		        	}
+
+					$data['titles'] 		= $titles;
+					$data['roles'] 			= $this->person_model->GetPersonRoles();
+
+					$result 				= $this->person_model->getpersonrolesbypersonid($id);
+					
+					foreach($result as $row){
+		            	$personroles[$row->role_id]	= $row->role_id;
+		        	}
+
+		        	$data['personroles'] 	= $personroles;
 				}	
 				
-				$data['nav'] = $this->navigation->load('people');
+				$data['nav'] 				= $this->navigation->load('people');
+				$data['page_title']			= "Edit User";				
+
+				//UDF setup
+				$this->load->model('udf_model');
+				$this->data['currentschoolid'] 		= $session_data['currentschoolid'];
+				$data['udf'] 						= $this->udf_model->GetUdfs($this->data['currentschoolid'],1,$id);
 
 				$this->load->view('templates/header', $data);
 				$this->load->view('templates/sidenav');	
@@ -317,8 +389,62 @@ class Person extends CI_Controller
 		
 		if(isset($current_school))
 			redirect('login/'.$current_school, 'refresh');
-		else
+			printer_draw_elipse(printer_handle, ul_x, ul_y, lr_x, lr_y);
 			redirect('login', 'refresh');
+	}
+
+	//UDF Validation 
+	function UDF_Validation(){
+		$udf_field  		= $this->input->post('udf_field', TRUE);
+		$udf_types	 		= $this->input->post('udf_types', TRUE);
+		$udf_validations	= $this->input->post("udf_validations", TRUE);
+		$udf_titles 		= $this->input->post("udf_titles", TRUE);
+		
+
+		foreach ($udf_field as $key => $value) {
+			$this->form_validation->set_rules('udf_field[' . $key . ']', $udf_titles[$key], $udf_validations[$key]);
+		}
+	}
+
+
+	function Insert_Update_UDF($person_id){
+		$this->load->model('udf_model');
+		$udf_field  		= $this->input->post('udf_field', TRUE);
+		$udf_types	 		= $this->input->post('udf_types', TRUE);
+		$udf_validations	= $this->input->post("udf_validations", TRUE);
+		$udf_titles 		= $this->input->post("udf_titles", TRUE);
+		$udf_ids 			= $this->input->post("udf_ids", TRUE);
+		$udf_data_ids 		= $this->input->post("udf_data_ids", TRUE);
+		$insertData			= array();		
+		$updateData			= array();
+
+		foreach ($udf_field as $key => $value) {
+			$isAdd = empty($udf_data_ids[$key]);
+			switch ($udf_types[$key]) {				
+				default:
+					if ($isAdd){
+						$insertData[count($insertData)] = array(							
+							'udf_id' 		=> $udf_ids[$key],
+							'udf_value' 	=> $value,
+							'fk_id' 		=> $person_id					
+						);
+					}else{
+						$updateData[count($updateData)] = array(							
+							'udf_data_id' 	=> $udf_data_ids[$key],
+							'udf_id' 		=> $udf_ids[$key],
+							'udf_value' 	=> $value,
+							'fk_id' 		=> $person_id					
+						);
+					}
+					break;
+			}			
+		}
+
+		if(count($insertData) > 0)
+			$this->udf_model->AddUDFValues($insertData);
+		
+		if(count($updateData) > 0)
+			$this->udf_model->UpdateUDFValues($updateData);
 	}
 }
 

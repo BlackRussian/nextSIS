@@ -33,7 +33,7 @@
 				            );
 						?>
 			                <div class="control-group">
-			                    <label class="control-label" for="title"><?php echo $student->student;?></label>
+			                    <label class="control-label" for="<?php echo $grade_field_name; ?>"><?php echo $student->student;?></label>
 			                    <div class="controls">
 			                    	<?php echo form_input($data, set_value($grade_field_name, $student->points)); ?>
 			                    	<?php echo form_hidden($studentid_field_name, $student->studentid); ?>
