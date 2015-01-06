@@ -36,6 +36,8 @@ class Schoolterms extends CI_Controller
 		$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
 		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
 		$this->viewdata['nav'] 				= $this->navigation->load('courses');
+		
+		$this->breadcrumbcomponent->add('School Year', '/schoolterm');
 	}
 	
 	function index()
