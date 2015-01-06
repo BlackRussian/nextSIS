@@ -24,25 +24,42 @@ session_start();
 
 class Gradelevels extends CI_Controller
 {
+
+	var $viewdata = null;
+
 	function __construct()
 	{
 		parent::__construct();
+		//$this->output->enable_profiler(TRUE);
+		$session_data = $this->session->userdata('logged_in');
+		//$this->data = array();
+		
+		// set the data associative array common values that is sent to the views of this controller
+		$this->viewdata['username'] 		= $session_data['username'];
+		$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
+		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
+		$this->viewdata['nav'] 				= $this->navigation->load('setup');
+
 		$this->load->model('gradelevels_model');
+
+		$this->breadcrumbcomponent->add('Grade Levels','/gradelevels');
 	}
 	
 	function index()
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
-			
-			// set the data associative array that is sent to the home view (and display/send)
-			
-			$data['username'] = $session_data['username'];
-			$this->lang->load('gradelevels'); // default language option taken from config.php file 	
-			$this->load->view('templates/setupheader', $data);
-			$this->load->view('gradelevels/gradelevels_view', $data);
+			if(!$this->load->model('gradelevels_model','',TRUE))
+			{
+				$this->lang->load('setup'); // default language option taken from config.php file 	
+				$this->viewdata['query'] = $this->gradelevels_model->listing($this->viewdata['currentschoolid']);
+				$this->viewdata['gradelevels'] = $this->gradelevels_model->GetGradeLevels($this->viewdata['currentschoolid']);
+			}
+
+			$this->load->view('templates/header', $this->viewdata);
+			$this->load->view('templates/sidenav', $this->viewdata);
+			$this->load->view('gradelevels/gradelevels_view', $this->viewdata);
+			$this->load->view('templates/footer');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -56,20 +73,23 @@ class Gradelevels extends CI_Controller
 		
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
+
+			$result				= $this->gradelevels_model->GetGradeLevels($this->viewdata['currentschoolid']);
+			$gradelevels[""] 	= "Select Grade";
+
+			foreach($result as $row){
+            	$gradelevels[$row->id] = $row->title;
+        	}
+
+			$this->viewdata['gradelevels'] 	= $gradelevels;	
+			$this->viewdata['page_title'] 	= "Add Grade Level";
 			
-			// set the data associative array that is sent to the home view (and display/send)
-			//$this->session->userdata('currentschoolid')
-			$data['username'] = $session_data['username'];
-			$data['currentschoolid'] = $session_data['currentschoolid'];
-			$this->load->helper(array('form', 'url')); // load the html form helper
-			$this->lang->load('person'); // default language option taken from config.php file 
-			$data['gradelevels'] = $this->gradelevels_model->GetGradeLevels($session_data['currentschoolid']);
-			//	$data['titles'] = $this->gradelevels_model->GetPersonTitles(1);
-			//	$data['roles'] = $this->gradelevels_model->GetPersonRoles();	
-		    $this->load->view('templates/setupheader',$data);
-			$this->load->view('gradelevels/add', $data);
+			$this->breadcrumbcomponent->add('Add','/gradelevels/add');
+
+		    $this->load->view('templates/header',$this->viewdata);
+		    $this->load->view('templates/sidenav',$this->viewdata);
+			$this->load->view('gradelevels/add_gradelevel_view', $this->viewdata);
+			$this->load->view('templates/footer');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -79,37 +99,71 @@ class Gradelevels extends CI_Controller
 	//This will save entry to the database
 	function addrecord()
 	{
-		//$this->load->model('person_model','',TRUE);
-		if($this->session->userdata('logged_in')) // user is logged in
-		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
+		$this->load->library('form_validation');
 
-			// set the data associative array that is sent to the home view (and display/send)
-			$data['username'] = $session_data['username'];
-			$this->lang->load('gradelevels'); // default language option taken from config.php file 	
-			//$this->load->view('person_view', $data);
-			
-				
-			if($this->input->post('next_grade_id') == "n/a")
-			{
-				$data = array(
-					'school_id' => $this->input->post('school_id'),
-					'title' => $this->input->post('title')
-				);
-				
+		if($this->session->userdata('logged_in')) // user is logged in
+		{			
+			// field is trimmed, required and xss cleaned respectively
+   			$this->form_validation->set_rules('title', 'Title', 'trim|required|xss_clean');
+
+			if($this->form_validation->run() == FALSE) 
+   			{
+   				$this->add();
 			}else{
-				$data = array(
-					'school_id' => $this->input->post('school_id'),
-					'title' => $this->input->post('title'),
-					'next_grade' => $this->input->post('next_grade_id')
-					
-				);
+				if($this->input->post('selGradeLevel') == "")
+				{
+					$data = array(
+						'title' => $this->input->post('title'),
+						'school_id' => $this->input->post('school_id')
+					);
+
+				}else{
+					$data = array(
+						'title' => $this->input->post('title'),
+						'next_grade_id' => $this->input->post('selGradeLevel'),
+						'school_id' => $this->input->post('school_id')
+					);
+				}
+
+				$this->gradelevels_model->AddGradeLevel($data);
+				redirect('gradelevels', 'refresh');
 			}
-			
-			
-			$this->gradelevels_model->addgradelevel($data);
-			redirect('gradelevels','listing');
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
+	}
+	
+    // The add function is used to load a person record for edit
+	function edit($id)
+	{
+	    if($this->session->userdata('logged_in')) // user is logged in
+		{	
+			// if the person model returns TRUE then call the view
+			if(!$this->load->model('gradelevels_model','',TRUE))
+			{
+				$gradelevel = $this->gradelevels_model->GetGradeLevelById($id);
+				
+				$this->viewdata['gradelevelobj'] = $gradelevel;
+				$this->viewdata['page_title'] = "Edit Grade Level";
+
+				$result		= $this->gradelevels_model->GetGradeLevelsExceptCurrent($this->viewdata['currentschoolid'], $id);
+				$gradelevels[""] = "Select Grade";
+
+				foreach($result as $row){
+	            	$gradelevels[$row->id] = $row->title;
+	        	}
+
+				$this->viewdata['gradelevels'] = $gradelevels;	
+			}
+
+			$this->breadcrumbcomponent->add('Edit','/gradelevels/edit/'.$id);
+
+			$this->load->view('templates/header',$this->viewdata);
+			$this->load->view('templates/sidenav', $this->viewdata);
+			$this->load->view('gradelevels/edit_gradelevel_view', $this->viewdata);
+			$this->load->view('templates/footer');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -120,126 +174,42 @@ class Gradelevels extends CI_Controller
 	// The editrecord function edits a person
 	function editrecord()
 	{
-		//$this->load->model('person_model','',TRUE);
-		if($this->session->userdata('logged_in')) // user is logged in
-		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
+		$this->load->library('form_validation');
 
-			// set the data associative array that is sent to the home view (and display/send)
-			$data['username'] = $session_data['username'];
-			$this->lang->load('person'); // default language option taken from config.php file 	
-			$this->load->view('person_view', $data);
-			
-			//Set the id that should be updated
-			$id= $this->input->post('glid');
-			
-			
-			
-			if($this->input->post('next_grade_id') == "n/a")
-			{
-				$data = array(
-					'school_id' => $this->input->post('school_id'),
-					'title' => $this->input->post('title')
-				);
-				
-			}else{
-				$data = array(
-					'school_id' => $this->input->post('school_id'),
-					'title' => $this->input->post('title'),
-					'next_grade' => $this->input->post('next_grade_id')
-					
-				);
-			}
-				
-			$this->gradelevels_model->updategradelevel($id,$data);
-			redirect('gradelevels/listing');
-		}
-		else // not logged in - redirect to login controller (login page)
-		{
-			redirect('login','refresh');
-		}
-	}
-	
-	
-    // The add function is used to load a person record for edit
-	function edit($id)
-	{
-		    if($this->session->userdata('logged_in')) // user is logged in
-			{
-			    // get session data
-				$session_data = $this->session->userdata('logged_in');
-				
-				// set the data associative array that is sent to the home view (and display/send)
-				$this->load->helper(array('form', 'url')); // load the html form helper
-				$data['username'] = $session_data['username'];
-				$data['currentschoolid'] = $session_data['currentschoolid'];
-				$this->lang->load('gradelevels'); // default language option taken from config.php file 	
-				//$this->load->view('person_view', $data);
-				
-				// if the person model returns TRUE then call the view
-				if(!$this->load->model('gradelevels_model','',TRUE))
-				{
-					echo "this is a test edit";
-						
-					$rows = $this->gradelevels_model->GetGradeLevelById($id);
-					foreach($rows as $row)
-					{
-						$data['title'] = $row->title;
-						$data['school_id'] = $row->school_id;
-						$data['next_grade_id'] = $row->next_grade_id;
-						$data['id'] = $row->id;
-						
-					}
-					$data['gradelevels'] = $this->gradelevels_model->GetGradeLevelsExceptCurrent($session_data['currentschoolid'],$id);	
-				}	
-				$this->load->view('templates/setupheader',$data);
-				$this->load->view('gradelevels/edit', $data);
-			}
-			else // not logged in - redirect to login controller (login page)
-			{
-				redirect('login','refresh');
-			}
-	}
-	
-	// The listing function displays a list of people in the database
-	function listing()
-	{
 		if($this->session->userdata('logged_in')) // user is logged in
-		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
-			
-			// set the data associative array that is sent to the home view (and display/send)
-			$data['username'] = $session_data['username'];
-			$data['currentschoolid'] = $session_data['currentschoolid'];
-			$this->lang->load('gradelevels'); // default language option taken from config.php file 	
-			//$this->load->view('person_view', $data);
-			
-			// if the person model returns TRUE then call the view
-			if(!$this->load->model('gradelevels_model','',TRUE))
-			{
-				//echo "this is a test";
-				$this->lang->load('setup'); // default language option taken from config.php file 	
-				$data['query'] = $this->gradelevels_model->listing($data['currentschoolid']);
-				$data['gradelevels'] = $this->gradelevels_model->GetGradeLevels($session_data['currentschoolid']);
-			}	
-			$this->load->view('templates/setupheader', $data);	
-			$this->load->view('gradelevels/gradelevels_view', $data);
+		{			
+			// field is trimmed, required and xss cleaned respectively
+   			$this->form_validation->set_rules('title', 'Title', 'trim|required|xss_clean');
+
+			//Set the id that should be updated
+			$id = $this->input->post('gradelevel_id');
+
+			if($this->form_validation->run() == FALSE) 
+   			{
+   				$this->edit($id);
+			}else{
+				if($this->input->post('selGradeLevel') == "")
+				{
+					$data = array(
+						'title' => $this->input->post('title')
+					);
+
+				}else{
+					$data = array(
+						'title' => $this->input->post('title'),
+						'next_grade_id' => $this->input->post('selGradeLevel')
+					);
+				}
+			}
+				
+			$this->gradelevels_model->UpdateGradeLevel($id,$data);
+
+			redirect('gradelevels', 'refresh');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
 			redirect('login','refresh');
 		}
-	}
-	
-	// The logout function logs out a person from the database
-	function logout()
-	{
-		// log the user out by destroying the session flag, then the session, then redirecting to the login controller		
-		$this->session->unset_userdata('logged_in');
-		session_destroy();
-		redirect('login', 'refresh');
 	}
 }
 

@@ -24,33 +24,36 @@ session_start();
 
 class Subjects extends CI_Controller
 {
+
+	var $viewdata = null;
+
 	function __construct()
 	{
 		parent::__construct();
+
+		$session_data = $this->session->userdata('logged_in');
+
+		$this->viewdata['username'] 		= $session_data['username'];
+		$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
+		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
+		$this->viewdata['nav'] 				= $this->navigation->load('setup');
+
 		$this->load->model('subjects_model');
-		$this->lang->load('setup');
+
+		$this->breadcrumbcomponent->add('Subjects', '/subjects');		
 	}
 	
 	function index()
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
-			
-			// set the data associative array that is sent to the home view (and display/send)
-			
-			// set the data associative array that is sent to the home view (and display/send)
-			$data['username'] = $session_data['username'];
-			$data['currentschoolid'] = $session_data['currentschoolid'];
-			$data['currentsyear'] = $session_data['currentsyear'];
-			$data['query'] = $this->subjects_model->listing($data['currentschoolid']);	
-			$data['nav'] = $this->navigation->load('setup');
 
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/sidenav', $data);
-			$this->load->view('subjects/subjects_view', $data);
-			$this->load->view('templates/footer', $data);
+			$this->viewdata['query'] = $this->subjects_model->listing($this->viewdata['currentschoolid']);	
+
+			$this->load->view('templates/header', $this->viewdata);
+			$this->load->view('templates/sidenav', $this->viewdata);
+			$this->load->view('subjects/subjects_view', $this->viewdata);
+			$this->load->view('templates/footer');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -126,22 +129,6 @@ class Subjects extends CI_Controller
 			
 			if($this->form_validation->run() == FALSE) 
    			{
-				// get session data
-				/*$session_data = $this->session->userdata('logged_in');
-				
-				$data['username'] = $session_data['username'];
-				$data['currentschoolid'] = $session_data['currentschoolid'];
-				$data['currentsyear'] = $session_data['currentsyear'];
-				$data['nav'] = $this->navigation->load('setup');
-
-				$this->load->helper(array('form', 'url')); // load the html form helper
-				$this->lang->load('setup');
-				
-			    $this->load->view('templates/header',$data);
-			    $this->load->view('templates/sidenav',$data);
-				$this->load->view('subjects/add_s', $data);
-				$this->load->view('templates/footer');*/
-
 				$this-add();
 			}else{
 				
@@ -282,17 +269,20 @@ class Subjects extends CI_Controller
 			$data['currentsyear'] = $session_data['currentsyear'];
 			$data['subject_id'] = $subject_id;
 
-			//$data['query'] = $this->subjects_model->GetSubjectCourses($subject_id, $data['currentschoolid']);
+			$data['query'] = $this->subjects_model->GetSubjectCourses($subject_id, $data['currentschoolid']);
 			
 			$subject = $this->subjects_model->GetSubjectById($subject_id, $data['currentschoolid']);	
 			
 			$data['nav'] = $this->navigation->load('courses');
 			$data['page_title'] = "Manage ". $subject->title . " Courses";
 
+			$this->breadcrumbcomponent->add($subject->title, 'subjects/courses/'.$subject_id);
 			$this->load->view('templates/header', $data);
 			$this->load->view('templates/sidenav', $data);
 			$this->load->view('subjects/subjectcourse_view', $data);
 			$this->load->view('templates/footer');
+
+
 		}
 		else // not logged in - redirect to login controller (login page)
 		{

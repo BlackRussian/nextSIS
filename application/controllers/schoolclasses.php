@@ -19,30 +19,57 @@
  * 
  * Copyright 2012 http://nextsis.org
  */
-
-session_start();
-
 class Schoolclasses extends CI_Controller
 {
+
+	var $viewdata = null;
+
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->model('schoolclasses_model');
+		$this->load->model('schoolclass_model');
+		$this->load->model('gradelevels_model');
+
+		//$this->output->enable_profiler(TRUE);
+		$session_data = $this->session->userdata('logged_in');
+		
+		// set the data associative array common values that is sent to the views of this controller
+		$this->viewdata['username'] 		= $session_data['username'];
+		$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
+		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
+		$this->viewdata['nav'] 				= $this->navigation->load('setup');
+
+		$this->breadcrumbcomponent->add('Grade Levels','/gradelevels');
+		$this->breadcrumbcomponent->add('Classes','/schoolclasses');
 	}
 	
-	function index()
+	function _remap($method, $params = array()){
+    	if (method_exists($this, $method))
+    	{
+        	return call_user_func_array(array($this, $method), $params);
+    	}else{
+        	$this->index($method);
+        }
+	}
+
+	function index($filter=FALSE)
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
-			
-			// set the data associative array that is sent to the home view (and display/send)
-			
-			$data['username'] = $session_data['username'];
+
 			$this->lang->load('gradelevels'); // default language option taken from config.php file 	
-			$this->load->view('templates/setupheader', $data);
-			$this->load->view('schoolclasses/view', $data);
+
+			$this->viewdata['query'] = $this->schoolclass_model->listing($filter, $this->viewdata['currentschoolid']);
+
+			if($filter && $this->viewdata['query']){
+				$this->breadcrumbcomponent->add($this->viewdata['query'][0]->grade_title,'schoolclasses/'.$filter);
+			}
+
+
+			$this->load->view('templates/header', $this->viewdata);
+			$this->load->view('templates/sidenav', $this->viewdata);
+			$this->load->view('schoolclasses/schoolclass_view', $this->viewdata);
+			$this->load->view('templates/footer');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -56,20 +83,24 @@ class Schoolclasses extends CI_Controller
 		
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
-			
-			// set the data associative array that is sent to the home view (and display/send)
-			//$this->session->userdata('currentschoolid')
-			$data['username'] = $session_data['username'];
-			$data['currentschoolid'] = $session_data['currentschoolid'];
-			$this->load->helper(array('form', 'url')); // load the html form helper
 			$this->lang->load('setup'); // default language option taken from config.php file 
-			$data['gradelevels'] = $this->schoolclasses_model->GetGradeLevels($session_data['currentschoolid']);
-			//	$data['titles'] = $this->gradelevels_model->GetPersonTitles(1);
-			//	$data['roles'] = $this->gradelevels_model->GetPersonRoles();	
-		    $this->load->view('templates/setupheader',$data);
-			$this->load->view('schoolclasses/add', $data);
+			
+			$result		= $this->gradelevels_model->GetGradeLevels($this->viewdata['currentschoolid']);
+			$gradelevels[""] = "Select Grade";
+
+			foreach($result as $row){
+            	$gradelevels[$row->id] = $row->title;
+        	}
+
+			$this->viewdata['gradelevels'] 	= $gradelevels;	
+			$this->viewdata['page_title'] = 'Add Class';
+
+			$this->viewdata['gradelevels'] = $gradelevels;
+
+		    $this->load->view('templates/header',$this->viewdata);
+		    $this->load->view('templates/sidenav',$this->viewdata);
+			$this->load->view('schoolclasses/add_schoolclass_view', $this->viewdata);
+			$this->load->view('templates/footer');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -79,37 +110,38 @@ class Schoolclasses extends CI_Controller
 	//This will save entry to the database
 	function addrecord()
 	{
-		//$this->load->model('person_model','',TRUE);
+
+		$this->load->library('form_validation');
+		
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
 			// get session data
 			$session_data = $this->session->userdata('logged_in');
-
-			// set the data associative array that is sent to the home view (and display/send)
-			$data['username'] = $session_data['username'];
-			$this->lang->load('gradelevels'); // default language option taken from config.php file 	
-			//$this->load->view('person_view', $data);
+		
+			// field is trimmed, required and xss cleaned respectively
+   			$this->form_validation->set_rules('title', 'Title', 'trim|required|xss_clean');
 			
-				
-			if($this->input->post('schoolgradelevels_id') == "n/a")
-			{
-				$data = array(
-					'school_id' => $this->input->post('school_id'),
-					'title' => $this->input->post('title')
-				);
-				
-			}else{
-				$data = array(
+			// field is trimmed, required and xss cleaned respectively
+			$this->form_validation->set_rules('selGradeLevel', 'Grade Level', 'trim|required|xss_clean');
+			
+			if($this->form_validation->run() == FALSE) 
+   			{
+				$this->add($this->input->post('subject_id'));
+			}else{	
+
+				$newdata = array(
 					'school_id' => $this->input->post('school_id'),
 					'title' => $this->input->post('title'),
-					'schoolgradelevels_id' => $this->input->post('schoolgradelevels_id')
+					'gradelevel_id' => $this->input->post('selGradeLevel')
 					
 				);
+				
+				$this->schoolclass_model->AddSchoolClass($newdata);
+
+				$this->session->set_flashdata('msgsuccess', 'Class added successfully.');
+			    
+			    redirect('schoolclasses/' . $this->input->post('subject_id'));
 			}
-			
-			
-			$this->schoolclasses_model->addschoolclass($data);
-			redirect('schoolclasses/listing');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -117,120 +149,89 @@ class Schoolclasses extends CI_Controller
 		}
 	}
 	
-	// The editrecord function edits a person
-	function editrecord()
-	{
-		//$this->load->model('person_model','',TRUE);
-		if($this->session->userdata('logged_in')) // user is logged in
-		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
-
-			// set the data associative array that is sent to the home view (and display/send)
-			$data['username'] = $session_data['username'];
-			$this->lang->load('person'); // default language option taken from config.php file 	
-			$this->load->view('person_view', $data);
-			
-			//Set the id that should be updated
-			$id= $this->input->post('cid');
-			
-			
-			
-			if($this->input->post('schoolgradelevels_id') == "n/a")
-			{
-				$data = array(
-					'school_id' => $this->input->post('school_id'),
-					'title' => $this->input->post('title')
-				);
-				
-			}else{
-				$data = array(
-					'school_id' => $this->input->post('school_id'),
-					'title' => $this->input->post('title'),
-					'schoolgradelevels_id' => $this->input->post('schoolgradelevels_id')
-					
-				);
-			}
-				
-			$this->schoolclasses_model->updateschoolclass($id,$data);
-			redirect('schoolclasses/listing');
-		}
-		else // not logged in - redirect to login controller (login page)
-		{
-			redirect('login','refresh');
-		}
-	}
-	
-	
-    // The add function is used to load a person record for edit
+	// The add function is used to load a person record for edit
 	function edit($id)
 	{
 		    if($this->session->userdata('logged_in')) // user is logged in
 			{
-			    // get session data
-				$session_data = $this->session->userdata('logged_in');
-				
-				// set the data associative array that is sent to the home view (and display/send)
-				$this->load->helper(array('form', 'url')); // load the html form helper
-				$data['username'] = $session_data['username'];
-				$data['currentschoolid'] = $session_data['currentschoolid'];
-				$this->lang->load('gradelevels'); // default language option taken from config.php file 	
-				//$this->load->view('person_view', $data);
-				
 				// if the person model returns TRUE then call the view
-				if(!$this->load->model('schoolclasses_model','',TRUE))
-				{
+				if(!$this->load->model('schoolclass_model','',TRUE))
+				{					
+
+					$class 	= $this->schoolclass_model->GetSchoolClassesById($id, $this->viewdata['currentschoolid']);
+					$result	= $this->gradelevels_model->GetGradeLevels($this->viewdata['currentschoolid']);
 					
-						
-					$rows = $this->schoolclasses_model->GetSchoolClassesById($id);
-					foreach($rows as $row)
-					{
-						$data['title'] = $row->title;
-						$data['school_id'] = $row->school_id;
-						$data['schoolgradelevels_id'] = $row->schoolgradelevels_id;
-						$data['id'] = $row->id;
-						
-					}
-					$data['gradelevels'] = $this->schoolclasses_model->GetGradeLevels($session_data['currentschoolid']);	
-				}	
-				$this->load->view('templates/setupheader',$data);
-				$this->load->view('schoolclasses/edit', $data);
+					$gradelevels[""] = "Select Grade";
+
+					foreach($result as $row){
+		            	$gradelevels[$row->id] = $row->title;
+		        	}
+
+					$this->viewdata["classobj"] 	= $class;
+					$this->viewdata["page_title"] 	= "Edit Class";
+					$this->viewdata['gradelevels'] 	= $gradelevels;
+				
+
+					$this->load->view('templates/header',$this->viewdata);
+					$this->load->view('templates/sidenav', $this->viewdata);
+					$this->load->view('schoolclasses/edit_schoolclass_view', $this->viewdata);
+					$this->load->view('templates/footer');
+				}else{
+
+					$this->session->set_flashdata('msgerr', 'System Error. Run for the hills!!');
+					redirect('schoolclasses/','refresh');
+				}
 			}
 			else // not logged in - redirect to login controller (login page)
 			{
 				redirect('login','refresh');
 			}
 	}
-	
-	// The listing function displays a list of people in the database
-	function listing()
+
+	// The editrecord function edits a person
+	function editrecord()
 	{
+		$this->load->library('form_validation');
+		
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
+		
+			// field is trimmed, required and xss cleaned respectively
+   			$this->form_validation->set_rules('title', 'Title', 'trim|required|xss_clean');
 			
-			// set the data associative array that is sent to the home view (and display/send)
-			$data['username'] = $session_data['username'];
-			$data['currentschoolid'] = $session_data['currentschoolid'];
-			$this->lang->load('setup'); // default language option taken from config.php file 	
-			//$this->load->view('person_view', $data);
-			
-			// if the person model returns TRUE then call the view
-			if(!$this->load->model('schoolclasses_model','',TRUE))
-			{
-				//echo "this is a test";
-				$this->lang->load('setup'); // default language option taken from config.php file 	
-				$data['query'] = $this->schoolclasses_model->listing($data['currentschoolid']);
-				$data['gradelevels'] = $this->schoolclasses_model->GetGradeLevels($session_data['currentschoolid']);
-			}	
-			$this->load->view('templates/setupheader', $data);	
-			$this->load->view('schoolclasses/view', $data);
+			// field is trimmed, required and xss cleaned respectively
+			$this->form_validation->set_rules('selGradeLevel', 'Grade Level', 'trim|required|xss_clean');
+
+			if($this->form_validation->run() == FALSE) 
+   			{
+				$this->edit($this->input->post('class_id'));
+			}else{	
+				
+				$id  = $this->input->post('class_id');
+
+				$data = array(
+					'title' => $this->input->post('title'),
+					'gradelevel_id' => $this->input->post('selGradeLevel')
+					
+				);
+				
+				$this->schoolclass_model->UpdateSchoolClass($id, $data);
+
+				$this->session->set_flashdata('msgsuccess', 'Class updated successfully.');
+			    
+			    redirect('schoolclasses');
+			}
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
 			redirect('login','refresh');
 		}
+	}
+	
+	// The listing function displays a list of people in the database
+	function listing()
+	{
+		
 	}
 	
 	// The logout function logs out a person from the database

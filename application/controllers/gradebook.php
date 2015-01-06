@@ -42,7 +42,7 @@ class Gradebook extends CI_Controller
 		$this->data['currentsyear'] 		= $session_data['currentsyear'];		
 		$this->data['roles'] 				= $session_data['roles'];	
 		$this->data['id'] 					= $session_data['id'];	
-		$this->data['nav'] 					= $this->navigation->load('setup');
+		$this->data['nav'] 					= $this->navigation->load('gradebook manager');
 	}
 	
 	function index()
@@ -158,7 +158,7 @@ class Gradebook extends CI_Controller
 			$this->data['query'] 		= $this->gradebook_model->GetGradeTypes($id);	
 			$this->data['course_id'] 	= $id;
 			$subject 					= $this->subjects_model->GetSubjectCourseById($id);
-			$this->data['page_title'] 	= "Manage Grades for \"". $subject->title . "\"";
+			$this->data['page_title'] 	= "Manage Grades for \"". $subject->course_title . "\"";
 
 
 			$this->load->view('templates/header', $this->data);

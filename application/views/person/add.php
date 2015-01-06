@@ -1,7 +1,9 @@
-<div class="span9">
-<div class="row-fluid">
+<div class="span9" id="content">
+	<div class="row-fluid">
+     <?php echo $this->load->view('templates/breadcrumb.php');?>
      <div class="block">
         <div class="block-content collapse in">
+<<<<<<< HEAD
           <div class="span12" id="content">
         		<?php echo form_open('person/addrecord', 'method="post" class="form-horizontal"'); ?>
 					<fieldset>

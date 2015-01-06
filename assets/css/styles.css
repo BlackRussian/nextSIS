@@ -211,3 +211,11 @@ body {
   font-size: 12px;
   padding-left: 2px;
 }
+.dataTables_processing{
+  display: inline;
+  position: absolute;
+  left: 40%;
+}
+.table-header-nav h2, .table-header-nav h1, .table-header-nav h3, .table-header-nav h4{
+  margin-top: 0px;
+}

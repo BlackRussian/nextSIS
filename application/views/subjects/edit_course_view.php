@@ -11,6 +11,12 @@
                   <?php $this->load->view('shared/display_errors');?>
                   <legend><?php echo $page_title;?></legend>
                   <div class="control-group">
+                    <label class="control-label">Subject</label>
+                    <div class="controls">
+                      <span class="input uneditable-input"><?php echo $title; ?></span>
+                    </div>
+                  </div>
+                  <div class="control-group">
                     <label class="control-label" for="selGradeLevel">Grade Level</label>
                     <div class="controls">
                       <?php echo form_dropdown('selGradeLevel', $gradelevels,set_value('selGradeLevel', $grade_level),'id="selGradeLevel"'); ?>
