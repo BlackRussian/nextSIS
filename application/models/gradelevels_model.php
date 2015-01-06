@@ -25,8 +25,13 @@ class GradeLevels_model extends CI_Model
 	// The listing method takes gets a list of people in the database 
 	public function listing($schoolid)
  	{
+		$sql = "child.id,parent.title as next_title,child.next_grade_id,child.title as grade_title";
+
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,school_id,title,next_grade_id')->from('school_gradelevels')->where('school_id',$schoolid)->limit(10);
+		$this->db->select($sql)->limit(10);
+		$this->db->from("school_gradelevels parent");
+		$this->db->join("school_gradelevels child", 'parent.id = child.next_grade_id','right');
+		$this->db->where("child.school_id", $schoolid);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -60,7 +65,7 @@ class GradeLevels_model extends CI_Model
 	
 	
  	//Update person model
- 	public function updategradelevel($id,$data)
+ 	public function UpdateGradeLevel($id,$data)
  	{
  		//This section will be used to update the person data
  		$this->db->where('id', $id);
@@ -97,7 +102,7 @@ class GradeLevels_model extends CI_Model
  	public function GetGradeLevelsExceptCurrent($schoolid,$currentid)
  	{
  		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,title')->from('school_gradelevels')->where('school_id',$schoolid)->where('next_grade_id !=',$currentid);
+		$this->db->select('id,title')->from('school_gradelevels')->where('school_id',$schoolid)->where('id !=',$currentid);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -118,7 +123,7 @@ class GradeLevels_model extends CI_Model
 	public function GetGradeLevelById($id)
  	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,school_id,title,next_grade_id')->from('school_gradelevels')->where('id',$id);
+		$this->db->select('id, school_id, title, next_grade_id')->from('school_gradelevels')->where('id', $id);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -127,7 +132,7 @@ class GradeLevels_model extends CI_Model
    		if($query->num_rows()>0)
    		{
 			// return the data (to the calling controller)
-			return $query->result();
+			return $query->row();
    		}
 		else
 		{

@@ -30,7 +30,7 @@ class Courses extends CI_Controller
 	function __construct()
 	{
 		parent::__construct();
-		
+		//$this->output->enable_profiler(TRUE);
 		$session_data = $this->session->userdata('logged_in');
 		//$this->data = array();
 		
@@ -49,7 +49,7 @@ class Courses extends CI_Controller
 		{
 			
 			$this->lang->load('course'); // load language file
-			
+
 			$this->load->view('templates/header', $this->viewdata);
 			$this->load->view('templates/sidenav');
 			$this->load->view('courses_view', $this->viewdata);
@@ -165,7 +165,7 @@ class Courses extends CI_Controller
 
 					$this->viewdata['page_title'] 	= "Edit";
 
-					$this->viewdata['title']		= $course->title;
+					$this->viewdata['title']		= $course->course_title;
 					$this->viewdata['grade_level']	= $course->grade_level;
 					$this->viewdata['short_name'] 	= $course->short_name;
 					$this->viewdata['subject_id'] 	= $course->subject_id;
@@ -246,12 +246,86 @@ class Courses extends CI_Controller
 	}
 
 	// The editrecord function updates a course
-	function termcourses()
+	function assignteacher($course_id)
 	{
 		//$this->load->model('person_model','',TRUE);
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
+			$this->load->model('school_model');
+			$this->load->model('person_model');
 
+			//load course details for use in view
+			$course = $this->subjects_model->GetSubjectCourseById($course_id);
+
+			$result = $this->school_model->GetSchoolTerms($this->viewdata['currentschoolid'], $this->viewdata['currentsyear']);
+
+			$markingperiod[""] = "Select a Term";
+
+			foreach ($result as $row) {
+				$markingperiod[$row->marking_period_id] = $row->title; 
+			}
+
+			$result = $this->person_model->GetPersonsWithRole(2, $this->viewdata['currentschoolid']);
+
+			$teachers[""] = "Select a Teacher";
+
+			foreach ($result as $row) {
+				$teachers[$row->id] = $row->first_name . " " . $row->surname; 
+			}
+
+			//construct page title
+			$this->viewdata["page_title"] 		= "Assign teacher to \"" .$course->course_title ." - " . $course->short_name . "\"";
+			$this->viewdata["course"] 			= $course;
+			$this->viewdata["subject_id"] 		= $course->subject_id;
+			$this->viewdata["markingperiod"] 	= $markingperiod;
+			$this->viewdata["teachers"] 		= $teachers;
+
+			$this->load->view('templates/header', $this->viewdata);
+			$this->load->view('templates/sidenav');
+			$this->load->view('subjects/assign_teacher_view', $this->viewdata);
+			$this->load->view('templates/footer');
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
+	}
+
+	function addtermcourse(){
+		// use the CodeIgniter form validation library
+   		$this->load->library('form_validation');
+		
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+		
+			// field is trimmed, required and xss cleaned respectively
+   			$this->form_validation->set_rules('title', 'Title', 'trim|required|xss_clean');
+
+			// field is trimmed, required and xss cleaned respectively
+   			$this->form_validation->set_rules('short_name', 'Short Name', 'trim|required|xss_clean');
+			
+			// field is trimmed, required and xss cleaned respectively
+			$this->form_validation->set_rules('selGradeLevel', 'Grade Level', 'trim|required|xss_clean');
+			
+			if($this->form_validation->run() == FALSE) 
+   			{
+				$this->add($this->input->post('subject_id'));
+			}else{		
+				$newdata = array(
+					
+					'title' => 			$this->input->post('title'),
+					'grade_level' =>	$this->input->post('selGradeLevel'),
+					'short_name' => 	$this->input->post('short_name'),
+					'subject_id' => 	$this->input->post('subject_id'),
+					'syear' =>			$this->viewdata['currentsyear']
+					
+				);
+				
+				$this->subjects_model->AddSubjectCourse($newdata);
+			    redirect('subjects/courses/' . $this->input->post('subject_id'));
+			}
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -259,5 +333,4 @@ class Courses extends CI_Controller
 		}
 	}
 }
-
 ?>

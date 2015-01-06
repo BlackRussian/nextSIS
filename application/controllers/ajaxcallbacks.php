@@ -85,6 +85,6 @@ class ajaxcallbacks extends CI_Controller
         $subject_id = $this->input->post('subject_id');
         $school_id = $this->input->post('school_id');
 
-        echo $this->subjects_model->GetSubjectCourses($subject_id, $school_id);
+        echo $this->subjects_model->GetSubjectCourses($subject_id, $school_id, TRUE);
     }
 }

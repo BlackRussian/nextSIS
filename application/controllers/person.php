@@ -43,8 +43,17 @@ class Person extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('person_model');
-		$this->viewdata['nav'] = $this->navigation->load('people');
+		$this->lang->load('person');
+
+		$session_data = $this->session->userdata('logged_in');
+
+		$this->viewdata['username'] 		= $session_data['username'];
+		$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
+		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
+		$this->viewdata['nav'] 				= $this->navigation->load('people');
 		
+		$this->breadcrumbcomponent->add('People', '/people');
+
 		
 		$this->sidemenu = array
 		(
@@ -90,22 +99,13 @@ class Person extends CI_Controller
 	function index($filter = FALSE)
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
-		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
-			
-			// set the data associative array that is sent to the home view (and display/send)
-			$this->viewdata['username'] = $session_data['username'];
-
-			$this->lang->load('person'); // default language option taken from config.php file 	
-			//$this->load->view('person_view', $data);
-			
+		{	
 			// if the person model returns TRUE then call the view
 			if(!$this->load->model('person_model','',TRUE))
 			{
 				$this->lang->load('person'); // default language option taken from config.php file
 
-				$this->viewdata['query'] = $this->person_model->listing($filter);
+				$this->viewdata['query'] = $this->person_model->listing($filter, $this->viewdata['currentschoolid']);
 			}
 
 			$this->viewdata['sidenav'] = $this->navigation->load_side_nav($filter, $this->sidemenu);
@@ -127,13 +127,7 @@ class Person extends CI_Controller
 		
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
-			
-			// set the data associative array that is sent to the home view (and display/send)
-			
-			$data['username'] = $session_data['username'];
-			$this->load->helper(array('form', 'url')); // load the html form helper
+			//$this->load->helper(array('form', 'url')); // load the html form helper
 			$this->lang->load('person'); // default language option taken from config.php file 
 			
 			$result = $this->person_model->GetPersonGender(1);
@@ -142,7 +136,7 @@ class Person extends CI_Controller
             	$genders[$row->id]=$row->label;
         	}
 
-			$data['genders'] = $genders;
+			$this->viewdata['genders'] = $genders;
 
 			$result = $this->person_model->GetPersonTitles(1);
 
@@ -151,15 +145,13 @@ class Person extends CI_Controller
             	$titles[$row->id]=$row->label;
         	}
 
-			$data['titles'] = $titles;
+			$this->viewdata['titles'] 	= $titles;
+			$this->viewdata['roles'] 	= $this->person_model->GetPersonRoles();
+			$this->viewdata['nav'] 		= $this->navigation->load('people');
 
-			$data['roles'] = $this->person_model->GetPersonRoles();	
-
-			$data['nav'] = $this->navigation->load('people');
-
-			$this->load->view('templates/header', $data);
-			$this->load->view('templates/sidenav');	
-			$this->load->view('person/add', $data);
+			$this->load->view('templates/header', $this->viewdata);
+			$this->load->view('templates/sidenav', $this->viewdata);
+			$this->load->view('person/add', $this->viewdata);
 			$this->load->view('templates/footer');
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -299,13 +291,7 @@ class Person extends CI_Controller
 				redirect('login','refresh');
 			}
 	}
-	
-	// The listing function displays a list of people in the database
-	function listing()
-	{
-		
-	}
-	
+
 	// The logout function logs out a person from the database
 	function logout()
 	{

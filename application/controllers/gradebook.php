@@ -42,7 +42,7 @@ class Gradebook extends CI_Controller
 		$this->data['currentsyear'] 		= $session_data['currentsyear'];		
 		$this->data['roles'] 				= $session_data['roles'];	
 		$this->data['id'] 					= $session_data['id'];	
-		$this->data['nav'] 					= $this->navigation->load('setup');
+		$this->data['nav'] 					= $this->navigation->load('gradebook manager');
 	}
 	
 	function index()

@@ -4,7 +4,10 @@
        		<div class="block-content collapse in">
           		<div class="span12">
           			<?php $this->load->view('shared/display_notification.php');?>
-          			<h2><?php echo $page_title;?></h2>
+          			<div class="table-header-nav">
+                    <a href="/subjects"><i class="icon-chevron-left icon-black"></i>Back to Subjects</a>
+                    <h3><?php echo $page_title;?></h3>
+                </div>
           			<div class="table-toolbar">
                     	<div class="btn-group">
                     		<a href="/courses/add/<?php echo $subject_id;?>"><button class="btn btn-success">Add New Course <i class="icon-plus icon-white"></i></button></a>
@@ -17,8 +20,22 @@
 								<th>Short Name</th>
 								<th>Grade Level</th>
 								<th></th>
+                <th style="border-left:0px"></th>
 							</tr>
 						</thead>
+            <tbody>
+                <?php
+                if($query){
+                    foreach($query as $course) { ?>
+                      <tr>
+                        <td><?php echo $course->course_title;?></td>
+                        <td><?php echo $course->short_name;?></td>
+                        <td><?php echo $course->grade_title;?></td>
+                        <td><a href="/courses/edit/<?php echo $course->course_id;?>">edit</a></td>
+                        <td><a href="/courses/assignteacher/<?php echo $course->course_id;?>">view teacher(s)</a></td>
+                      </tr>
+                <?php } }?>
+            </tbody>
 					</table>
         		</div>  			
   				  				
@@ -33,13 +50,17 @@
         	"serverSide": true,
         	"ajax": {"url":"<?php echo base_url(); ?>ajaxcallbacks/getSubjectCourses","type":"POST", "data":{"subject_id":"<?php echo $subject_id?>", "school_id":"1"}},
         	"columns":[
-        				{"data":"subject_title"},
+        				{"data":"course_title"},
         				{"data":"short_name"},
         				{"data":"grade_title"},
         				{	"data":"edit",
         					"sortable":false,
         					"searchable":false
-        				}
+        				},
+                { "data":"assign",
+                  "sortable":false,
+                  "searchable":false
+                }
         	]
 		} );
 	} );

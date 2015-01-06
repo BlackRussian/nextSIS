@@ -23,18 +23,19 @@
 class Person_model extends CI_Model
 {
 	// The listing method takes gets a list of people in the database 
-	public function listing($filter)
+	public function listing($filter, $school_id)
  	{
  		$sql = "select person.id, first_name, surname,username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles
 	 					from person inner join person_role on person.id = person_role.person_id
 						inner join role on person_role.role_id = role.id
+						where person.default_schoolId=$school_id
 						group by first_name,surname,person.id";
 
  		if($filter){
 			$sql = "select person.id, first_name, surname,username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles
 	 					from person inner join person_role on person.id = person_role.person_id
 						inner join role on person_role.role_id = role.id
-						where person_role.role_id = $filter
+						where person_role.role_id = $filter and person.default_schoolId=$school_id
 						group by first_name,surname,person.id";
 		}
    		
@@ -218,6 +219,30 @@ class Person_model extends CI_Model
 			return FALSE;
 		}
  	}
+
+ 	public function GetPersonsWithRole($role_id, $school_id){
+
+		$sql = "select person.id, first_name, surname 
+ 					from person inner join person_role on person.id = person_role.person_id
+					inner join role on person_role.role_id = role.id
+					where person_role.role_id = $role_id and person.default_schoolId=$school_id
+					group by first_name,surname,person.id";
+
+   		
+   		$query = $this->db->query($sql);
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+	}
 }
 
 ?>

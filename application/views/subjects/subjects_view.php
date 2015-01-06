@@ -4,7 +4,7 @@
        		<div class="block-content collapse in">
           		<div class="span12">
           			<?php $this->load->view('shared/display_notification.php');?>
-          			<h2><?php echo $this->lang->line("school_subjects");?></h2>
+          			<h3><?php echo $this->lang->line("school_subjects");?></h3>
           			<div class="table-toolbar">
                     	<div class="btn-group">
                     		<a href="subjects/add"><button class="btn btn-success"><?php echo $this->lang->line("add_new_schoolsubject");?> <i class="icon-plus icon-white"></i></button></a>

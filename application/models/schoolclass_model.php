@@ -20,14 +20,21 @@
  * Copyright 2012 http://nextsis.org
  */
 
-class SchoolClasses_model extends CI_Model
+class Schoolclass_model extends CI_Model
 {
 	// The listing method takes gets a list of people in the database 
-	public function listing($schoolid)
+	public function listing($filter, $schoolid)
  	{
-		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,school_id,title,schoolgradelevels_id')->from('school_classes')->where('school_id',$schoolid)->limit(10);
-
+		if($filter){
+			$this->db->select('school_class.id,school_class.school_id, school_class.title as class_title, gradelevel_id, school_gradelevels.title as grade_title')->from('school_class');
+			$this->db->join('school_gradelevels', 'school_class.gradelevel_id = school_gradelevels.id');
+			$this->db->where('gradelevel_id', $filter);
+			$this->db->where('school_class.school_id',$schoolid)->limit(10);
+		}else{
+			$this->db->select('school_class.id,school_class.school_id, school_class.title as class_title, gradelevel_id, school_gradelevels.title as grade_title')->from('school_class');
+			$this->db->join('school_gradelevels', 'school_class.gradelevel_id = school_gradelevels.id');
+			$this->db->where('school_class.school_id',$schoolid)->limit(10);
+		}
    		// run the query and return the result
    		$query = $this->db->get();
 		
@@ -45,11 +52,11 @@ class SchoolClasses_model extends CI_Model
  	}
 	
 	//Add person model
- 	public function addschoolclass($data)
+ 	public function AddSchoolClass($data)
  	{
  		//This section will be used to add the person data
  		
-		$this->db->insert('school_classes', $data);
+		$this->db->insert('school_class', $data);
 		
 		$this->db->flush_cache();
 		
@@ -64,7 +71,7 @@ class SchoolClasses_model extends CI_Model
  	{
  		//This section will be used to update the person data
  		$this->db->where('id', $id);
-		$this->db->update('school_classes', $data);
+		$this->db->update('school_class', $data);
 		$this->db->flush_cache();
 		
 		
@@ -76,7 +83,7 @@ class SchoolClasses_model extends CI_Model
  	{
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,title')->from('school_classes')->where('school_id',$schoolid);
+		$this->db->select('id,title')->from('school_class')->where('school_id',$schoolid);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -93,53 +100,14 @@ class SchoolClasses_model extends CI_Model
 			return FALSE;
 		}
  	}
-	public function GetGradeLevels($schoolid)
- 	{
- 		
-		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,title')->from('school_gradelevels')->where('school_id',$schoolid);
 
-   		// run the query and return the result
-   		$query = $this->db->get();
-		
-		// proceed if records are found
-   		if($query->num_rows()>0)
-   		{
-			// return the data (to the calling controller)
-			return $query->result();
-   		}
-		else
-		{
-			// there are no records
-			return FALSE;
-		}
- 	}
- 	//Get Grade levels except current grade level
- 	public function GetGradeLevelsExceptCurrent($schoolid,$currentid)
- 	{
- 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,title')->from('school_gradelevels')->where('school_id',$schoolid)->where('next_grade_id !=',$currentid);
-
-   		// run the query and return the result
-   		$query = $this->db->get();
-		
-		// proceed if records are found
-   		if($query->num_rows()>0)
-   		{
-			// return the data (to the calling controller)
-			return $query->result();
-   		}
-		else
-		{
-			// there are no records
-			return FALSE;
-		}
- 	}
 	// The listing method takes gets a list of people in the database 
-	public function GetSchoolClassesById($id)
+	public function GetSchoolClassesById($id, $school_id)
  	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,school_id,title,schoolgradelevels_id')->from('school_classes')->where('id',$id);
+		$this->db->select('id,school_id,title,gradelevel_id')->from('school_class');
+		$this->db->where('id', $id);
+		$this->db->where('school_id', $school_id);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -148,7 +116,7 @@ class SchoolClasses_model extends CI_Model
    		if($query->num_rows()>0)
    		{
 			// return the data (to the calling controller)
-			return $query->result();
+			return $query->row();
    		}
 		else
 		{
@@ -159,7 +127,7 @@ class SchoolClasses_model extends CI_Model
 
  	public function GetClassByGradeLevel($gradelevel_id){
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,title')->from('school_classes')->where('schoolgradelevels_id', $gradelevel_id);
+		$this->db->select('id,title')->from('school_class')->where('schoolgradelevels_id', $gradelevel_id);
 
    		// run the query and return the result
    		$query = $this->db->get();

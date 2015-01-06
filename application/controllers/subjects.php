@@ -27,6 +27,7 @@ class Subjects extends CI_Controller
 	function __construct()
 	{
 		parent::__construct();
+		//$this->output->enable_profiler(TRUE);
 		$this->load->model('subjects_model');
 		$this->lang->load('setup');
 	}
@@ -282,7 +283,7 @@ class Subjects extends CI_Controller
 			$data['currentsyear'] = $session_data['currentsyear'];
 			$data['subject_id'] = $subject_id;
 
-			//$data['query'] = $this->subjects_model->GetSubjectCourses($subject_id, $data['currentschoolid']);
+			$data['query'] = $this->subjects_model->GetSubjectCourses($subject_id, $data['currentschoolid']);
 			
 			$subject = $this->subjects_model->GetSubjectById($subject_id, $data['currentschoolid']);	
 			

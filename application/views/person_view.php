@@ -1,10 +1,11 @@
-<div class="span9">
+<div class="span9" id="content">
 	<div class="row-fluid">
+		<?php echo $this->load->view('templates/breadcrumb.php');?>
      	<div class="block">
        		<div class="block-content collapse in">
           		<div class="span12">
           			<?php $this->load->view('shared/display_notification.php');?>
-					<h2>People</h2>
+					<h3>People</h3>
 					<div class="table-toolbar">
                     	<div class="btn-group">
                     		<a href="person/add"><button class="btn btn-success">Add New Person <i class="icon-plus icon-white"></i></button></a>

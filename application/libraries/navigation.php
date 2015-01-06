@@ -77,22 +77,22 @@ class Navigation{
 			),
 			9 => 	array(
 				'text'		=> 	 "Manage Grade Levels",	
-				'link'		=> 	base_url().'gradelevels/listing',
+				'link'		=> 	base_url().'gradelevels',
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-home',
 				'parent'	=>	5
 			),
 			10 => 	array(
 				'text'		=> 	"Manage Classes",	
-				'link'		=> 	base_url().'schoolclasses/listing',
-				'show_condition'=>	1,
+				'link'		=> 	base_url().'schoolclasses',
+				'show_condition'=>	0,
 				'icon-class'=>	'icon-home',
 				'parent'	=>	5
 			),
 			11 => 	array(
 				'text'		=> 	"Manage Class Periods",	
 				'link'		=> 	base_url().'schoolperiods/listing',
-				'show_condition'=>	1,
+				'show_condition'=>	0,
 				'icon-class'=>	'icon-home',
 				'parent'	=>	5
 			),
