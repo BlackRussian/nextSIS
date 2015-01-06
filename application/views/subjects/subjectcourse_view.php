@@ -30,7 +30,7 @@
                         <td><?php echo $course->short_name;?></td>
                         <td><?php echo $course->grade_title;?></td>
                         <td><a href="/courses/edit/<?php echo $course->course_id;?>">edit</a></td>
-                        <td><a href="/courses/assignteacher/<?php echo $course->course_id;?>">view teacher(s)</a></td>
+                        <td><a href="/courses/<?php echo $course->course_id;?>">view teacher(s)</a></td>
                       </tr>
                 <?php } }?>
             </tbody>

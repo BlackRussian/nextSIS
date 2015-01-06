@@ -53,7 +53,7 @@ class School_model extends CI_Model
 	public function GetSchoolTerms($school_id, $syear){
 		
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('marking_period_id, title')->from('marking_period');
+		$this->db->select('marking_period_id, title, short_name, mp_type')->from('marking_period');
 		$this->db->where('school_id',$school_id);
 		$this->db->where('syear',$syear);
 		$this->db->order_by('title');
