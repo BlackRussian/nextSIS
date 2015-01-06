@@ -21,17 +21,17 @@
                   <div class="control-group">
                     <label class="control-label" for="selTerm">Term</label>
                     <div class="controls">
-                      <?php echo form_dropdown('selTerm', $markingperiod,'','id="selTerm"'); ?>
+                      <?php echo form_dropdown('selTerm', $markingperiod,set_value('selTerm'),'id="selTerm"'); ?>
                     </div>
                   </div>
                   <div class="control-group">
                     <label class="control-label" for="title">Teacher</label>
                     <div class="controls">
-                    	 <?php echo form_dropdown('selTeacher', $teachers,'','id="selTeacher"'); ?>
+                    	 <?php echo form_dropdown('selTeacher', $teachers,set_value('selTeacher'),'id="selTeacher"'); ?>
                     </div>
                   </div>
                   <div class="form-actions">
-                  		<a href="/subjects/courses/<?php echo $course->subject_id;?>" class="btn"><i class="icon-chevron-left icon-black"></i>Cancel</a>
+                  		<a href="/courses/<?php echo $course->course_id;?>" class="btn"><i class="icon-chevron-left icon-black"></i>Cancel</a>
 						          <?php echo form_submit('submit','Submit', 'class="btn btn-primary"'); ?>
 						          <?php echo form_close(); ?>
 				          </div>

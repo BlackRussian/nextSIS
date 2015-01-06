@@ -43,12 +43,12 @@ class Navigation{
 			4 => 	array(
 				'text'		=> 	'Courses',	
 				'link'		=> 	base_url() . 'courses',
-				'show_condition'=>	1,
+				'show_condition'=>	0,
 				'icon-class'=>	'icon-list-alt',
 				'parent'	=>	0
 			),
 			7 => 	array(
-				'text'		=> 	"Gradebook Manager",	
+				'text'		=> 	"Gradebook",	
 				'link'		=> 	base_url().'gradebook',
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-briefcase',
@@ -64,7 +64,7 @@ class Navigation{
 			6 => 	array(
 				'text'		=> 	'Help',	
 				'link'		=> 	base_url() . 'home',
-				'show_condition'=>	1,
+				'show_condition'=>	0,
 				'icon-class'=>	'icon-question-sign',
 				'parent'	=>	0
 			),

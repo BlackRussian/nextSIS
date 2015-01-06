@@ -30,26 +30,47 @@ class Courses extends CI_Controller
 	function __construct()
 	{
 		parent::__construct();
-		//$this->output->enable_profiler(TRUE);
+
 		$session_data = $this->session->userdata('logged_in');
-		//$this->data = array();
-		
-		// set the data associative array common values that is sent to the views of this controller
+
 		$this->viewdata['username'] 		= $session_data['username'];
 		$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
 		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
 		$this->viewdata['nav'] 				= $this->navigation->load('courses');
 
 		$this->load->model('subjects_model');
+
+		$this->breadcrumbcomponent->add('Subjects', '/subjects');
 	}
 	
-	function index()
+	function _remap($method, $params = array()){
+    	if (method_exists($this, $method))
+    	{
+        	return call_user_func_array(array($this, $method), $params);
+    	}else{
+        	$this->index($method);
+        }
+	}
+
+	function index($filter = FALSE)
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-			
-			$this->lang->load('course'); // load language file
 
+			$course = $this->subjects_model->GetSubjectCourseById($filter);
+
+			$this->breadcrumbcomponent->add($course->subject_title, '/subjects/courses/'.$course->subject_id);
+			$this->breadcrumbcomponent->add($course->course_title, '/courses/'.$course->course_id);
+
+			if($filter)
+				$this->viewdata['page_title'] = "Teachers assigned to \"$course->course_title\"";
+			else
+				$this->viewdata['page_title'] = "All Current Courses";
+
+			$this->viewdata['query']		= $this->subjects_model->GetTermCourses($this->viewdata['currentsyear'], $this->viewdata['currentschoolid'], $filter);
+			
+			$this->viewdata['course_id'] = $course->course_id;
+			
 			$this->load->view('templates/header', $this->viewdata);
 			$this->load->view('templates/sidenav');
 			$this->load->view('courses_view', $this->viewdata);
@@ -66,23 +87,23 @@ class Courses extends CI_Controller
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-
 			//load models needed
 			$this->load->model('gradelevels_model');
 			$this->load->model('subjects_model');
 			
-			// set the data associative array that is sent to the home view (and display/send)
-			//$this->session->userdata('currentschoolid')
-			$this->viewdata['subject_id'] 		= $subject_id;
 			
-			
-			$subject 	= $this->subjects_model->GetSubjectById($subject_id, $this->viewdata['currentschoolid']);
-			$result		= $this->gradelevels_model->GetGradeLevels($this->viewdata['currentschoolid']);
-			$gradelevels[""] = "Select Grade";
+			$subject 					= $this->subjects_model->GetSubjectById($subject_id, $this->viewdata['currentschoolid']);
+			$result						= $this->gradelevels_model->GetGradeLevels($this->viewdata['currentschoolid']);
+			$gradelevels[""]			= "Select Grade";
+			$this->viewdata['subject'] 	= $subject;
 
 			foreach($result as $row){
             	$gradelevels[$row->id] = $row->title;
         	}
+
+
+        	$this->breadcrumbcomponent->add($subject->title, '/subjects/courses/'.$subject->subject_id);
+			$this->breadcrumbcomponent->add('Add', '/courses/add/'.$subject->subject_id);
 
 			$this->viewdata['gradelevels'] 	= $gradelevels;
 			$this->viewdata['page_title'] 	= "Adding Course for \"". $subject->title . "\"";
@@ -262,7 +283,7 @@ class Courses extends CI_Controller
 			$markingperiod[""] = "Select a Term";
 
 			foreach ($result as $row) {
-				$markingperiod[$row->marking_period_id] = $row->title; 
+				$markingperiod[$row->marking_period_id."|".$row->short_name] = $row->title; 
 			}
 
 			$result = $this->person_model->GetPersonsWithRole(2, $this->viewdata['currentschoolid']);
@@ -299,31 +320,28 @@ class Courses extends CI_Controller
 		{
 			// get session data
 			$session_data = $this->session->userdata('logged_in');
-		
+			
 			// field is trimmed, required and xss cleaned respectively
-   			$this->form_validation->set_rules('title', 'Title', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('selTerm', 'Term', 'trim|required|xss_clean');
+			
+			// field is trimmed, required and xss cleaned respectively
+   			$this->form_validation->set_rules('selTeacher', 'Teacher Name', 'trim|required|xss_clean');
 
-			// field is trimmed, required and xss cleaned respectively
-   			$this->form_validation->set_rules('short_name', 'Short Name', 'trim|required|xss_clean');
-			
-			// field is trimmed, required and xss cleaned respectively
-			$this->form_validation->set_rules('selGradeLevel', 'Grade Level', 'trim|required|xss_clean');
-			
 			if($this->form_validation->run() == FALSE) 
    			{
-				$this->add($this->input->post('subject_id'));
-			}else{		
+				$this->assignteacher($this->input->post('course_id'));
+			}else{
+				$term = explode ("|", $this->input->post('selTerm'));
+
 				$newdata = array(
-					
-					'title' => 			$this->input->post('title'),
-					'grade_level' =>	$this->input->post('selGradeLevel'),
-					'short_name' => 	$this->input->post('short_name'),
-					'subject_id' => 	$this->input->post('subject_id'),
-					'syear' =>			$this->viewdata['currentsyear']
-					
+					'marking_period_id' => $term[0],
+					'mp' 				=> $term[1],
+					'course_id' 		=> $this->input->post('course_id'),
+					'teacher_id' 		=> $this->input->post('selTeacher')
 				);
 				
-				$this->subjects_model->AddSubjectCourse($newdata);
+				$this->subjects_model->AddTermCourse($newdata);
+			    
 			    redirect('subjects/courses/' . $this->input->post('subject_id'));
 			}
 		}
