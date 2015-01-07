@@ -9,7 +9,7 @@
 					<fieldset>
 		                <?php $this->load->view('shared/display_errors');?>
 		                <legend><?php echo $page_title;?></legend>
-						<div class="control-group">
+		                <div class="control-group">
 		                    <label class="control-label" for="sel_category"><?php echo "Title";?></label>
 		                    <div class="controls">		                                        			                    	
 		                    	<?php echo form_dropdown('Title', $titles ,set_value('Title', $titleid),'id="Title"');  ?>

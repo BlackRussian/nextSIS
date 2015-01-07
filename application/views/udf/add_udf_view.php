@@ -1,3 +1,19 @@
+<script type="text/javascript">
+	$(document).ready(function() {
+	     
+	     if ($('#sel_type').val() != "select")
+	     	$('#txt_selectoptions').attr('disabled','disabled');
+
+	     $('#sel_type').change(function() {	     	
+	        if($(this).val() == 'select') {
+	           	$('#txt_selectoptions').removeAttr('disabled');
+	        }else{
+	        	$('#txt_selectoptions').attr('disabled','disabled');
+	        }
+	     });
+	 });
+
+</script>
 <div class="span9">
 	<div class="row-fluid">
      	<div class="block">
@@ -37,19 +53,19 @@
 		                    		echo form_textarea($data, set_value("txt_description")); 
 		                    	?>
 		                    </div>
-		                </div>
-		                <div class="control-group">
-		                    <label class="control-label" for="sel_type"><?php echo "Type";?></label>
-		                    <div class="controls">		                    	
-		                    	<?php echo form_dropdown('sel_type', $types, set_value('sel_type', ''),'id="sel_type"');?>
-		                    </div>
-		                </div>
+		                </div> 
 		                <div class="control-group">
 		                    <label class="control-label" for="txt_sort"><?php echo "Sort order";?></label>
 		                    <div class="controls">
 		                    	<?php echo form_input("txt_sort", set_value("txt_sort","1")); ?>
 		                    </div>
 		                </div>
+		                <div class="control-group">
+		                    <label class="control-label" for="sel_type"><?php echo "Type";?></label>
+		                    <div class="controls">		                    	
+		                    	<?php echo form_dropdown('sel_type', $types, set_value('sel_type', ''),'id="sel_type"');?>
+		                    </div>
+		                </div>		              
 		                <div class="control-group">
 		                    <label class="control-label" for="txt_selectoptions"><?php echo "Select Options";?></label>
 		                    <div class="controls">		                    	

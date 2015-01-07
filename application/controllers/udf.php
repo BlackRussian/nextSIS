@@ -26,8 +26,9 @@ class UDF extends CI_Controller
 {
 	var $data = null;
 	var $types = array(
-        		"text"				=>"text",
-        		"select"			=>"select"
+        		"text"				=>"Text Box",
+        		"select"			=>"Drop Down List",
+        		"textarea"			=>"Text Area"
         	);
 
     var $validations = array(
@@ -235,19 +236,20 @@ class UDF extends CI_Controller
 			$txt_default 		= $this->input->post("txt_default", TRUE);
 			$chk_hidden 		= $this->input->post("chk_hidden", TRUE);
 			
+			$required = ($sel_type == "select")? "required|":"" ;
 			
 			$this->form_validation->set_rules('sel_category', 'Category', 'required|xss_clean');
 			$this->form_validation->set_rules('txt_title', 'Title', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('txt_description', 'Description', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('sel_type', 'Select options', 'trim|xss_clean');
 			$this->form_validation->set_rules('txt_sort', 'Sort order', 'trim|integer|required|xss_clean');
-			$this->form_validation->set_rules('txt_selectoptions', 'Select options', 'trim|xss_clean');
+			$this->form_validation->set_rules('txt_selectoptions', 'Select options', $required.'trim|xss_clean');
 			$this->form_validation->set_rules('sel_validation[]', 'Validation', 'trim|xss_clean');
 			$this->form_validation->set_rules('txt_default', 'Default', 'trim|xss_clean');
 			
 			if($this->form_validation->run() == FALSE) 
    			{
-				$this->edit();
+				$this->edit($udf_id);
 			}else{
 				$data = array(
 					'school_id' 		=> $hid_school_id,

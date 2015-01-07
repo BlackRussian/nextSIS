@@ -10,7 +10,9 @@
                     		<a href='/udf/add'><button class="btn btn-success"><?php echo "Add New User Defined Field";?> <i class="icon-plus icon-white"></i></button></a>
                     	</div>
 					</div>	  			
-					<?php if ($query){?>	
+					<?php 
+					
+					if ($query){?>	
 					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
 						<thead>
 							<tr>

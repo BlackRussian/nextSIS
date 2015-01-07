@@ -49,9 +49,22 @@
 					    </div>
 					<?php 
 					break;
-				
-				default:
-					# code...
+				case 'textarea':
+					$data = array(
+				      'name'        	=> $udf_field_name,
+				      'id'          	=> $udf_field_name,
+				      'rows'    		=> '4',
+				      'cols'    		=> '50'
+				    );
+					?>
+					    <div class="control-group">
+					        <label class="control-label" for="<?php echo $udf_field_name; ?>"><?php echo $field->title;?></label>
+					        <div class="controls">
+					        	<?php echo form_textarea($data, set_value($udf_field_name, $default_vals)); ?>
+
+					        </div>
+					    </div>
+					<?php 				
 					break;
 			}		
 		echo form_hidden($udf_types_name, $field->type);

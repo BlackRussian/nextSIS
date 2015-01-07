@@ -103,10 +103,9 @@ class Udf_model extends CI_Model
  				}else{
 					$this->db->select('udf_definition.udf_id, school_id, type,  title,  description,  sort_order,  select_options,  category_id,  validation,  default_selection,  hide, udf_data_id, udf_value');
 					$this->db->from('udf_definition');
-					$this->db->join('udf_data','udf_definition.udf_id = udf_data.udf_id');
+					$this->db->join('udf_data','udf_definition.udf_id = udf_data.udf_id and fk_id = "' . $fk_id . '"', 'left');
 					$this->db->where('school_id', $school_id);
-					$this->db->where('category_id', $category_id);
-					$this->db->where('fk_id', $fk_id);
+					$this->db->where('category_id', $category_id);					
 					$this->db->where('hide', '0');
 					$this->db->order_by('sort_order');
  				}
