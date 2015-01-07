@@ -20,7 +20,7 @@
 		                <div class="control-group">
 		                    <label class="control-label" for="title"><?php echo "Weight";?></label>
 		                    <div class="controls">
-		                    	<?php echo form_input("weight", set_value("weight", $grade_type->weight)); ?>
+		                    	<?php echo form_input("weight", set_value("weight", round($grade_type->weight))); ?>
 		                    </div>
 		                </div>
 		              

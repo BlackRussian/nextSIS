@@ -36,6 +36,7 @@ class Login extends CI_Controller
  	{
    		parent::__construct();
    		$this->load->model('school_model','',TRUE); //Load school model
+      $this->load->model('user','',TRUE);
  	}
 
  	public function index($param = "none")
@@ -65,7 +66,6 @@ class Login extends CI_Controller
 				$data["schid"] = $school->id;
 				$data["school_title"] = $school->title;
 
-				$this->load->helper(array('form', 'url')); // load the html form helper
 				$this->lang->load('login'); // load the login language file - the default language option (unused second parameter) is taken from config.php file 		
 				$this->load->view('login_view', $data); // load the standard login form
 			}else{
@@ -73,11 +73,39 @@ class Login extends CI_Controller
 			}
 		}
  	}
+  
+  public function chooserole(){
+      if($this->session->userdata('choose_role'))
+      {
+        $session_data = $this->session->userdata('choose_role');
+        $role = $this->input->post('role');
+
+        if($role){
+          $session_data['role'] = $role;
+
+          $this->session->set_userdata('logged_in', $session_data);
+          
+          $this->session->unset_userdata('choose_role');
+
+          redirect('home','refresh');
+        }else{
+          $school               = $this->school_model->GetSchoolById($session_data['currentschoolid']);
+          
+          //Create view data array
+          $data["schid"]        = $school->id;
+          $data["school_title"] = $school->title;
+          $roles                = $this->user->GetRolesByIds($session_data['role']);
+          $data["query"]        = $roles;
+
+          $this->load->view('choose_role_view', $data);
+        }
+      }else{
+        redirect('login','refresh');
+      }
+  }
 
 	public function authenticate()
-	{
-		$this->load->model('user','',TRUE);
-   		
+	{		
    		// use the CodeIgniter form validation library
    		$this->load->library('form_validation');
    		// field is trimmed, required and xss cleaned respectively
@@ -87,12 +115,17 @@ class Login extends CI_Controller
    		$this->form_validation->set_rules('password', 'Password', 'trim|required|xss_clean|callback_validate_password');
    		if($this->form_validation->run() == FALSE) // authentication failed - display the login form 
    		{
+        
    			$this->session->set_flashdata('msgerr', 'Login Failed!!');
    			$this->load->view('login_view'); // load the standard login form
    		}
-		else // authentication succeeded - display the homepage
-   		{
-     		redirect('home', 'refresh');
+		else{// authentication succeeded - display the homepage
+
+        if($this->session->userdata('logged_in')){
+          redirect('home', 'refresh');
+        }else{
+          redirect('login/chooserole', 'refresh');
+        }
    		}
 	}
 	
@@ -108,27 +141,44 @@ class Login extends CI_Controller
 
    		if($result)
    		{
-     		$session = array();
+     		$session = null;
      		foreach($result as $row)
      		{
        			$sresult = $this->user->GetSchoolYear($row->default_schoolId);
-				$myyear="";
-				foreach($sresult as $srow)
-				{
-					
-					$myyear= $srow->syear;
-				}
+    				
+            $myyear="";
+    				
+            foreach($sresult as $srow)
+    				{
+    					
+    					$myyear= $srow->syear;
+    				}
+            
+    				$arrResult = $this->user->GetRoles($row->id);
+            
+            foreach($arrResult as $role){
+              $rolearr[] = $role->role_id;
+            }
 
-				$arrResult = $this->user->GetRoles($row->id);
-				
-       			$session = array('id'=>$row->id,'username'=>$row->username,'defaultschoolid'=>$row->default_schoolId,'currentschoolid'=>$row->default_schoolId,'currentsyear'=>$myyear,'roles'=>$arrResult);
-       			$this->session->set_userdata('logged_in', $session);
+            $rolelist = implode(',', $rolearr);
+
+           	$session = array( 'id'=>$row->id,
+                              'username' => $row->username,
+                              'defaultschoolid' => $row->default_schoolId,
+                              'currentschoolid' => $row->default_schoolId,
+                              'currentsyear' => $myyear,
+                              'role' => $rolelist);
+           	
+            if(count($rolearr) > 1)
+              $this->session->set_userdata('choose_role', $session);
+            else
+              $this->session->set_userdata('logged_in', $session);
      		}
-     		log_message('error', "Failed authentication");
-     		return TRUE; // validation succeeded
-   		}
-   		else
-   		{
+
+        return TRUE;
+   	}
+    else
+   	{
    			// load in the login language file (login_lang)
 			$this->lang->load('login');
 			

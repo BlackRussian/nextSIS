@@ -28,6 +28,29 @@ class School_model extends CI_Model
         $this->load->database();
     }
 
+
+    //Get School by school id
+	public function GetSchoolById($school_id)
+ 	{
+ 		
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('id,title,anchor')->from('school')->where('id',$school_id);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows() === 1)
+   		{
+			// return the data (to the calling controller)
+			return $query->row();
+   		}
+		else
+		{
+			return null;
+		}
+	}
+
 	//Get School by school id
 	public function GetSchoolByAnchor($school_anchor)
  	{

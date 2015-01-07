@@ -108,6 +108,27 @@ class User extends CI_Model
 		}
 		
 	}
+	public function GetRolesByIds($id_list)
+	{
+		
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$sql = "select id,label from role where id in ($id_list)";
+
+		$query = $this->db->query($sql);
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+		
+	}
 
 }
 

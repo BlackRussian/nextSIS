@@ -40,17 +40,18 @@ class Gradebook extends CI_Controller
 		$this->data['username'] 			= $session_data['username'];
 		$this->data['currentschoolid'] 		= $session_data['currentschoolid'];
 		$this->data['currentsyear'] 		= $session_data['currentsyear'];		
-		$this->data['roles'] 				= $session_data['roles'];	
+		$this->data['roles'] 				= $session_data['role'];	
 		$this->data['id'] 					= $session_data['id'];	
-		$this->data['nav'] 					= $this->navigation->load('gradebook manager');
+		$this->data['nav'] 					= $this->navigation->load('gradebook');
+
+		$this->breadcrumbcomponent->add('Grade Book Courses', '/gradebook');
 	}
 	
 	function index()
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-
-			$this->data['query'] = $this->gradebook_model->listing(2, $this->data['id']);	
+			$this->data['query'] = $this->gradebook_model->listing($this->data['roles'], $this->data['id']);	
 
 
 			$this->load->view('templates/header', $this->data);
@@ -105,7 +106,7 @@ class Gradebook extends CI_Controller
 		{	
 			$this->load->model('subjects_model');
 			$subject 					= $this->subjects_model->GetSubjectCourseById($id);
-			$this->data['page_title'] 	= "Adding Grade Type for \"". $subject->title . "\"";
+			$this->data['page_title'] 	= "Adding Grade Type for \"". $subject->subject_title . "\"";
 			$this->data['course_id'] 	= $id;
 
 		    $this->load->view('templates/header',$this->data);
@@ -131,7 +132,7 @@ class Gradebook extends CI_Controller
 			$this->load->model('subjects_model');
 			$subject 						= $this->subjects_model->GetSubjectCourseById($course_id);
 			$grade_type 					= $this->gradebook_model->GetGradeTypeByID($grade_type_id);
-			$this->data['page_title'] 		= "Editing Grade Type for \"". $subject->title . "\"";
+			$this->data['page_title'] 		= "Editing Grade Type for \"". $subject->course_title . "\"";
 			$this->data['grade_type'] 		= $grade_type;
 			$this->data['course_id'] 		= $course_id;
 
@@ -160,7 +161,7 @@ class Gradebook extends CI_Controller
 			$subject 					= $this->subjects_model->GetSubjectCourseById($id);
 			$this->data['page_title'] 	= "Manage Grades for \"". $subject->course_title . "\"";
 
-
+			$this->breadcrumbcomponent->add($subject->course_title." Grades", '/gradetypelist/'.$id);
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('templates/sidenav');
 			$this->load->view('gradebook/list_gradetypes_view', $this->data);

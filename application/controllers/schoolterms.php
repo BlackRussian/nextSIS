@@ -98,6 +98,7 @@ class Schoolterms extends CI_Controller
 			$this->viewdata['newwizard'] = "Yes";
 			$this->viewdata['isyedit'] = "no";
 		    $this->load->view('templates/header',$this->viewdata);
+		    $this->load->view('templates/sidenav',$this->viewdata);
 			$this->load->view('schoolterms/add', $this->viewdata);
 			$this->load->view('templates/footer',$this->viewdata);
 			
@@ -231,6 +232,7 @@ class Schoolterms extends CI_Controller
 			   $this->viewdata['syear_markingperiodid'] = $syear_markingperiodid;
 			}
  				$this->load->view('templates/header',$this->viewdata);
+ 				$this->load->view('templates/sidenav',$this->viewdata);
 				$this->load->view('schoolterms/add', $this->viewdata);
 				$this->load->view('templates/footer',$this->viewdata);
 			//$this->gradelevels_model->addgradelevel($data);
@@ -352,6 +354,7 @@ class Schoolterms extends CI_Controller
 				$this->viewdata['activeindex'] = 1;
 				
 				$this->load->view('templates/header',$this->viewdata);
+				$this->load->view('templates/sidenav',$this->viewdata);
 				$this->load->view('schoolterms/add', $this->viewdata);
 				$this->load->view('templates/footer',$this->viewdata);
 			//$this->gradelevels_model->addgradelevel($data);
@@ -616,7 +619,9 @@ class Schoolterms extends CI_Controller
 				$date['db_edate'] = $db_edate;
 							
 			    $this->load->view('templates/header',$data);
+			    $this->load->view('templates/sidenav',$this->viewdata);
 				$this->load->view('schoolterms/edit', $data);
+				$this->load->view('templates/footer');
 			}else{
 				
 						

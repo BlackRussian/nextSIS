@@ -26,13 +26,16 @@ class Gradebook_model extends CI_Model
 	public function listing($role, $teacher_id)
  	{
 
-		$this->db->select('term_course.term_course_id,subject_course.title,subject_course.title,subject_course.short_name, person_title.label, person.first_name,person.surname');
+		$this->db->select('school_gradelevels.title grade_level, term_course.term_course_id,subject_course.title,subject_course.title,subject_course.short_name, person_title.label, person.first_name,person.surname');
 		$this->db->from('term_course');
 		$this->db->join('subject_course', 'term_course.course_id = subject_course.course_id');
 		$this->db->join('person', 'term_course.teacher_id = person.id');
 		$this->db->join('person_title', 'person.title_id = person_title.id');
+		$this->db->join('school_gradelevels', 'subject_course.grade_level = school_gradelevels.id');
+		
 		if ($role == 2)
 			$this->db->where('term_course.teacher_id', $teacher_id);
+		
 		$this->db->order_by("title,short_name, label, first_name,surname");
 
    		// run the query and return the result

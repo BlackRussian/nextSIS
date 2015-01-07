@@ -34,6 +34,7 @@ class Grades_model extends CI_Model
 		}
    		// run the query and return the result
    		$this->db->limit(10);
+   		
    		$query = $this->db->get();
 		
 		// proceed if records are found
