@@ -106,7 +106,9 @@ class Gradebook extends CI_Controller
 		{	
 			$this->load->model('subjects_model');
 			$subject 					= $this->subjects_model->GetSubjectCourseById($id);
-			$this->data['page_title'] 	= "Adding Grade Type for \"". $subject->subject_title . "\"";
+
+			$this->data['page_title'] 	= "Adding Grade Type for \"". $subject->course_title . "\"";
+
 			$this->data['course_id'] 	= $id;
 
 		    $this->load->view('templates/header',$this->data);
@@ -194,14 +196,15 @@ class Gradebook extends CI_Controller
 			$studentName 		= $this->input->post("studentName", TRUE);
 			$oldgrade 			= $this->input->post("oldgrade", TRUE);
 			
+
 			foreach ($grade as $key => $value) {
 				$this->form_validation->set_rules('grade[' . $key . ']', $studentName[$key] .' grade', 'trim|numeric|required|xss_clean');
 			}
 			
 			$insertData = array();
 			$updateData = array();
-			if($this->form_validation->run() == FALSE) 
-   			{
+
+			if($this->form_validation->run() == FALSE){
 				$this->add($grade_type_id);
 			}else{
 
@@ -213,13 +216,14 @@ class Gradebook extends CI_Controller
 							'points' => $value					
 						);
 					}else{
-						if ($value != $oldgrade[$key])
+						if ($value != $oldgrade[$key]){
 							$updateData[count($updateData)] = array(							
 								'grade_id' => $gradeid[$key],
 								'grade_type_id' => $grade_type_id,
 								'student_id' => $studentid[$key],
 								'points' => $value					
 							);
+						}
 					}
 				}
 				//$_SESSION["insert"] = $insertData;

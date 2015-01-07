@@ -77,7 +77,7 @@ class Person_model extends CI_Model
 			}
 		}
 		
-		
+		return $id;
  	}
 	
 	
