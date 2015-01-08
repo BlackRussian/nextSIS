@@ -109,7 +109,8 @@ class Person extends CI_Controller
 				$this->viewdata['query'] = $this->person_model->listing($filter, $this->viewdata['currentschoolid']);
 			}
 
-			$this->viewdata['sidenav'] = $this->navigation->load_side_nav($filter, $this->sidemenu);
+			$this->viewdata['sidenav'] 	= $this->navigation->load_side_nav($filter, $this->sidemenu);
+			$this->viewdata['filter']	= $filter;
 			
 			$this->load->view('templates/header', $this->viewdata);
 			$this->load->view('templates/sidenav', $this->viewdata);			
@@ -123,7 +124,7 @@ class Person extends CI_Controller
 	}
 	
 	// The add function adds a person
-	function add()
+	function add($role = FALSE)
 	{
 		
 		if($this->session->userdata('logged_in')) // user is logged in
@@ -161,6 +162,7 @@ class Person extends CI_Controller
 			$this->viewdata['udf'] 						= $this->udf_model->GetUdfs($session_data['currentschoolid'],1);
 
 			$this->viewdata['titles'] 	= $titles;
+			$this->viewdata['role_id'] 	= $role;
 			$this->viewdata['roles'] 	= $this->person_model->GetPersonRoles();
 			$this->viewdata['nav'] 		= $this->navigation->load('people');
 

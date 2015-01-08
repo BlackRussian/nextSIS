@@ -29,12 +29,13 @@ class Gradebook_model extends CI_Model
  		if (!in_array($role, $validRoles))
  			return FALSE;
 
-		$this->db->select('school_gradelevels.title grade_level, term_course.term_course_id,subject_course.title,subject_course.title,subject_course.short_name, person_title.label, person.first_name,person.surname');
+		$this->db->select('school_gradelevels.title grade_level, term_course.term_course_id,subject_course.title,subject_course.title,subject_course.short_name, person_title.label, person.first_name,person.surname,marking_period.title as marking_period_title');
 		$this->db->from('term_course');
 		$this->db->join('subject_course', 'term_course.course_id = subject_course.course_id');
 		$this->db->join('person', 'term_course.teacher_id = person.id');
 		$this->db->join('person_title', 'person.title_id = person_title.id');
 		$this->db->join('school_gradelevels', 'subject_course.grade_level = school_gradelevels.id');
+		$this->db->join('marking_period', 'term_course.marking_period_id = marking_period.marking_period_id');
 		
 		if ($role == 2)
 			$this->db->where('term_course.teacher_id', $teacher_id);

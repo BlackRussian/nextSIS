@@ -6,12 +6,15 @@
           		<div class="span12">
           			<?php $this->load->view('shared/display_notification.php');?>
           			<h2><?php echo 'Manage Grades';?></h2>       			
-					<?php if ($query){?>	
+					<?php 
+					//echo $this->db->last_query();
+					if ($query){?>	
 					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
 						<thead>
 							<tr>
 								<th>Grade Level</th>
 								<th>Course Name</th>
+								<th>Marking Period</th>
 								<th>Teacher Name</th>
 								<th>&nbsp;</th>
 							</tr>
@@ -21,6 +24,7 @@
 							<tr>
 								<td><?php echo $course->grade_level ?></td>
 								<td><?php echo $course->title . " - ".$course->short_name?></td>
+								<td><?php echo $course->marking_period_title?></td>
 								<td><?php echo $course->label . ' ' . $course->first_name . ' ' . $course->surname?></td>
 								<td><a href='gradebook/gradetypelist/<?php echo urlencode($course->term_course_id); ?>'><?php echo $this->lang->line("editoption");?></a></td>
 							</tr>

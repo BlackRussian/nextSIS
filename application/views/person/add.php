@@ -54,8 +54,9 @@
 		                    <label class="control-label" for="uname"><?php echo "User Roles";?></label>
 		                    <div class="controls">		                    			                    	
 		                    	<?php
-									foreach($roles as $role){									
-										echo form_checkbox('userrole[]', $role->id, set_checkbox('userrole[]', $role->id));
+									foreach($roles as $role){
+										$checked = ($role_id == $role->id);
+										echo form_checkbox('userrole[]', $role->id, set_checkbox('userrole[]', $role->id, $checked));
 										echo " " .$role->label . "<br />";									
 									}
 								?>
