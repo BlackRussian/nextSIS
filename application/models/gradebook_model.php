@@ -25,6 +25,9 @@ class Gradebook_model extends CI_Model
 	// The listing method takes gets a list of people in the database 
 	public function listing($role, $teacher_id)
  	{
+ 		$validRoles = array(1,2);
+ 		if (!in_array($role, $validRoles))
+ 			return FALSE;
 
 		$this->db->select('school_gradelevels.title grade_level, term_course.term_course_id,subject_course.title,subject_course.title,subject_course.short_name, person_title.label, person.first_name,person.surname');
 		$this->db->from('term_course');
