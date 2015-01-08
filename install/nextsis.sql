@@ -1,45 +1,95 @@
--- phpMyAdmin SQL Dump
--- version 3.4.10.1deb1
--- http://www.phpmyadmin.net
---
--- Host: localhost
--- Generation Time: Nov 13, 2012 at 12:34 AM
--- Server version: 5.5.24
--- PHP Version: 5.3.10-1ubuntu3.4
-
-SET SQL_MODE="NO_AUTO_VALUE_ON_ZERO";
-SET time_zone = "+00:00";
-
+-- --------------------------------------------------------
+-- Host:                         127.0.0.1
+-- Server version:               5.6.16 - MySQL Community Server (GPL)
+-- Server OS:                    Win32
+-- HeidiSQL Version:             9.1.0.4867
+-- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
+/*!40101 SET NAMES utf8mb4 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 
---
--- Database: `nextsis`
---
+-- Dumping database structure for nextsis
 DROP DATABASE IF EXISTS `nextsis`;
-CREATE DATABASE `nextsis` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE IF NOT EXISTS `nextsis` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */;
 USE `nextsis`;
 
--- --------------------------------------------------------
 
---
--- Table structure for table `course`
---
+-- Dumping structure for table nextsis.course_comments
+CREATE TABLE IF NOT EXISTS `course_comments` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `student_id` int(11) unsigned NOT NULL,
+  `course_id` mediumint(8) unsigned NOT NULL,
+  `comment_id` int(11) NOT NULL,
+  `conduct_id` mediumint(8) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_course_comments_person` (`student_id`),
+  KEY `FK_course_comments_subject_course` (`course_id`),
+  CONSTRAINT `FK_course_comments_person` FOREIGN KEY (`student_id`) REFERENCES `person` (`id`),
+  CONSTRAINT `FK_course_comments_subject_course` FOREIGN KEY (`course_id`) REFERENCES `subject_course` (`course_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `course` (
-  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key.',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Stores course names and details.' AUTO_INCREMENT=1 ;
+-- Data exporting was unselected.
 
--- --------------------------------------------------------
 
---
--- Table structure for table `language`
---
+-- Dumping structure for table nextsis.course_nonreport_grade
+CREATE TABLE IF NOT EXISTS `course_nonreport_grade` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `course_id` mediumint(8) unsigned NOT NULL,
+  `gradetype_id` mediumint(8) unsigned NOT NULL,
+  `student_id` int(10) unsigned NOT NULL,
+  `grade_title` varchar(75) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `grade` decimal(3,2) unsigned NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_course_nonreport_grade_subject_course` (`course_id`),
+  KEY `FK_course_nonreport_grade_person` (`student_id`),
+  CONSTRAINT `FK_course_nonreport_grade_person` FOREIGN KEY (`student_id`) REFERENCES `person` (`id`),
+  CONSTRAINT `FK_course_nonreport_grade_subject_course` FOREIGN KEY (`course_id`) REFERENCES `subject_course` (`course_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Data exporting was unselected.
+
+
+-- Dumping structure for function nextsis.fn_marking_period_seq
+DELIMITER //
+CREATE DEFINER=`root`@`localhost` FUNCTION `fn_marking_period_seq`() RETURNS int(11)
+BEGIN
+   INSERT INTO marking_period_id_generator VALUES(NULL);
+ RETURN LAST_INSERT_ID();
+ END//
+DELIMITER ;
+
+
+-- Dumping structure for table nextsis.grade_book
+CREATE TABLE IF NOT EXISTS `grade_book` (
+  `grade_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `grade_type_id` mediumint(8) unsigned NOT NULL,
+  `student_id` int(10) unsigned NOT NULL,
+  `points` decimal(6,2) DEFAULT NULL,
+  PRIMARY KEY (`grade_id`),
+  KEY `FK_grade_book_person` (`student_id`),
+  KEY `FK_grade_book_grade_type` (`grade_type_id`),
+  CONSTRAINT `FK_grade_book_grade_type` FOREIGN KEY (`grade_type_id`) REFERENCES `grade_type` (`grade_type_id`),
+  CONSTRAINT `FK_grade_book_person` FOREIGN KEY (`student_id`) REFERENCES `person` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.grade_type
+CREATE TABLE IF NOT EXISTS `grade_type` (
+  `grade_type_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `weight` decimal(6,2) DEFAULT NULL,
+  `term_course_id` mediumint(8) unsigned DEFAULT NULL,
+  PRIMARY KEY (`grade_type_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.language
 CREATE TABLE IF NOT EXISTS `language` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT 'The language primary key (0-65,535).',
   `code` varchar(2) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT 'ISO 639-1 language codes.',
@@ -49,28 +99,39 @@ CREATE TABLE IF NOT EXISTS `language` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `subtag` (`subtag`),
   UNIQUE KEY `description` (`name`,`region`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Language list table.' AUTO_INCREMENT=9 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Language list table.';
 
---
--- Dumping data for table `language`
---
+-- Data exporting was unselected.
 
-INSERT INTO `language` (`id`, `code`, `subtag`, `name`, `region`) VALUES
-(1, 'en', 'US', 'English', 'American'),
-(2, 'en', 'GB', 'English', 'British'),
-(3, 'ko', 'KR', 'Korean', NULL),
-(4, 'km', 'KH', 'Central Khmer', 'Cambodia'),
-(5, 'zh', 'CN', 'Chinese', 'China'),
-(6, 'es', 'ES', 'Spanish', 'Spain'),
-(7, 'fr', 'CA', 'French', 'Canada'),
-(8, 'ja', 'JP', 'Japanese', NULL);
 
--- --------------------------------------------------------
+-- Dumping structure for view nextsis.marking_period
+-- Creating temporary table to overcome VIEW dependency errors
+CREATE TABLE `marking_period` (
+	`marking_period_id` MEDIUMINT(9) NOT NULL,
+	`syear` INT(11) NULL,
+	`school_id` MEDIUMINT(9) NULL,
+	`mp_type` VARCHAR(8) NOT NULL COLLATE 'utf8mb4_general_ci',
+	`title` VARCHAR(50) NULL COLLATE 'utf8mb4_unicode_ci',
+	`short_name` VARCHAR(10) NULL COLLATE 'utf8mb4_unicode_ci',
+	`parent_id` BIGINT(20) NULL,
+	`grandparent_id` BIGINT(20) NULL,
+	`start_date` DATE NULL,
+	`end_date` DATE NULL,
+	`post_start_date` DATE NULL,
+	`post_end_date` DATE NULL
+) ENGINE=MyISAM;
 
---
--- Table structure for table `person`
---
 
+-- Dumping structure for table nextsis.marking_period_id_generator
+CREATE TABLE IF NOT EXISTS `marking_period_id_generator` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.person
 CREATE TABLE IF NOT EXISTS `person` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key (4,294,967,295 possible values). This can serve as a public or internal identifier.',
   `local_id` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -82,196 +143,462 @@ CREATE TABLE IF NOT EXISTS `person` (
   `gender_id` smallint(3) unsigned NOT NULL COMMENT 'Foreign key from the person_gender table.',
   `username` varchar(80) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The person''s nextSIS username.',
   `password` varchar(252) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The person''s nextSIS password (encrypted).',
+  `default_schoolId` mediumint(9) DEFAULT NULL,
+  `classId` mediumint(9) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `local_id` (`local_id`),
   KEY `surname` (`surname`),
   KEY `first_name` (`first_name`),
   KEY `title_id` (`title_id`),
-  KEY `gender_id` (`gender_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Person table (stores all people - students, staff, parents, administrators...)' AUTO_INCREMENT=6 ;
+  KEY `gender_id` (`gender_id`),
+  CONSTRAINT `person_ibfk_1` FOREIGN KEY (`title_id`) REFERENCES `person_title` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `person_ibfk_2` FOREIGN KEY (`gender_id`) REFERENCES `person_gender` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Person table (stores all people - students, staff, parents, administrators...)';
 
---
--- Dumping data for table `person`
---
+-- Data exporting was unselected.
 
-INSERT INTO `person` (`id`, `local_id`, `surname`, `first_name`, `middle_name`, `common_name`, `title_id`, `gender_id`, `username`, `password`) VALUES
-(5, 'NX-1', 'Smith', 'John', NULL, NULL, 4, 2, 'admin', 'c2ab1dbf445c7aafec65ee0d94ccd05d43e90a9a2b12e6bae8e32e924ba4a0245664350b0e8320a326faa38a93e5fbef36113bbbb72f0c4aa8b046c84c5a09b2');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `person_course`
---
-
+-- Dumping structure for table nextsis.person_course
 CREATE TABLE IF NOT EXISTS `person_course` (
   `person_id` int(8) unsigned NOT NULL COMMENT 'Foreign key from the person table.',
-  `course_id` mediumint(8) unsigned NOT NULL COMMENT 'Foreign key form the course table.',
-  PRIMARY KEY (`person_id`,`course_id`),
-  KEY `course_id` (`course_id`)
+  `term_course_id` int(11) NOT NULL COMMENT 'Foreign key form the course table.',
+  PRIMARY KEY (`person_id`,`term_course_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Link table between person and course for many-to-many.';
 
--- --------------------------------------------------------
+-- Data exporting was unselected.
 
---
--- Table structure for table `person_gender`
---
 
+-- Dumping structure for table nextsis.person_gender
 CREATE TABLE IF NOT EXISTS `person_gender` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key (0-65,535).',
   `language_id` smallint(5) unsigned NOT NULL COMMENT 'The primary key from the language table.',
   `label` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT 'The gender of a person.',
   PRIMARY KEY (`id`),
   UNIQUE KEY `label` (`label`),
-  KEY `language_id` (`language_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='A person''s gender.' AUTO_INCREMENT=3 ;
+  KEY `language_id` (`language_id`),
+  CONSTRAINT `person_gender_ibfk_1` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='A person''s gender.';
 
---
--- Dumping data for table `person_gender`
---
+-- Data exporting was unselected.
 
-INSERT INTO `person_gender` (`id`, `language_id`, `label`) VALUES
-(1, 1, 'Female'),
-(2, 1, 'Male');
 
--- --------------------------------------------------------
-
---
--- Table structure for table `person_role`
---
-
+-- Dumping structure for table nextsis.person_role
 CREATE TABLE IF NOT EXISTS `person_role` (
   `person_id` int(10) unsigned NOT NULL COMMENT 'Foreign key from the person table.',
   `role_id` smallint(5) unsigned NOT NULL COMMENT 'Foreign key from the role table.',
+  `school_id` mediumint(9) DEFAULT NULL,
   PRIMARY KEY (`person_id`,`role_id`),
-  KEY `role_id` (`role_id`)
+  KEY `role_id` (`role_id`),
+  CONSTRAINT `person_role_ibfk_1` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `person_role_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Link table between person and role to support many-to-many.';
 
--- --------------------------------------------------------
+-- Data exporting was unselected.
 
---
--- Table structure for table `person_school`
---
 
+-- Dumping structure for table nextsis.person_school
 CREATE TABLE IF NOT EXISTS `person_school` (
   `person_id` int(10) unsigned NOT NULL COMMENT 'Foreign key from person table',
   `school_id` mediumint(8) unsigned NOT NULL COMMENT 'Foriegn key from school table',
+  `udf1` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `udf2` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `udf3` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `udf4` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `udf5` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`person_id`,`school_id`),
-  KEY `school_id` (`school_id`)
+  KEY `school_id` (`school_id`),
+  CONSTRAINT `person_school_ibfk_2` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `person_school_ibfk_3` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Link table between person and school for many-to-many';
 
--- --------------------------------------------------------
+-- Data exporting was unselected.
 
---
--- Table structure for table `person_title`
---
 
+-- Dumping structure for table nextsis.person_title
 CREATE TABLE IF NOT EXISTS `person_title` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key (0-255).',
   `language_id` smallint(5) unsigned NOT NULL COMMENT 'The primary key from the language table.',
   `label` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `label` (`label`),
-  KEY `language_id` (`language_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Titles a person can be known by.' AUTO_INCREMENT=6 ;
+  KEY `language_id` (`language_id`),
+  CONSTRAINT `person_title_ibfk_1` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Titles a person can be known by.';
 
---
--- Dumping data for table `person_title`
---
+-- Data exporting was unselected.
 
-INSERT INTO `person_title` (`id`, `language_id`, `label`) VALUES
-(1, 1, 'Dr.'),
-(2, 1, 'Miss'),
-(3, 1, 'Ms.'),
-(4, 1, 'Mr.'),
-(5, 1, 'Mrs.');
 
--- --------------------------------------------------------
+-- Dumping structure for table nextsis.profile_property
+CREATE TABLE IF NOT EXISTS `profile_property` (
+  `school_id` mediumint(8) unsigned NOT NULL,
+  `title` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`id`),
+  KEY `FK_profile_property_school` (`school_id`),
+  CONSTRAINT `FK_profile_property_school` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Table structure for table `role`
---
+-- Data exporting was unselected.
 
+
+-- Dumping structure for table nextsis.rating_scale
+CREATE TABLE IF NOT EXISTS `rating_scale` (
+  `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `school_id` mediumint(8) unsigned DEFAULT NULL,
+  `rate` int(11) DEFAULT NULL,
+  `value` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_rating_scale_school` (`school_id`),
+  CONSTRAINT `FK_rating_scale_school` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.role
 CREATE TABLE IF NOT EXISTS `role` (
   `id` smallint(5) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key.',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Stores people''s roles (student, teacher, parent, administrator etc.)' AUTO_INCREMENT=1 ;
+  `label` varchar(45) CHARACTER SET utf8mb4 DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `RoleName_UNIQUE` (`label`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Stores people''s roles (student, teacher, parent, administrator etc.)';
 
--- --------------------------------------------------------
+-- Data exporting was unselected.
 
---
--- Table structure for table `school`
---
 
+-- Dumping structure for table nextsis.school
 CREATE TABLE IF NOT EXISTS `school` (
   `id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `title` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `syear` int(11) DEFAULT NULL,
+  `address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `city` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `state` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `phone` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `principal` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `www_address` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `anchor` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `email` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `schoolcol` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `reporting_gp_scale` decimal(10,0) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `schoolname_UNIQUE` (`title`,`anchor`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Stores school details (to support multiple schools)';
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.school_class
+CREATE TABLE IF NOT EXISTS `school_class` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `school_id` mediumint(9) DEFAULT NULL,
+  `gradelevel_id` mediumint(8) DEFAULT NULL,
+  `title` varchar(45) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Stores school details (to support multiple schools)' AUTO_INCREMENT=1 ;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- --------------------------------------------------------
+-- Data exporting was unselected.
 
---
--- Table structure for table `school_course`
---
 
-CREATE TABLE IF NOT EXISTS `school_course` (
-  `school_id` mediumint(10) unsigned NOT NULL COMMENT 'Foreign key from the school table.',
-  `course_id` mediumint(10) unsigned NOT NULL COMMENT 'Foreign key from the course table.',
-  PRIMARY KEY (`school_id`,`course_id`),
-  KEY `course_id` (`course_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='This is a link table between school and course to support many-to-many.';
+-- Dumping structure for table nextsis.school_gradelevels
+CREATE TABLE IF NOT EXISTS `school_gradelevels` (
+  `id` smallint(6) NOT NULL AUTO_INCREMENT,
+  `school_id` mediumint(9) NOT NULL,
+  `title` varchar(45) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `next_grade_id` smallint(6) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `title_UNIQUE` (`title`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Store school levels';
 
---
--- Constraints for dumped tables
---
+-- Data exporting was unselected.
 
---
--- Constraints for table `person`
---
-ALTER TABLE `person`
-  ADD CONSTRAINT `person_ibfk_1` FOREIGN KEY (`title_id`) REFERENCES `person_title` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `person_ibfk_2` FOREIGN KEY (`gender_id`) REFERENCES `person_gender` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `person_course`
---
-ALTER TABLE `person_course`
-  ADD CONSTRAINT `person_course_ibfk_1` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `person_course_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+-- Dumping structure for table nextsis.school_periods
+CREATE TABLE IF NOT EXISTS `school_periods` (
+  `period_id` int(10) NOT NULL AUTO_INCREMENT,
+  `syear` decimal(4,0) DEFAULT NULL,
+  `school_id` decimal(10,0) DEFAULT NULL,
+  `sort_order` decimal(10,0) DEFAULT NULL,
+  `title` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `short_name` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `length` decimal(10,0) DEFAULT NULL,
+  `block` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `ignore_scheduling` varchar(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `attendance` varchar(1) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rollover_id` decimal(10,0) DEFAULT NULL,
+  `start_time` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `end_time` varchar(15) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`period_id`),
+  KEY `school_periods_ind1` (`period_id`,`syear`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
--- Constraints for table `person_gender`
---
-ALTER TABLE `person_gender`
-  ADD CONSTRAINT `person_gender_ibfk_1` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+-- Data exporting was unselected.
 
---
--- Constraints for table `person_role`
---
-ALTER TABLE `person_role`
-  ADD CONSTRAINT `person_role_ibfk_1` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `person_role_ibfk_2` FOREIGN KEY (`role_id`) REFERENCES `role` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
---
--- Constraints for table `person_school`
---
-ALTER TABLE `person_school`
-  ADD CONSTRAINT `person_school_ibfk_2` FOREIGN KEY (`person_id`) REFERENCES `person` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `person_school_ibfk_3` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+-- Dumping structure for table nextsis.school_quarter
+CREATE TABLE IF NOT EXISTS `school_quarter` (
+  `marking_period_id` mediumint(8) NOT NULL,
+  `syear` int(11) DEFAULT NULL,
+  `school_id` mediumint(8) DEFAULT NULL,
+  `semester_id` mediumint(8) DEFAULT NULL,
+  `title` varchar(50) DEFAULT NULL,
+  `short_name` varchar(10) DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `post_start_date` date DEFAULT NULL,
+  `post_end_date` date DEFAULT NULL,
+  PRIMARY KEY (`marking_period_id`),
+  KEY `school_quarter_ind1` (`semester_id`) USING BTREE,
+  KEY `school_quarter_ind2` (`syear`,`school_id`,`start_date`,`end_date`) USING BTREE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
---
--- Constraints for table `person_title`
---
-ALTER TABLE `person_title`
-  ADD CONSTRAINT `person_title_ibfk_1` FOREIGN KEY (`language_id`) REFERENCES `language` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+-- Data exporting was unselected.
 
---
--- Constraints for table `school_course`
---
-ALTER TABLE `school_course`
-  ADD CONSTRAINT `school_course_ibfk_1` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `school_course_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `course` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
+-- Dumping structure for table nextsis.school_semester
+CREATE TABLE IF NOT EXISTS `school_semester` (
+  `marking_period_id` mediumint(8) NOT NULL,
+  `syear` int(11) DEFAULT NULL,
+  `school_id` mediumint(8) DEFAULT NULL,
+  `year_id` mediumint(8) DEFAULT NULL,
+  `title` varchar(50) DEFAULT NULL,
+  `short_name` varchar(10) DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `post_start_date` date DEFAULT NULL,
+  `post_end_date` date DEFAULT NULL,
+  PRIMARY KEY (`marking_period_id`),
+  KEY `school_semesters_ind1` (`year_id`) USING BTREE,
+  KEY `school_semesters_ind2` (`syear`,`school_id`,`start_date`,`end_date`) USING BTREE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.school_year
+CREATE TABLE IF NOT EXISTS `school_year` (
+  `marking_period_id` mediumint(8) NOT NULL,
+  `syear` int(11) DEFAULT NULL,
+  `school_id` mediumint(8) DEFAULT NULL,
+  `title` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `short_name` varchar(10) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `post_start_date` date DEFAULT NULL,
+  `post_end_date` date DEFAULT NULL,
+  PRIMARY KEY (`marking_period_id`),
+  KEY `school_years_ind2` (`syear`,`school_id`,`start_date`,`end_date`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.student_profile_comment
+CREATE TABLE IF NOT EXISTS `student_profile_comment` (
+  `id` mediumint(8) NOT NULL AUTO_INCREMENT,
+  `teacher_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `student_id` int(11) unsigned NOT NULL DEFAULT '0',
+  `comment` varchar(250) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `FK_student_profile_comment_person` (`teacher_id`),
+  KEY `FK_student_profile_comment_person_2` (`student_id`),
+  CONSTRAINT `FK_student_profile_comment_person` FOREIGN KEY (`teacher_id`) REFERENCES `person` (`id`),
+  CONSTRAINT `FK_student_profile_comment_person_2` FOREIGN KEY (`student_id`) REFERENCES `person` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.student_report_profile
+CREATE TABLE IF NOT EXISTS `student_report_profile` (
+  `id` mediumint(8) NOT NULL AUTO_INCREMENT,
+  `property_id` mediumint(8) unsigned NOT NULL,
+  `rating` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `term_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_student_report_profile_profile_property` (`property_id`),
+  KEY `FK_student_report_profile_term` (`term_id`),
+  CONSTRAINT `FK_student_report_profile_profile_property` FOREIGN KEY (`property_id`) REFERENCES `profile_property` (`id`),
+  CONSTRAINT `FK_student_report_profile_term` FOREIGN KEY (`term_id`) REFERENCES `term_old` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for view nextsis.student_subjects_vw
+-- Creating temporary table to overcome VIEW dependency errors
+CREATE TABLE `student_subjects_vw` (
+	`student` VARCHAR(142) NULL COLLATE 'utf8mb4_unicode_ci',
+	`studentid` INT(10) UNSIGNED NOT NULL COMMENT 'Primary key (4,294,967,295 possible values). This can serve as a public or internal identifier.',
+	`term_course_id` INT(11) NOT NULL COMMENT 'Foreign key form the course table.',
+	`title` VARCHAR(100) NULL COLLATE 'utf8mb4_unicode_ci'
+) ENGINE=MyISAM;
+
+
+-- Dumping structure for table nextsis.subject
+CREATE TABLE IF NOT EXISTS `subject` (
+  `subject_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT COMMENT 'Primary key.',
+  `syear` int(11) unsigned NOT NULL DEFAULT '0',
+  `school_id` mediumint(8) unsigned NOT NULL,
+  `short_name` varchar(75) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `title` varchar(250) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`subject_id`),
+  KEY `FK_subject_school` (`school_id`),
+  CONSTRAINT `FK_subject_school` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='Stores subject names and details.';
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.subject_course
+CREATE TABLE IF NOT EXISTS `subject_course` (
+  `course_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `subject_id` mediumint(8) unsigned NOT NULL,
+  `syear` int(11) NOT NULL,
+  `grade_level` mediumint(8) unsigned NOT NULL,
+  `title` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `short_name` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  PRIMARY KEY (`course_id`),
+  KEY `FK_subject_course_subject` (`subject_id`),
+  KEY `syear_courseid_KEY` (`syear`,`course_id`),
+  CONSTRAINT `FK_subject_course_subject` FOREIGN KEY (`subject_id`) REFERENCES `subject` (`subject_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for view nextsis.subject_course_count
+-- Creating temporary table to overcome VIEW dependency errors
+CREATE TABLE `subject_course_count` (
+	`subject_id` MEDIUMINT(8) UNSIGNED NOT NULL COMMENT 'Primary key.',
+	`school_id` MEDIUMINT(8) UNSIGNED NOT NULL,
+	`title` VARCHAR(250) NULL COLLATE 'utf8mb4_unicode_ci',
+	`short_name` VARCHAR(75) NULL COLLATE 'utf8mb4_unicode_ci',
+	`course_count` BIGINT(21) NOT NULL
+) ENGINE=MyISAM;
+
+
+-- Dumping structure for view nextsis.teachersubjects_vw
+-- Creating temporary table to overcome VIEW dependency errors
+CREATE TABLE `teachersubjects_vw` 
+) ENGINE=MyISAM;
+
+
+-- Dumping structure for table nextsis.term_course
+CREATE TABLE IF NOT EXISTS `term_course` (
+  `term_course_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `marking_period_id` mediumint(8) unsigned DEFAULT NULL,
+  `mp` varchar(3) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `course_id` mediumint(8) unsigned DEFAULT NULL,
+  `teacher_id` mediumint(8) unsigned DEFAULT NULL,
+  PRIMARY KEY (`term_course_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.udf_categories
+CREATE TABLE IF NOT EXISTS `udf_categories` (
+  `category_id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  PRIMARY KEY (`category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.udf_data
+CREATE TABLE IF NOT EXISTS `udf_data` (
+  `udf_data_id` mediumint(8) NOT NULL AUTO_INCREMENT,
+  `udf_id` mediumint(8) NOT NULL,
+  `udf_value` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `fk_id` mediumint(8) NOT NULL,
+  PRIMARY KEY (`udf_data_id`),
+  KEY `FK_udf_data_udf_definition` (`udf_id`),
+  CONSTRAINT `FK_udf_data_udf_definition` FOREIGN KEY (`udf_id`) REFERENCES `udf_definition` (`udf_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for table nextsis.udf_definition
+CREATE TABLE IF NOT EXISTS `udf_definition` (
+  `udf_id` mediumint(8) NOT NULL AUTO_INCREMENT,
+  `school_id` mediumint(8) unsigned NOT NULL,
+  `type` varchar(10) DEFAULT NULL,
+  `title` varchar(30) DEFAULT NULL,
+  `description` varchar(500) DEFAULT NULL,
+  `sort_order` int(11) DEFAULT NULL,
+  `select_options` varchar(10000) DEFAULT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `validation` varchar(500) DEFAULT NULL,
+  `default_selection` varchar(255) DEFAULT NULL,
+  `hide` tinyint(1) DEFAULT NULL,
+  PRIMARY KEY (`udf_id`),
+  KEY `FK_udf_definition_udf_categories` (`category_id`),
+  KEY `FK_udf_definition_school` (`school_id`),
+  CONSTRAINT `FK_udf_definition_school` FOREIGN KEY (`school_id`) REFERENCES `school` (`id`),
+  CONSTRAINT `FK_udf_definition_udf_categories` FOREIGN KEY (`category_id`) REFERENCES `udf_categories` (`category_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- Data exporting was unselected.
+
+
+-- Dumping structure for view nextsis.marking_period
+-- Removing temporary table and create final VIEW structure
+DROP TABLE IF EXISTS `marking_period`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `marking_period` AS SELECT q.marking_period_id, q.syear,
+ 	q.school_id, 'quarter' AS mp_type, q.title, q.short_name,
+	q.semester_id AS parent_id,
+ 	s.year_id AS grandparent_id, q.start_date,
+ 	q.end_date, q.post_start_date,
+ 	q.post_end_date
+     FROM school_quarter q
+     JOIN school_semester s ON q.semester_id = s.marking_period_id
+ UNION
+     SELECT marking_period_id, syear,
+	  	school_id, 'semester' AS mp_type, title, short_name,
+		year_id AS parent_id, -1 AS grandparent_id, start_date,
+		end_date, post_start_date, post_end_date
+     FROM school_semester
+ UNION
+     SELECT marking_period_id, syear,
+ 			school_id, 'year' AS mp_type, title, short_name,
+ 			-1 AS parent_id,
+ 			-1 AS grandparent_id, start_date,
+ 			end_date, post_start_date,
+ 			post_end_date
+     FROM school_year ;
+
+
+-- Dumping structure for view nextsis.student_subjects_vw
+-- Removing temporary table and create final VIEW structure
+DROP TABLE IF EXISTS `student_subjects_vw`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `student_subjects_vw` AS select concat_ws(' ',p.first_name, p.middle_name, p.surname) as student, p.id as studentid,pc.term_course_id,sc.title  from 
+person as p 
+inner join person_course pc on p.id = pc.person_id
+inner join term_course tc on pc.term_course_id = tc.term_course_id
+inner join subject_course sc on tc.course_id = sc.course_id ;
+
+
+-- Dumping structure for view nextsis.subject_course_count
+-- Removing temporary table and create final VIEW structure
+DROP TABLE IF EXISTS `subject_course_count`;
+CREATE ALGORITHM=UNDEFINED DEFINER=`root`@`localhost` VIEW `subject_course_count` AS select s.subject_id, s.school_id, s.title, s.short_name, count(sc.course_id) as course_count from subject s
+left join subject_course sc
+on s.subject_id = sc.subject_id
+group by s.subject_id, s.school_id, s.title, s.short_name ;
+
+
+-- Dumping structure for view nextsis.teachersubjects_vw
+-- Removing temporary table and create final VIEW structure
+DROP TABLE IF EXISTS `teachersubjects_vw`;
+CREATE DEFINER=`root`@`localhost` VIEW `teachersubjects_vw` AS select sc.course_id as subjectcourse_id, sc.title as subjectcourse_title,pc.person_id as personid, marking_period.syear from 
+term_course as tc 
+inner join marking_period on tc.term_course_id = marking_period.marking_period_id
+inner join subject_course as sc on tc.course_id = sc.course_id
+inner join person_course as pc on tc.term_course_id = pc.termcourses_id ;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
