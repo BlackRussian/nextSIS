@@ -233,23 +233,6 @@ class Person extends CI_Controller
 				$this->Insert_Update_UDF($person_id);
 				redirect('person','listing');
 			}
-
-			
-			$data = array(
-				'middle_name' => $this->input->post('mname'),
-				'first_name' => $this->input->post('fname'),
-				'surname' => $this->input->post('lname'),
-				'common_name' => $this->input->post('cname'),
-				'default_schoolId' => $this->viewdata['defaultschoolid'],
-				'gender_id' => $this->input->post('Gender'),
-				'title_id' => $this->input->post('Title'),
-				'username' => $this->input->post('uname'),
-				'password' => $upwd
-			);
-			$roledata = $this->input->post('userrole');
-			
-			$this->person_model->addperson($data,$roledata);
-			redirect('person','listing');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
