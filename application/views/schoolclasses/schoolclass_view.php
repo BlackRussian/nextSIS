@@ -8,7 +8,7 @@
 					<h3>Manage Classes</h3>
 					<div class="table-toolbar">
                     	<div class="btn-group">
-                    		<a href="schoolclasses/add"><button class="btn btn-success">Add New Class <i class="icon-plus icon-white"></i></button></a>
+                    		<a href="/schoolclasses/add"><button class="btn btn-success">Add New Class <i class="icon-plus icon-white"></i></button></a>
                     	</div>
 					</div>
 					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
@@ -27,7 +27,7 @@
 								<td>
 									<?php echo $class->class_title; ?>
 								</td>
-								<td><a href="schoolclasses/edit/<?php echo urlencode($class->id); ?>">edit</a></td>
+								<td><a href="/schoolclasses/edit/<?php echo urlencode($class->id); ?>">edit</a></td>
 							</tr>
 						<?php }}?>
 					</table>
