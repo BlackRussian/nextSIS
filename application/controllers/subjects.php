@@ -129,7 +129,7 @@ class Subjects extends CI_Controller
 			
 			if($this->form_validation->run() == FALSE) 
    			{
-				$this-add();
+				$this->add();
 			}else{
 				
 								

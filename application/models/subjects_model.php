@@ -105,7 +105,7 @@ class Subjects_model extends CI_Model
 	public function AddTermCourse($data)
  	{
  		
-		$this->db->insert('terms_course', $data);
+		$this->db->insert('term_course', $data);
 		
 		$this->db->flush_cache();
  	}
