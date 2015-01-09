@@ -207,6 +207,7 @@ class Person extends CI_Controller
 			$this->form_validation->set_rules('Title', 'Title', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('uname', 'User Name', 'trim|required|xss_clean|is_unique[person.username]');
 			$this->form_validation->set_rules('userrole[]', 'User Roles', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('dob', 'Date of Birth', 'trim|required|xss_clean');
 			
 
 			$this->UDF_Validation();
@@ -215,6 +216,7 @@ class Person extends CI_Controller
    			{
 				$this->add();
 			}else{
+				$dateArr = explode('/', $this->input->post('dob'));
 				$data = array(
 					'middle_name' => $this->input->post('mname'),
 					'first_name' => $this->input->post('fname'),
@@ -224,7 +226,8 @@ class Person extends CI_Controller
 					'title_id' => $this->input->post('Title'),
 					'username' => $this->input->post('uname'),
 					'password' => $upwd,
-					'default_schoolid' => $session_data["currentschoolid"]
+					'default_schoolid' => $session_data["currentschoolid"],
+					'dob' => $dateArr[2] . '-'. $dateArr[1] . '-' . $dateArr[0]
 				);
 				$roledata 		= $this->input->post('userrole');
 				$person_id 		= $this->person_model->addperson($data,$roledata);
@@ -266,13 +269,15 @@ class Person extends CI_Controller
 			$this->form_validation->set_rules('Title', 'Title', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('uname', 'User Name', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('userrole[]', 'User Roles', 'trim|required|xss_clean');
-			
+			$this->form_validation->set_rules('dob', 'Date of Birth', 'trim|required|xss_clean');
+
 			$this->UDF_Validation();
 
 			if($this->form_validation->run() == FALSE) 
    			{
 				$this->edit($id);
 			}else{
+				$dateArr = explode('/', $this->input->post('dob'));
 				$data = array(
 					'middle_name' => $this->input->post('mname'),
 					'first_name' => $this->input->post('fname'),
@@ -280,7 +285,8 @@ class Person extends CI_Controller
 					'common_name' => $this->input->post('cname'),
 					'gender_id' => $this->input->post('Gender'),
 					'title_id' => $this->input->post('Title'),
-					'default_schoolid' => $session_data["currentschoolid"]
+					'default_schoolid' => $session_data["currentschoolid"],
+					'dob' => $dateArr[2] . '-'. $dateArr[1] . '-' . $dateArr[0]
 				);
 				$roledata = $this->input->post('userrole');
 				
@@ -325,6 +331,7 @@ class Person extends CI_Controller
 						$this->viewdata['titleid'] 		= $row->title_id;
 						$this->viewdata['uname'] 		= $row->username;
 						$this->viewdata['personid'] 	= $row->id;
+						$this->viewdata['dob'] 			= $row->dob;
 					}
 					$result 				= $this->person_model->GetPersonGender(1);
 					$genders[""]			="Select Gender";
@@ -387,6 +394,7 @@ class Person extends CI_Controller
 					$this->load->model('udf_model');
 					$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['currentschoolid'],1,$id);
 					$this->viewdata['udfDisplay']		= TRUE;
+					$this->viewdata['age']				= $this->ago(new DateTime($userProfile->dob));
 					$this->load->view('templates/header', $this->viewdata);
 					$this->load->view('templates/sidenav');	
 					$this->load->view('person/profile', $this->viewdata);
@@ -470,6 +478,23 @@ class Person extends CI_Controller
 		
 		if(count($updateData) > 0)
 			$this->udf_model->UpdateUDFValues($updateData);
+	}
+
+	function ago( $datetime )
+	{
+	    $interval = date_create('now')->diff( $datetime );
+	    $suffix = ( $interval->invert ? ' old' : '' );
+	    if ( $v = $interval->y >= 1 ) return $this->pluralize( $interval->y, 'year' ) . $suffix;
+	    if ( $v = $interval->m >= 1 ) return $this->pluralize( $interval->m, 'month' ) . $suffix;
+	    if ( $v = $interval->d >= 1 ) return $this->pluralize( $interval->d, 'day' ) . $suffix;
+	    if ( $v = $interval->h >= 1 ) return $this->pluralize( $interval->h, 'hour' ) . $suffix;
+	    if ( $v = $interval->i >= 1 ) return $this->pluralize( $interval->i, 'minute' ) . $suffix;
+	    return pluralize( $interval->s, 'second' ) . $suffix;
+	}
+
+	function pluralize( $count, $text ) 
+	{ 
+	    return $count . ( ( $count == 1 ) ? ( " $text" ) : ( " ${text}s" ) );
 	}
 }
 

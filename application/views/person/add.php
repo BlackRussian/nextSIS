@@ -1,3 +1,9 @@
+<script type="text/javascript">
+	$(document).ready(function() {
+	     $(".datepicker").datepicker();
+	 });
+
+</script>
 <div class="span9" id="content">
 	<div class="row-fluid">
      <?php echo $this->load->view('templates/breadcrumb.php');?>
@@ -49,7 +55,13 @@
 		                    <div class="controls">		                    			                    	
 		                    	<?php echo form_input('uname', set_value('uname'));  ?>
 		                    </div>
-		                </div>					
+		                </div>
+		                <div class="control-group">
+		                    <label class="control-label" for="dob"><?php echo "Date of Birth";?></label>
+		                    <div class="controls">		                    			                    	
+		                    	<?php echo form_input('dob', set_value('dob'),'class="datepicker"');  ?>
+		                    </div>
+		                </div>						
 		                <div class="control-group">
 		                    <label class="control-label" for="uname"><?php echo "User Roles";?></label>
 		                    <div class="controls">		                    			                    	

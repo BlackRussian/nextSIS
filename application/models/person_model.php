@@ -116,7 +116,7 @@ class Person_model extends CI_Model
  	{
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id,username')->from('person')->where('id',$personid);
+		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id,username, dob')->from('person')->where('id',$personid);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -139,7 +139,7 @@ class Person_model extends CI_Model
  	{
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select("person.id, first_name,middle_name, surname,common_name, username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles, person_title.label as title, person_gender.label as gender",FALSE);
+		$this->db->select("person.id, first_name,middle_name, surname,common_name, username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles, person_title.label as title, person_gender.label as gender, dob",FALSE);
 		$this->db->from('person');
 		$this->db->join('person_role','person.id = person_role.person_id');
 		$this->db->join('role','person_role.role_id = role.id');

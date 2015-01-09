@@ -1,3 +1,10 @@
+<script type="text/javascript">
+	$(document).ready(function() {
+	     $(".datepicker").datepicker({
+    		format: 'dd/mm/yyyy'
+		});
+	 });
+</script>
 <div class="span9" id="content">
 <div class="row-fluid">
      <div class="block">
@@ -49,6 +56,15 @@
 		                    <label class="control-label" for="uname"><?php echo "User Name";?></label>
 		                    <div class="controls">		                    			                    	
 		                    	<?php echo form_input('uname', set_value('uname',$uname), 'readonly="readonly"');  ?>
+		                    </div>
+		                </div>
+		                <div class="control-group">
+		                    <label class="control-label" for="dob"><?php echo "Date of Birth";?></label>
+		                    <div class="controls">		                    			                    	
+		                    	<?php
+		                    		$timestamp = strtotime($dob);
+		                    		echo form_input('dob', set_value('dob',date("d/m/Y", $timestamp)),'class="datepicker"');  
+		                    	?>
 		                    </div>
 		                </div>					
 		                <div class="control-group">

@@ -9,7 +9,7 @@
 		                <?php $this->load->view('shared/display_errors');?>
 		                <legend><?php echo $page_title;?></legend>
 		                
-                      	<?php $style = "padding-top: 5px;" ?> 
+                      	<?php $style = "padding-top: 5px;"; ?> 
                       	<div class="control-group">
                       		<label class="control-label" for="sel_category"><?php echo "Photo";?></label>
 	                      	<div class="span3">
@@ -59,7 +59,14 @@
 		                    <div class="controls" style="<?php echo $style ?>">
 		                    	<?php echo $profile->username ?>	                                        			                    	
 		                    </div>
-		                </div>					
+		                </div>
+		                <div class="control-group">
+		                    <label class="control-label" for="uname"><?php echo "Date of Birth";?></label>
+		                    <div class="controls" style="<?php echo $style ?>">
+		                    	<?php $timestamp = strtotime($profile->dob);
+		                    		echo date("F j, Y", $timestamp) . " (<i>" . $age . "</i>)";  ?>	                                        			                    	
+		                    </div>
+		                </div>						
 		                <div class="control-group">
 		                    <label class="control-label" for="uname"><?php echo "User Roles";?></label>
 		                    <div class="controls" style="<?php echo $style ?>">
