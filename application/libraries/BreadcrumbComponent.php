@@ -1,4 +1,5 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<?php if(!defined('BASEPATH')) exit('No direct script access allowed');
+
 class BreadcrumbComponent {
 	
 	private $breadcrumbs = array();
@@ -13,7 +14,7 @@ class BreadcrumbComponent {
 
 		$this->breadcrumbs[] = array('title' => 'Dashboard', 'href' => '/home');
 	}
-	
+
 	private function initialize($params = array()){
 		if (count($params) > 0){
 			foreach ($params as $key => $val){
@@ -52,5 +53,4 @@ class BreadcrumbComponent {
 		
 		return '';
 	}
-
 }

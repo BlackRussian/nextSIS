@@ -1,6 +1,6 @@
 <?php
 	if(isset($this->form_validation)){
-		if(!empty($this->form_validation->error_array())){
+		if($this->form_validation->error_array()){
 		    $display = '<div class="alert alert-error"><button class="close" data-dismiss="alert">×</button>';
 		    $display .= '<ul>';
 		    foreach ($this->form_validation->error_array() as $this_error){

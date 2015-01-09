@@ -84,7 +84,7 @@
 		                <div class="control-group">
 		                    <label class="control-label" for="sel_validation"><?php echo "Validation";?></label>
 		                    <div class="controls">		                    	
-		                    	<?php echo form_multiselect('sel_validation[]', $validations, empty($this->input->post('sel_validation'))?explode('|',$udf->validation):$this->input->post('sel_validation'),'id="sel_validation"');?>
+		                    	<?php echo form_multiselect('sel_validation[]', $validations, $this->input->post('sel_validation')?explode('|',$udf->validation):$this->input->post('sel_validation'),'id="sel_validation"');?>
 		                    </div>
 		                </div>
 		                <div class="control-group">

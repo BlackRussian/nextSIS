@@ -20,14 +20,14 @@
 								<th>&nbsp;</th>
 							</tr>
 						</thead>
-				 		<?php foreach($query as $gradelevel){ ?>
+				 		<?php if($query) {foreach($query as $gradelevel){ ?>
 						<tr>
 							<td><?php echo $gradelevel->grade_title ?></td>
 							<td><?php echo $gradelevel->next_title ?></td>
 							<td><a href="/gradelevels/edit/<?php echo urlencode($gradelevel->id); ?>">edit</a></td>
 							<td><a href="/schoolclasses/<?php echo urlencode($gradelevel->id); ?>">view class</a></td>
 						</tr>
-						<?php }?>
+						<?php } }?>
 					</table>
 					<a href="add"><?php echo $this->lang->line("add_new_gradelevel");?></a>
         		</div>				

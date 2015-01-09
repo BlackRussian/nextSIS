@@ -102,15 +102,13 @@ class Person extends CI_Controller
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
 		{	
-			// if the person model returns TRUE then call the view
-			if(!$this->load->model('person_model','',TRUE))
-			{
-				$this->lang->load('person'); // default language option taken from config.php file
+			
+			$this->lang->load('person'); // default language option taken from config.php file
 
-				$this->viewdata['query'] = $this->person_model->listing($filter, $this->viewdata['currentschoolid']);
-			}
+			$this->viewdata['query'] = $this->person_model->listing($filter, $this->viewdata['currentschoolid']);
 
 			$this->viewdata['sidenav'] 	= $this->navigation->load_side_nav($filter, $this->sidemenu);
+			
 			$this->viewdata['filter']	= $filter;
 			
 			$this->load->view('templates/header', $this->viewdata);

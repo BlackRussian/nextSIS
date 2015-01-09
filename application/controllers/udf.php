@@ -91,11 +91,12 @@ class UDF extends CI_Controller
 		{	
 			$result = $this->udf_model->GetUdfCategories();
 			$categories[""] 		= "Select Category";
-
-			foreach($result as $row){
-            	$categories[$row->category_id] = $row->title;
+			
+			if($result){
+				foreach($result as $row){
+	            	$categories[$row->category_id] = $row->title;
+	        	}
         	}
-        	
 
 			$this->data['categories'] 		= $categories;
 			$this->data['types'] 			= $this->types;

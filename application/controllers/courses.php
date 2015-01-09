@@ -312,6 +312,53 @@ class Courses extends CI_Controller
 		}
 	}
 
+	// The editrecord function updates a course
+		function reassignteacher($term_course_id)
+		{
+			//$this->load->model('person_model','',TRUE);
+			if($this->session->userdata('logged_in')) // user is logged in
+			{
+				$this->load->model('school_model');
+				$this->load->model('person_model');
+
+				//load course details for use in view
+				$course = $this->subjects_model->GetTermCourseById($term_course_id);
+
+				$result = $this->school_model->GetSchoolTerms($this->viewdata['currentschoolid'], $this->viewdata['currentsyear']);
+
+				$markingperiod[""] = "Select a Term";
+
+				foreach ($result as $row) {
+					$markingperiod[$row->marking_period_id."|".$row->short_name] = $row->title; 
+				}
+
+				$result = $this->person_model->GetPersonsWithRole(2, $this->viewdata['currentschoolid']);
+
+				$teachers[""] = "Select a Teacher";
+
+				foreach ($result as $row) {
+					$teachers[$row->id] = $row->first_name . " " . $row->surname; 
+				}
+
+				//construct page title
+				$this->viewdata["page_title"] 		= "Ressign teacher for \"" .$course->course_title ." - " . $course->short_name . "\"";
+				$this->viewdata["course"] 			= $course;
+				$this->viewdata["subject_id"] 		= $course->subject_id;
+				$this->viewdata["markingperiod"] 	= $markingperiod;
+				$this->viewdata["teachers"] 		= $teachers;
+
+				$this->load->view('templates/header', $this->viewdata);
+				$this->load->view('templates/sidenav');
+				$this->load->view('subjects/reassign_teacher_view', $this->viewdata);
+				$this->load->view('templates/footer');
+			}
+			else // not logged in - redirect to login controller (login page)
+			{
+				redirect('login','refresh');
+			}
+		}
+
+
 	function addtermcourse(){
 		// use the CodeIgniter form validation library
    		$this->load->library('form_validation');
@@ -343,6 +390,45 @@ class Courses extends CI_Controller
 				$this->subjects_model->AddTermCourse($newdata);
 			    
 			    redirect('subjects/courses/' . $this->input->post('subject_id'));
+			}
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
+	}
+
+	function edittermcourse(){
+		// use the CodeIgniter form validation library
+   		$this->load->library('form_validation');
+		
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+			
+			// field is trimmed, required and xss cleaned respectively
+			$this->form_validation->set_rules('selTerm', 'Term', 'trim|required|xss_clean');
+			
+			// field is trimmed, required and xss cleaned respectively
+   			$this->form_validation->set_rules('selTeacher', 'Teacher Name', 'trim|required|xss_clean');
+
+			if($this->form_validation->run() == FALSE) 
+   			{
+				$this->reassignteacher($this->input->post('term_course_id'));
+			}else{
+				$term 		= explode ("|", $this->input->post('selTerm'));
+				$id 		= $this->input->post('term_course_id');
+
+				$data 	= array(
+										'marking_period_id' => $term[0],
+										'mp' 				=> $term[1],
+										'teacher_id' 		=> $this->input->post('selTeacher')
+				);
+				
+				$this->subjects_model->EditTermCourse($id, $data);
+			    
+			    redirect('courses/' . $this->input->post('subject_id'));
 			}
 		}
 		else // not logged in - redirect to login controller (login page)

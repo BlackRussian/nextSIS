@@ -77,9 +77,11 @@ class Gradelevels extends CI_Controller
 			$result				= $this->gradelevels_model->GetGradeLevels($this->viewdata['currentschoolid']);
 			$gradelevels[""] 	= "Select Grade";
 
-			foreach($result as $row){
-            	$gradelevels[$row->id] = $row->title;
-        	}
+			if($result){
+				foreach($result as $row){
+            		$gradelevels[$row->id] = $row->title;
+        		}
+			}
 
 			$this->viewdata['gradelevels'] 	= $gradelevels;	
 			$this->viewdata['page_title'] 	= "Add Grade Level";
@@ -150,9 +152,11 @@ class Gradelevels extends CI_Controller
 
 				$result		= $this->gradelevels_model->GetGradeLevelsExceptCurrent($this->viewdata['currentschoolid'], $id);
 				$gradelevels[""] = "Select Grade";
-
-				foreach($result as $row){
-	            	$gradelevels[$row->id] = $row->title;
+				
+				if($result){
+					foreach($result as $row){
+	            		$gradelevels[$row->id] = $row->title;
+	        		}
 	        	}
 
 				$this->viewdata['gradelevels'] = $gradelevels;	

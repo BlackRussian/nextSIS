@@ -109,6 +109,14 @@ class Subjects_model extends CI_Model
 		
 		$this->db->flush_cache();
  	}
+	
+	public function EditTermCourse($id,$data)
+ 	{
+ 		//This section will be used to update the person data
+ 		$this->db->where('term_course_id', $id);
+		$this->db->update('term_course', $data);
+		$this->db->flush_cache();
+ 	}
 
  	public function UpdateSubject($id,$data)
  	{
@@ -160,6 +168,36 @@ class Subjects_model extends CI_Model
 		$this->db->join('school_gradelevels', 'subject_course.grade_level = school_gradelevels.id');
 		$this->db->join('subject', 'subject.subject_id = subject_course.subject_id');
 		$this->db->where('course_id',$course_id);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->row();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+
+ 		//Get Grade Levels
+	public function GetTermCourseById($term_course_id)
+ 	{
+ 		
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		//$where = 'subject_id = '. $id . ' AND school_id = ' . $school_id;
+		$this->db->select('term_course_id, marking_period.marking_period_id, term_course.course_id, school_gradelevels.title as grade_title,
+							teacher_id,subject_course.title course_title, subject_course.short_name, subject_course.subject_id, marking_period.short_name term_short_name');
+		$this->db->from('term_course');
+		$this->db->join('subject_course','term_course.course_id = subject_course.course_id');
+		$this->db->join('school_gradelevels', 'subject_course.grade_level = school_gradelevels.id');
+		$this->db->join('marking_period', 'marking_period.marking_period_id = term_course.marking_period_id');
+		$this->db->where('term_course_id',$term_course_id);
 
    		// run the query and return the result
    		$query = $this->db->get();
