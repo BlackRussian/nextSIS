@@ -26,7 +26,7 @@
                 });
             });
 </script>
-<div class="span9">
+<div class="span9" id="content">
 <div class="row-fluid">
      <div class="block">
         <div class="block-content collapse in">

@@ -110,7 +110,7 @@
 			
 		</script>
 		       
-       <div class="span9">
+       <div class="span9" id="content">
 		  <div class="row-fluid section">
 		     <div class="block">
 		     	

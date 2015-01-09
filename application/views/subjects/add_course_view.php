@@ -1,4 +1,4 @@
-<div class="span9">
+<div class="span9" id="content">
 	<div class="row-fluid">
       <?php echo $this->load->view('templates/breadcrumb.php');?>
      	<div class="block">

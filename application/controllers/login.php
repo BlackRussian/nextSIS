@@ -163,6 +163,7 @@ class Login extends CI_Controller
             $rolelist = implode(',', $rolearr);
 
            	$session = array( 'id'=>$row->id,
+                              'fullname'=> $row->first_name.' '.$row->surname,
                               'username' => $row->username,
                               'defaultschoolid' => $row->default_schoolId,
                               'currentschoolid' => $row->default_schoolId,
