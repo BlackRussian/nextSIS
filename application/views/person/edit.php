@@ -66,10 +66,10 @@
 		                <div class="form-actions">
 	                  		<a href="/person" class="btn"><i class="icon-chevron-left icon-black"></i>Cancel</a>
 							          <?php echo form_submit('submit','Submit', 'class="btn btn-primary"'); ?>
-							          <?php echo form_close(); ?>
+							          
 					    </div>
 					</fieldset>	
-        		
+        		<?php echo form_close(); ?>
         		</div>  			
   				  				
   			</div>

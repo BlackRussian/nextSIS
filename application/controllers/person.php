@@ -51,6 +51,7 @@ class Person extends CI_Controller
 		$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
 		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
 		$this->viewdata['defaultschoolid']  = $session_data['defaultschoolid'];
+		$this->viewdata['id']  				= $session_data['id'];
 		$this->viewdata['nav'] 				= $this->navigation->load('people');
 		
 		$this->breadcrumbcomponent->add('People', '/people');
@@ -362,6 +363,41 @@ class Person extends CI_Controller
 				$this->load->view('templates/sidenav');	
 				$this->load->view('person/edit', $this->viewdata);
 				$this->load->view('templates/footer');
+			}
+			else // not logged in - redirect to login controller (login page)
+			{
+				redirect('login','refresh');
+			}
+	}
+
+	// The add function is used to load a person record for edit
+	function profile()
+	{
+		    if($this->session->userdata('logged_in')) // user is logged in
+			{				
+				$id 									= $this->viewdata['id'];
+				$userProfile 							= $this->person_model->GetUserProfileInfo($id);
+				//$this->load->helper(array('form', 'url'));
+				if($userProfile)
+				{					
+					$this->viewdata['profile']			= $userProfile;					
+				
+					$this->viewdata['nav'] 				= $this->navigation->load('people');
+					$this->viewdata['page_title']		= "User Profile";				
+
+					//UDF setup
+					$this->load->model('udf_model');
+					$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['currentschoolid'],1,$id);
+					$this->viewdata['udfDisplay']		= TRUE;
+					$this->load->view('templates/header', $this->viewdata);
+					$this->load->view('templates/sidenav');	
+					$this->load->view('person/profile', $this->viewdata);
+					$this->load->view('templates/footer');
+				}else{
+					$this->session->set_flashdata('msgerror', 'Error retreiving user profile');
+			    
+			    	redirect('/home/');
+				}
 			}
 			else // not logged in - redirect to login controller (login page)
 			{

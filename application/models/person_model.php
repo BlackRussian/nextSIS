@@ -133,6 +133,37 @@ class Person_model extends CI_Model
 			return FALSE;
 		}
  	}
+
+	//Get Person by person id
+	public function GetUserProfileInfo($personid)
+ 	{
+ 		
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select("person.id, first_name,middle_name, surname,common_name, username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles, person_title.label as title, person_gender.label as gender",FALSE);
+		$this->db->from('person');
+		$this->db->join('person_role','person.id = person_role.person_id');
+		$this->db->join('role','person_role.role_id = role.id');
+		$this->db->join('person_title','person.title_id = person_title.id');
+		$this->db->join('person_gender','person.gender_id = person_gender.id');
+		$this->db->where('person.id',$personid);
+		$this->db->group_by("first_name,surname,person.id");
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->row();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+
  	//Get current Person Roles
  	public function getpersonrolesbypersonid($personid)
 	{
