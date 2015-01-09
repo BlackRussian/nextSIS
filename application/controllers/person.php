@@ -489,7 +489,8 @@ class Person extends CI_Controller
 	    if ( $v = $interval->d >= 1 ) return $this->pluralize( $interval->d, 'day' ) . $suffix;
 	    if ( $v = $interval->h >= 1 ) return $this->pluralize( $interval->h, 'hour' ) . $suffix;
 	    if ( $v = $interval->i >= 1 ) return $this->pluralize( $interval->i, 'minute' ) . $suffix;
-	    return pluralize( $interval->s, 'second' ) . $suffix;
+	    
+	    return $this->pluralize( $interval->s, 'second' ) . $suffix;
 	}
 
 	function pluralize( $count, $text ) 
