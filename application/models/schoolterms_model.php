@@ -23,18 +23,25 @@
 class Schoolterms_model extends CI_Model
 {
 	// The listing method takes gets a list of people in the database 
-	public function listing($schoolid, $syear)
+	public function listing($filter, $schoolid)
  	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$sql = "Select a.marking_period_id,a.school_id,a.title,a.syear,a.start_date,a.end_date,
-				GROUP_CONCAT(b.title SEPARATOR ', ') as Terms from school_year a
-				left outer join school_semester b on a.marking_period_id = b.year_id
-				group by a.marking_period_id";
-		//$this->db->select('marking_period_id,school_id,title,syear,start_date,end_date')->from('school_semester')->where('school_id',$schoolid)->where('syear',$syear)->limit(10);
+		if($filter)
+		{
+			$this->db->select('school_year.title as syeartitle,school_semester.marking_period_id,school_semester.year_id,school_semester.school_id,school_semester.title,school_semester.syear,school_semester.start_date,school_semester.end_date')->from('school_semester');
+			$this->db->join('school_year', 'school_semester.year_id = school_year.marking_period_id');
+			$this->db->where('year_id',$filter);
+			$this->db->where('school_semester.school_id',$schoolid)->limit(10);
+		}else{
+			$this->db->select('school_year.title as syeartitle,school_semester.marking_period_id,school_semester.year_id,school_semester.school_id,school_semester.title,school_semester.syear,school_semester.start_date,school_semester.end_date')->from('school_semester');
+			$this->db->join('school_year', 'school_semester.year_id = school_year.marking_period_id');
+			$this->db->where('school_semester.school_id',$schoolid)->limit(10);
+		}
+		
 
    		// run the query and return the result
-   		//$query = $this->db->get();
-		$query = $this->db->query($sql);
+   		$query = $this->db->get();
+		
 		// proceed if records are found
    		if($query->num_rows()>0)
    		{
@@ -92,30 +99,7 @@ class Schoolterms_model extends CI_Model
 			}
 	 	}
 	
-	//Manage marking period Id
-	public function getMarkingPeriodId()
-	{
-		//$this->db->select('fn_marking_period_seq()');
-		//$query = $this->db->get();
-		//$this->db->call_function('fn_marking_period_seq');
-		//$this->db->query("call fn_marking_period_seq()");
-		//$query = $this->db->query("select fn_marking_period_seq()");
-		//echo $query->result_array();
-		
-		//$vars = get_object_vars ( $query );
-		//print_r ($vars);
-		
-		
-		$data = array(
-		   'id' => NULL 
-		);
-		
-		$this->db->insert('marking_period_id_generator', $data); 
-		$id = $this->db->insert_id();
-		$this->db->flush_cache();
-		
-		return $id;
-	}
+	
 	
 	public function PopulateSchoolTermsDDLByyearId($syearId)
  	{
@@ -137,20 +121,6 @@ class Schoolterms_model extends CI_Model
 			return FALSE;
 		}
  	}
-	
-	
-	//Add new school year
-	public function addschoolyear($data)
- 	{
- 		//This section will be used to add the person data
- 		
-		$this->db->insert('school_year', $data);
-		$id = $this->db->insert_id();
-		$this->db->flush_cache();
-		//echo "marking period Id: " . $id;
-		return $id;
- 	}
-	
 	
 	
 	
