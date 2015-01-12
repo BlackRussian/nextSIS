@@ -67,7 +67,7 @@
 		                	
 							
 	                  		<div class="form-actions">
-	                  			<a href="/gradelevels" class="btn"> <i class="icon-chevron-left icon-black"></i>Cancel</a>
+	                  			<a href="/schoolquarter/<?php echo $semester_id ;?>" class="btn"> <i class="icon-chevron-left icon-black"></i>Cancel</a>
 							          <?php echo form_submit('submit','Submit', 'class="btn btn-primary"'); ?>
 					        </div>
 				          	<?php echo form_close(); ?>

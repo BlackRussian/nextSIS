@@ -42,8 +42,9 @@ class SchoolQuarter extends CI_Controller
 
 		$this->load->model('schoolquarter_model');
 		$this->load->model('dbfunctions_model');
-
-		$this->breadcrumbcomponent->add('School Quarter','/schoolquarter');
+		$this->breadcrumbcomponent->add('School Years','/schoolyear');
+		//$this->breadcrumbcomponent->add('School Terms', '/schoolterms');
+		
 	}
 	
 	function _remap($method, $params = array()){
@@ -54,6 +55,12 @@ class SchoolQuarter extends CI_Controller
         	$this->index($method);
         }
 	}
+	function addSemesterBreadCrumb($semesterid)
+	{
+		$result = $this->schoolquarter_model->GetSchoolTermById($semesterid);
+				$this->breadcrumbcomponent->add('School Terms', '/schoolterms/'.$result->year_id);
+				$this->breadcrumbcomponent->add('School Quarter','/schoolquarter/'.$semesterid);
+	}
 	function index($semesterid = null)
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
@@ -63,12 +70,14 @@ class SchoolQuarter extends CI_Controller
 			if($semesterid)	
 			{
 				$this->viewdata['query'] = $this->schoolquarter_model->listing($semesterid,$this->viewdata['currentschoolid']);
+				$this->addSemesterBreadCrumb($semesterid);
 			}else{
 				$this->session->set_flashdata('msgerr','Please select the year to manage');	
 				redirect('schoolyear','refresh');
 			}
 			
 			
+		
 		
 			$this->viewdata['semesterid'] = $semesterid;
 			
@@ -102,12 +111,12 @@ class SchoolQuarter extends CI_Controller
 			}
 			
 			$this->viewdata['gradelevels'] 	= $gradelevels;	*/
-			$term = $this->schoolquarter_model->GetSemesterBySemesterId($semesterid);
+			$term = $this->schoolquarter_model->GetSchoolTermById($semesterid);
 			$this->viewdata['page_title'] 	= "Add Quarter for - " . $term->syear. " " . $term->title;
 			$this->viewdata['semester_id'] = $term->marking_period_id;
 			$this->viewdata['year_id'] = $term->year_id;
 			$this->viewdata['schoolyear'] = $term->syear;
-			
+			$this->addSemesterBreadCrumb($semesterid);
 			$this->breadcrumbcomponent->add('Add','/schoolquarter/add');
 
 		    $this->load->view('templates/header',$this->viewdata);
@@ -213,7 +222,7 @@ class SchoolQuarter extends CI_Controller
 				$this->viewdata['schoolquarterobj'] = $schoolquarter;
 				$this->viewdata['page_title'] = "Edit School Quarter";
 
-				
+				$this->addSemesterBreadCrumb($schoolquarter->semester_id);
 			}
 
 			$this->breadcrumbcomponent->add('Edit','/schoolquarter/edit/'.$id);

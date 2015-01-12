@@ -76,28 +76,7 @@ class Schoolterms_model extends CI_Model
 		}
  	}
 
-	public function GetSchoolQuatersBySchoolYearId($syearId)
-	 	{
-			$sql = "Select a.marking_period_id,c.title as SchoolYearTitle,b.title as TermTitle,a.school_id,a.title,a.syear,
-					a.start_date,a.end_date from school_quarter a
-				inner join school_semester b on a.semester_id = b.marking_period_id
-				inner join school_year c on a.year_id = c.marking_period_id
-				where a.year_id = $syearId";
-	   		// run the query and return the result
-	   		//$query = $this->db->get();
-			$query = $this->db->query($sql);
-			// proceed if records are found
-	   		if($query->num_rows()>0)
-	   		{
-				// return the data (to the calling controller)
-				return $query->result();
-	   		}
-			else
-			{
-				// there are no records
-				return FALSE;
-			}
-	 	}
+	
 	
 	
 	
@@ -134,15 +113,7 @@ class Schoolterms_model extends CI_Model
 		$this->db->flush_cache();
  	}
 	
-	//Add person model
- 	public function addtermquarter($data)
- 	{
- 		//This section will be used to add the person data
- 		
-		$this->db->insert('school_quarter', $data);
-		
-		$this->db->flush_cache();
- 	}
+	
 	
 	
 	
@@ -151,49 +122,20 @@ class Schoolterms_model extends CI_Model
  	public function updateschoolterm($id,$data)
  	{
  		//This section will be used to update the person data
- 		$this->db->where('id', $id);
-		$this->db->update('term', $data);
-		$this->db->flush_cache();
-	
- 	}
-	
-	public function updateschoolyear($id,$data)
- 	{
- 		//This section will be used to update the person data
  		$this->db->where('marking_period_id', $id);
-		$this->db->update('school_year', $data);
+		$this->db->update('school_semester', $data);
 		$this->db->flush_cache();
 	
  	}
- 	//Get Grade Levels
-	public function GetGradeLevels($schoolid)
- 	{
- 		
-		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,title')->from('school_gradelevels')->where('school_id',$schoolid);
-
-   		// run the query and return the result
-   		$query = $this->db->get();
-		
-		// proceed if records are found
-   		if($query->num_rows()>0)
-   		{
-			// return the data (to the calling controller)
-			return $query->result();
-   		}
-		else
-		{
-			// there are no records
-			return FALSE;
-		}
- 	}
 	
+	
+ 	
 	//Get Grade Levels
 	public function GetSchoolTermById($id)
  	{
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,school_id,title,syear,startdate,enddate')->from('term')->where('id',$id);
+		$this->db->select('marking_period_id,short_name,year_id,school_id,title,syear,start_date,end_date')->from('school_semester')->where('marking_period_id',$id);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -202,7 +144,7 @@ class Schoolterms_model extends CI_Model
    		if($query->num_rows()>0)
    		{
 			// return the data (to the calling controller)
-			return $query->result();
+			return $query->row();
    		}
 		else
 		{
@@ -224,7 +166,7 @@ class Schoolterms_model extends CI_Model
    		if($query->num_rows()>0)
    		{
 			// return the data (to the calling controller)
-			return $query->result();
+			return $query->row();
    		}
 		else
 		{

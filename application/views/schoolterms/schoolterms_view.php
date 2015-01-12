@@ -5,10 +5,10 @@
        		<div class="block-content collapse in">
           		<div class="span12">
           			<?php $this->load->view('shared/display_notification.php');?>
-					<h3>School Year</h3>
+					<h3>Manage School Semesters/Terms for - <?php echo $syeartitle; ?></h3>
 					<div class="table-toolbar">
                     	<div class="btn-group">
-                    		<a href="/schoolterms/add"><button class="btn btn-success"><?php echo $this->lang->line("add_new_schoolterm");?><i class="icon-plus icon-white"></i></button></a>
+                    		<a href="/schoolterms/add/<?php echo $yearid;?>"><button class="btn btn-success"><?php echo $this->lang->line("add_new_schoolterm");?><i class="icon-plus icon-white"></i></button></a>
                     	</div>
 					</div>	
 					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
@@ -26,10 +26,7 @@
 						<th>
 							End Date
 						</th>
-						<th>
-							Terms
-						</th>
-						
+											
 						
 						<th>
 							&nbsp;
@@ -67,13 +64,13 @@
 							<td>
 								<?php echo $sterm->end_date ?>
 							</td>
-							<td>
-								<?php echo $sterm->Terms ?>
-							</td>
-							
+														
 							<td>
 									
-								<a href="/schoolterms/newedit/<?php echo urlencode($sterm->marking_period_id); ?>"><?php echo $this->lang->line("editoption");?></a>
+								<a href="/schoolterms/edit/<?php echo urlencode($sterm->marking_period_id); ?>"><?php echo $this->lang->line("editoption");?></a>
+							</td>
+							<td>
+								<a href="/schoolquarter/<?php echo urlencode($sterm->marking_period_id); ?>"><?php echo "Manage Quarters";?></a>
 							</td>
 							
 						</tr>
