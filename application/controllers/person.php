@@ -43,6 +43,7 @@ class Person extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('person_model');
+		$this->load->model('schoolclass_model');
 		$this->lang->load('person');
 
 		$session_data = $this->session->userdata('logged_in');
@@ -54,7 +55,7 @@ class Person extends CI_Controller
 		$this->viewdata['id']  				= $session_data['id'];
 		$this->viewdata['nav'] 				= $this->navigation->load('people');
 		
-		$this->breadcrumbcomponent->add('People', '/people');
+		$this->breadcrumbcomponent->add('People', '/person');
 
 		
 		$this->sidemenu = array
@@ -115,6 +116,7 @@ class Person extends CI_Controller
 			$this->load->view('templates/sidenav', $this->viewdata);			
 			$this->load->view('person_view', $this->viewdata);
 			$this->load->view('templates/footer');	
+			$this->breadcrumbcomponent->add('People', '/people/'.$filter);
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -165,10 +167,12 @@ class Person extends CI_Controller
 			$this->viewdata['roles'] 	= $this->person_model->GetPersonRoles();
 			$this->viewdata['nav'] 		= $this->navigation->load('people');
 
+			$this->breadcrumbcomponent->add('Add','/people/add/'.$role);
 			$this->load->view('templates/header', $this->viewdata);
 			$this->load->view('templates/sidenav', $this->viewdata);
 			$this->load->view('person/add', $this->viewdata);
 			$this->load->view('templates/footer');
+			
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -300,6 +304,120 @@ class Person extends CI_Controller
 			redirect('login','refresh');
 		}
 	}
+
+	function addclass()
+	{
+		//$this->load->model('person_model','',TRUE);
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+			$this->load->library('form_validation');
+
+			// set the data associative array that is sent to the home view (and display/send)
+			
+			
+			$this->lang->load('person'); // default language option taken from config.php file 				
+			
+			//Set the id that should be updated
+			$syear= $this->input->post('syear');
+			$class_id = $this->input->post('class_id');
+			$person_id = $this->input->post('person_id');
+					
+			$this->form_validation->set_rules('class_id', 'class_id', 'trim|required|xss_clean');
+			
+
+			if($this->form_validation->run() == FALSE) 
+   			{
+				$this->assignclass($id);
+			}else{
+				
+				$data = array(
+					'person_id' => $person_id,
+					'class_id' => $class_id,
+					'year' => $syear
+					
+				);
+				
+				
+				$this->person_model->updatepersonclass($person_id,$syear,$data);
+				
+				redirect('person','listing');
+			}
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
+	}
+	 // The add function is used to load a person record for edit
+	function assignclass($id)
+	{
+		    if($this->session->userdata('logged_in')) // user is logged in
+			{
+				// get session data
+				$session_data 				= $this->session->userdata('logged_in');
+				
+				// set the data associative array that is sent to the home view (and display/send)
+				$this->load->helper(array('form', 'url')); // load the html form helper
+				$this->viewdata['username'] 			= $session_data['username'];
+				$this->lang->load('person'); // default language option taken from config.php file 	
+				//$this->load->view('person_view', $data);
+				
+				// if the person model returns TRUE then call the view
+				if(!$this->load->model('person_model','',TRUE))
+				{
+					$this->lang->load('person'); // default language option taken from config.php file 	
+					$rows 					= $this->person_model->getpersonbyid($id);
+					foreach($rows as $row)
+					{
+						$this->viewdata['fname'] 		= $row->first_name;
+						$this->viewdata['mname'] 		= $row->middle_name;
+						$this->viewdata['lname']		= $row->surname;
+						$this->viewdata['cname'] 		= $row->common_name;
+						$this->viewdata['genderid']		= $row->gender_id;
+						$this->viewdata['titleid'] 		= $row->title_id;
+						$this->viewdata['uname'] 		= $row->username;
+						$this->viewdata['personid'] 	= $row->id;
+						$this->viewdata['dob'] 			= $row->dob;
+						$this->viewdata['fullname']  = $row->first_name . " " . $row->middle_name . " " . $row->surname;
+					}
+					$result 				= $this->schoolclass_model->GetSchoolClasses($this->viewdata['currentschoolid']);
+					$classes[""]			="Select Class";
+					foreach($result as $row){
+		            	$classes[$row->id]=$row->title;
+		        	}
+					$this->viewdata['classes'] 		= $classes;
+
+					
+					$result1 = $this->person_model->GetStudentClassByStudent($id,$this->viewdata['currentsyear']);					
+					if($result1)
+					{
+						$this->viewdata['classid'] 	= $result1->class_id;
+					}else{
+						$this->viewdata['classid']="";
+					}
+		        	
+				}	
+				
+				$this->viewdata['nav'] 				= $this->navigation->load('people');
+				$this->viewdata['page_title']		= "Assign Class";				
+
+				//UDF setup
+				$this->load->model('udf_model');
+				$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
+				$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['currentschoolid'],1,$id);
+				$this->breadcrumbcomponent->add('Assign Class','/people/assignclass/'.$id);
+				$this->load->view('templates/header', $this->viewdata);
+				$this->load->view('templates/sidenav');	
+				$this->load->view('person/edit_studentclass_view', $this->viewdata);
+				$this->load->view('templates/footer');
+			}
+			else // not logged in - redirect to login controller (login page)
+			{
+				redirect('login','refresh');
+			}
+	}
 	
 	
     // The add function is used to load a person record for edit
@@ -363,7 +481,7 @@ class Person extends CI_Controller
 				$this->load->model('udf_model');
 				$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
 				$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['currentschoolid'],1,$id);
-
+				$this->breadcrumbcomponent->add('Edit','/person/edit/'.$id);
 				$this->load->view('templates/header', $this->viewdata);
 				$this->load->view('templates/sidenav');	
 				$this->load->view('person/edit', $this->viewdata);

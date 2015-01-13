@@ -29,7 +29,16 @@
 										<td><?php echo $person->roles ?></td>
 										<td>
 											<a href="/person/edit/<?php echo urlencode($person->id); ?>"><?php echo $this->lang->line("edit_person");?></a>
+											
 										</td>
+										
+										<?php if($filter && $filter=="3")
+												{
+													
+													echo "<td>
+													<a href='/person/assignclass/" .  urlencode($person->id) . "';>Assign Class</a>										
+													</td>";
+												}?>
 									</tr>
 								<?php }}?>
 							</tbody>

@@ -164,6 +164,34 @@ class Person_model extends CI_Model
 		}
  	}
 
+	
+	public function updatepersonclass($personid, $year, $data)
+	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('person_id,class_id')->from('person_class')->where('person_id',$personid)->where('year', $year);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+   			$this->db->flush_cache();
+			$this->db->where('person_id', $personid);
+			$this->db->where('year', $year);
+			$this->db->update('person_class', $data);
+			$this->db->flush_cache();
+   		}
+		else
+		{
+			// there are no records
+			$this->db->insert('person_class', $data);
+			$this->db->flush_cache();
+		}
+		
+	}
+	
+
  	//Get current Person Roles
  	public function getpersonrolesbypersonid($personid)
 	{
@@ -186,6 +214,26 @@ class Person_model extends CI_Model
 		}
 		
 	}
+	
+	public function GetStudentClassByStudent($studentid, $syear)
+	{
+		
+		$this->db->select('person_id,class_id,year')->from('person_class')->where('person_id',$studentid)->where('year',$syear);
+		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->row();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+	}
+	
  	//Get all Person Genders
 	public function GetPersonGender($langid)
  	{
