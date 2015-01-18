@@ -10,7 +10,7 @@
         					<?php echo form_open('person/addclass', 'method="post" class="form-horizontal"'); ?>
 							<?php echo "<input type='hidden' id='school_id' name='school_id' value='" .$currentschoolid ."'  />"?>
 							<div class="control-group">
-								<label class="control-label" for="fname">Student Name</label>
+								<label class="control-label" for="fname">Name</label>
 			                	<div class="controls">
 			                      	<?php
 			                      	 echo  form_hidden('syear',set_value('syear', $currentsyear));
@@ -32,7 +32,7 @@
 		                    	</div>
 		                	</div>
 	                  		<div class="form-actions">
-	                  			<a href="/gradelevels" class="btn"> <i class="icon-chevron-left icon-black"></i>Cancel</a>
+	                  			<a href="/person/<?php echo($personrole)?>" class="btn"> <i class="icon-chevron-left icon-black"></i>Cancel</a>
 							          <?php echo form_submit('submit','Submit', 'class="btn btn-primary"'); ?>
 					        </div>
 				          	<?php echo form_close(); ?>

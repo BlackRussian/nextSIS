@@ -32,11 +32,11 @@
 											
 										</td>
 										
-										<?php if($filter && $filter=="3")
+										<?php if($filter && ($filter=="3" || $filter=="2"))
 												{
 													
 													echo "<td>
-													<a href='/person/assignclass/" .  urlencode($person->id) . "';>Assign Class</a>										
+													<a href='/person/assignclass/" .  urlencode($person->id) . "/".urlencode($filter)."';>Assign Class</a>										
 													</td>";
 												}?>
 									</tr>

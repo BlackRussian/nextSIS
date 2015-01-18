@@ -351,7 +351,7 @@ class Person extends CI_Controller
 		}
 	}
 	 // The add function is used to load a person record for edit
-	function assignclass($id)
+	function assignclass($id,$personrole)
 	{
 		    if($this->session->userdata('logged_in')) // user is logged in
 			{
@@ -399,7 +399,7 @@ class Person extends CI_Controller
 					}
 		        	
 				}	
-				
+				$this->viewdata['personrole']       = $personrole;
 				$this->viewdata['nav'] 				= $this->navigation->load('people');
 				$this->viewdata['page_title']		= "Assign Class";				
 
