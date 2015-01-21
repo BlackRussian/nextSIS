@@ -54,7 +54,7 @@ class Person_model extends CI_Model
 		}
  	}
 	//Add person model
- 	public function addperson($data,$roledata)
+ 	public function addperson($data,$roledata,$schoolid)
  	{
  		//This section will be used to add the person data
  		
@@ -76,6 +76,10 @@ class Person_model extends CI_Model
 				
 			}
 		}
+		$this->db->flush_cache();
+		$sdata = array('person_id' => $id,
+		'school_id' => $scoolid);
+		$this->db->insert('person_school',$sdata);
 		
 		return $id;
  	}
@@ -112,11 +116,13 @@ class Person_model extends CI_Model
 		
  	}
  	//Get Person by person id
-	public function getpersonbyid($personid)
+	public function getpersonbyid($personid, $schoolid)
  	{
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id,username, dob')->from('person')->where('id',$personid);
+		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id,username, dob')->from('person');
+		$this->db->join('person_school','person.id = person_school.person_id');
+		$this->db->where('person.id',$personid)->where('person_school.school_id', $schoolid);
 
    		// run the query and return the result
    		$query = $this->db->get();

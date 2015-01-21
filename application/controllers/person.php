@@ -234,7 +234,7 @@ class Person extends CI_Controller
 					'dob' => $dateArr[2] . '-'. $dateArr[1] . '-' . $dateArr[0]
 				);
 				$roledata 		= $this->input->post('userrole');
-				$person_id 		= $this->person_model->addperson($data,$roledata);
+				$person_id 		= $this->person_model->addperson($data,$roledata,$session_data["currentschoolid"]);
 
 				$this->Insert_Update_UDF($person_id);
 				redirect('person','listing');
@@ -368,7 +368,7 @@ class Person extends CI_Controller
 				if(!$this->load->model('person_model','',TRUE))
 				{
 					$this->lang->load('person'); // default language option taken from config.php file 	
-					$rows 					= $this->person_model->getpersonbyid($id);
+					$rows 					= $this->person_model->getpersonbyid($id, $this->viewdata['currentschoolid']);
 					foreach($rows as $row)
 					{
 						$this->viewdata['fname'] 		= $row->first_name;
@@ -438,7 +438,7 @@ class Person extends CI_Controller
 				if(!$this->load->model('person_model','',TRUE))
 				{
 					$this->lang->load('person'); // default language option taken from config.php file 	
-					$rows 					= $this->person_model->getpersonbyid($id);
+					$rows 					= $this->person_model->getpersonbyid($id,$this->viewdata['currentschoolid']);
 					foreach($rows as $row)
 					{
 						$this->viewdata['fname'] 		= $row->first_name;
@@ -467,7 +467,7 @@ class Person extends CI_Controller
 
 					$this->viewdata['roles'] 		= $this->person_model->GetPersonRoles();
 
-					$result 						= $this->person_model->getpersonrolesbypersonid($id);					
+					$result 						= $this->person_model->getpersonrolesbypersonid($id, $this->viewdata['currentschoolid'] );					
 					foreach($result as $row){
 		            	$personroles[$row->role_id]	= $row->role_id;
 		        	}
