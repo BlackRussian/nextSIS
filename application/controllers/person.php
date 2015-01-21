@@ -115,6 +115,7 @@ class Person extends CI_Controller
 			$this->load->view('templates/header', $this->viewdata);
 			$this->load->view('templates/sidenav', $this->viewdata);			
 			$this->load->view('person_view', $this->viewdata);
+			$this->load->view('shared/display_notification', $this->viewdata);
 			$this->load->view('templates/footer');	
 			$this->breadcrumbcomponent->add('People', '/people/'.$filter);
 		}
@@ -237,6 +238,8 @@ class Person extends CI_Controller
 				$person_id 		= $this->person_model->addperson($data,$roledata,$session_data["currentschoolid"]);
 
 				$this->Insert_Update_UDF($person_id);
+				
+				$this->session->set_flashdata('msgsuccess','Record Saved');	
 				redirect('person','listing');
 			}
 		}
@@ -296,6 +299,7 @@ class Person extends CI_Controller
 				
 				$this->person_model->updateperson($id,$data,$roledata);
 				$this->Insert_Update_UDF($id);
+				$this->session->set_flashdata('msgsuccess','Record Saved');	
 				redirect('person','listing');
 			}
 		}
@@ -341,7 +345,7 @@ class Person extends CI_Controller
 				
 				
 				$this->person_model->updatepersonclass($person_id,$syear,$data);
-				
+				$this->session->set_flashdata('msgsuccess','Record Saved');	
 				redirect('person','listing');
 			}
 		}
