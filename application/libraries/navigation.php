@@ -69,7 +69,7 @@ class Navigation{
 				'parent'	=>	0
 			),
 			8 => 	array(
-				'text'		=> "Manage School Years",	
+				'text'		=> "Manage School Terms",	
 				'link'		=> 	base_url().'schoolyear',
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-home',

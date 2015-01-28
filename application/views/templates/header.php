@@ -1,25 +1,5 @@
 <!DOCTYPE html>
-<!--
- nextSIS home view
- 
- PURPOSE 
- This displays the homepage once the user has logged in.
- 
- LICENCE 
- This file is part of nextSIS.
- 
- nextSIS is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as
- published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-  
- nextSIS is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-  
- You should have received a copy of the GNU General Public License along with nextSIS. If not, see
- <http://www.gnu.org/licenses/>.
-  
- Copyright 2012 http://nextsis.org
--->
-
+<?php  $session_info = $this->session->userdata('logged_in');?>
 <html>
 	<head>
 		<meta charset="utf-8">
@@ -54,7 +34,7 @@
   				   	<div class="nav-collapse collapse">
                 <ul class="nav pull-right">
                             <li class="dropdown">
-                                <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-user"></i>&nbsp;<?php echo $this->session->userdata('logged_in')['fullname'];?>&nbsp;<i class="caret"></i>
+                                <a href="#" role="button" class="dropdown-toggle" data-toggle="dropdown"> <i class="icon-user"></i>&nbsp;<?php echo $session_info['fullname'];?>&nbsp;<i class="caret"></i>
 
                                 </a>
                                 <ul class="dropdown-menu">
