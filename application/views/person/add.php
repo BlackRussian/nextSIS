@@ -24,12 +24,14 @@
 		                    <label class="control-label" for="fname"><?php echo "First Name";?></label>
 		                    <div class="controls">		                    			                    	
 		                    	<?php echo form_input('fname', set_value('fname'));  ?>
+		                    	
 		                    </div>
 		                </div>
 						<div class="control-group">
 		                    <label class="control-label" for="mname"><?php echo "Middle Name";?></label>
 		                    <div class="controls">		                    			                    	
 		                    	<?php echo form_input('mname', set_value('mname'));  ?>
+		                    	<p class="help-block">Enter middle Name here.</p>
 		                    </div>
 		                </div>
 						<div class="control-group">
