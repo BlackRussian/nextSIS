@@ -140,7 +140,7 @@ class Schoolclasses extends CI_Controller
 
 				$this->session->set_flashdata('msgsuccess', 'Class added successfully.');
 			    
-			    redirect('schoolclasses/' . $this->input->post('subject_id'));
+			    redirect('schoolclasses/' . $this->input->post('selGradeLevel'));
 			}
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -201,7 +201,7 @@ class Schoolclasses extends CI_Controller
 			
 			// field is trimmed, required and xss cleaned respectively
 			$this->form_validation->set_rules('selGradeLevel', 'Grade Level', 'trim|required|xss_clean');
-
+			$glevelid = $this->input->post('gradelevel_id');
 			if($this->form_validation->run() == FALSE) 
    			{
 				$this->edit($this->input->post('class_id'));
@@ -219,7 +219,7 @@ class Schoolclasses extends CI_Controller
 
 				$this->session->set_flashdata('msgsuccess', 'Class updated successfully.');
 			    
-			    redirect('schoolclasses');
+			    redirect('schoolclasses/' . $glevelid);
 			}
 		}
 		else // not logged in - redirect to login controller (login page)

@@ -10,6 +10,7 @@
 
         				<?php echo form_open('schoolclasses/editrecord', 'method="post" class="form-horizontal"'); ?>
         				<?php echo "<input type='hidden' id='class_id' name='class_id' value='" . $classobj->id ."'  />"?>
+        				<?php echo "<input type='hidden' id='gradelevel_id' name='gradelevel_id' value='" . $classobj->gradelevel_id ."'  />"?>
         				<div class="control-group">
 							<label class="control-label" for="selGradeLevel">Name/Title</label>
 			                <div class="controls">
