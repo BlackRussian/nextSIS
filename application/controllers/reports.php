@@ -302,7 +302,7 @@ class Reports extends CI_Controller
 			$this->breadcrumbcomponent->add('Student List', '/reports/student_list/' . $class_id);
 			$this->breadcrumbcomponent->add('Report Profile', '/reports/report_profile');
 			
-			$this->data['page_title']		= "Student Profile for " . $student ;
+			$this->data['page_title']		= "Report Profile for " . $student ;
 			$this->data['student_id']		= $id;
 			$this->data['period']			= $period;
 			$this->data['class_id']			= $class_id;

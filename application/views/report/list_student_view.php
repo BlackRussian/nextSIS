@@ -29,7 +29,7 @@
 					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
 						<thead>
 							<tr>
-								<th>Name</th>
+								<th>Student Name</th>
 								<th >&nbsp;</th>
 							</tr>
 						</thead>
@@ -38,7 +38,7 @@
 							<tr>
 								<td><?php echo $student->name ?>
 								<?php //echo var_dump($student)?></td>								
-								<td><a style="cursor:pointer;" onclick="updateProfile('<?php echo $student->person_id; ?>')"><?php echo "Update Student Grades";?></a></td>
+								<td><a style="cursor:pointer;" onclick="updateProfile('<?php echo $student->person_id; ?>')"><?php echo "Update Report Profile";?></a></td>
 							</tr>
 						<?php } ?>
 						<tbody>
