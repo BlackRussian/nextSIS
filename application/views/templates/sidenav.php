@@ -10,7 +10,7 @@
 			  	$('.hide-sidebar').hide();
 			  	$('.show-sidebar').show();
 			  });
-			})</script>;";
+			})</script>";
 			echo $script;
 		} ?>
 	<!--div class="well span7">
