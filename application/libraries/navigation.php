@@ -33,13 +33,13 @@ class Navigation{
 				'icon-class'=>	'icon-user',
 				'parent'	=>	0
 			),							
-			/*3 => 	array(
+			3 => 	array(
 				'text'		=> 	'Reports',	
-				'link'		=> 	base_url() . 'reports/dashboard',
+				'link'		=> 	base_url() . 'reports/class_list',
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-book',
 				'parent'	=>	0
-			),*/
+			),
 			4 => 	array(
 				'text'		=> 	'Courses',	
 				'link'		=> 	base_url() . 'courses',

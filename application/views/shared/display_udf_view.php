@@ -5,8 +5,7 @@
 	if (!isset($udfDisplay))
 		$udfDisplay = FALSE;
 
-		
-	if (isset($udf)){
+	if ($udf){		
 		foreach($udf as $field) {
 			$udf_field_name			= "udf_field[". $counter ."]";
 			$udf_types_name			= "udf_types[". $counter ."]";

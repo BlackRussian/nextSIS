@@ -169,4 +169,254 @@ class Reports extends CI_Controller
 		}
 		
 	}
+
+	function class_list()
+	{
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+				
+			// set the data associative array that is sent to the home view (and display/send)
+			$this->data['username'] 			= $session_data['username'];
+			$this->data['currentschoolid'] 		= $session_data['currentschoolid'];
+			$this->data['currentsyear'] 		= $session_data['currentsyear'];		
+			$this->data['roles'] 				= $session_data['role'];	
+			$this->data['id'] 					= $session_data['id'];	
+			$this->data['nav'] 					= $this->navigation->load('Report Profile');
+
+			$this->breadcrumbcomponent->add('Student Report Profile', '/reports/class_list');
+
+			$this->load->model('report_model');
+			$this->data['query'] = $this->report_model->listing($this->data['roles'], $this->data['id'], $this->data['currentsyear'], $this->data['currentschoolid']);	
+
+
+			$this->load->view('templates/header', $this->data);
+			$this->load->view('templates/sidenav');
+			$this->load->view('report/list_class_view', $this->data);
+			$this->load->view('templates/footer');
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
+	}
+
+	function student_list($class_id)
+	{
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+				
+			// set the data associative array that is sent to the home view (and display/send)
+			$this->data['username'] 			= $session_data['username'];
+			$this->data['currentschoolid'] 		= $session_data['currentschoolid'];
+			$this->data['currentsyear'] 		= $session_data['currentsyear'];		
+			$this->data['roles'] 				= $session_data['role'];	
+			$this->data['id'] 					= $session_data['id'];	
+			$this->data['nav'] 					= $this->navigation->load('Report Profile');
+
+			$this->breadcrumbcomponent->add('Student Report Profile', '/reports/class_list');
+			$this->breadcrumbcomponent->add('Student List', '/reports/student_list');
+
+			$this->load->model('report_model');
+			$student_listing					= $this->report_model->student_listing($class_id, $this->data['currentsyear'], $this->data['currentschoolid']);	
+
+			$this->data['query']				= $student_listing;
+
+
+			$this->data['page_title']			= "";
+			if (count($student_listing) > 0){
+				$this->data['page_title']		= "Student List for class " . $student_listing[0]->class ;
+			}
+			
+			$this->load->model('school_model');
+
+			$result 							= $this->school_model->GetSchoolTerms($this->data['currentschoolid'], $this->data['currentsyear']);
+			
+			if($result){
+				foreach($result as $row){
+	            	$periods[$row->marking_period_id] = $row->short_name;
+	        	}
+        	}
+
+			$this->data['periods'] 				= $periods;
+			$this->data['class_id'] 			= $class_id;
+
+
+			$this->load->view('templates/header', $this->data);
+			$this->load->view('templates/sidenav');
+			$this->load->view('report/list_student_view', $this->data);
+			$this->load->view('templates/footer');
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
+	}
+
+
+	function report_profile($id,$period,$class_id)
+	{
+		
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data 						= $this->session->userdata('logged_in');
+			$this->data['username'] 			= $session_data['username'];
+			$this->data['currentschoolid'] 		= $session_data['currentschoolid'];
+			$this->data['currentsyear'] 		= $session_data['currentsyear'];		
+			$this->data['roles'] 				= $session_data['role'];	
+			$this->data['id'] 					= $session_data['id'];	
+			$this->data['nav'] 					= $this->navigation->load('Report Profile');
+
+			$this->load->model('udf_model');
+			
+			// set the data associative array that is sent to the home view (and display/send)
+			
+			$this->load->helper(array('form', 'url')); // load the html form helper
+
+			$this->lang->load('person'); // default language option taken from config.php file 
+			$this->load->model('person_model','',TRUE);
+							
+			$rows 								= $this->person_model->getpersonbyid($id,$this->data['currentschoolid']);
+			$student = "";
+			foreach($rows as $row)
+			{
+				$student = $row->first_name . ((empty($row->middle_name))? "":" ".  strtoupper(substr($row->middle_name,1,1) . ".")). " " . $row->surname;
+				//$this->viewdata['fname'] 		= $row->first_name;
+				//$this->viewdata['mname'] 		= $row->middle_name;
+				//$this->viewdata['lname']		= $row->surname;
+				//$this->viewdata['cname'] 		= $row->common_name;
+				//$this->viewdata['genderid']		= $row->gender_id;
+				//$this->viewdata['titleid'] 		= $row->title_id;
+				//$this->viewdata['uname'] 		= $row->username;
+				//$this->viewdata['personid'] 	= $row->id;
+				//$this->viewdata['dob'] 			= $row->dob;
+			}
+			
+			
+
+			$this->breadcrumbcomponent->add('Student Report Profile', '/reports/class_list');
+			$this->breadcrumbcomponent->add('Student List', '/reports/student_list/' . $class_id);
+			$this->breadcrumbcomponent->add('Report Profile', '/reports/report_profile');
+			
+			$this->data['page_title']		= "Student Profile for " . $student ;
+			$this->data['student_id']		= $id;
+			$this->data['period']			= $period;
+			$this->data['class_id']			= $class_id;
+
+			//UDF setup
+			$this->data['udf'] 				= $this->udf_model->GetUdfs($session_data['currentschoolid'],2,$id,$period);
+
+
+			$this->load->view('templates/header', $this->data);
+			$this->load->view('templates/sidenav');
+			$this->load->view('report/report_profile_view', $this->data);
+			$this->load->view('templates/footer');
+			
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
+	}
+
+	// The editrecord function edits a person
+	function editrecord()
+	{
+		//$this->load->model('person_model','',TRUE);
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data 				= $this->session->userdata('logged_in');
+			$this->load->library('form_validation');
+
+			// set the data associative array that is sent to the home view (and display/send)
+			$data['username'] 			= $session_data['username'];
+			
+			$this->lang->load('person'); // default language option taken from config.php file 				
+			
+			//Set the id that should be updated
+			$student_id 				= $this->input->post('student_id');
+			$class_id 					= $this->input->post('class_id');
+			$period 					= $this->input->post('period');
+						
+			$this->UDF_Validation();
+
+			if($this->form_validation->run() == FALSE) 
+   			{
+   				$this->report_profile($student_id,$period,$class_id);			
+			}else{				
+				$this->Insert_Update_UDF($student_id,$period);
+				$this->session->set_flashdata('msgsuccess','Record Saved');	
+				redirect('reports/student_list/'. $class_id,'refresh');
+			}
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
+	}
+
+	//UDF Validation 
+	function UDF_Validation(){
+		$udf_field  		= $this->input->post('udf_field', TRUE);
+		$udf_types	 		= $this->input->post('udf_types', TRUE);
+		$udf_validations	= $this->input->post("udf_validations", TRUE);
+		$udf_titles 		= $this->input->post("udf_titles", TRUE);
+		
+		if (!empty($udf_field)){
+			foreach ($udf_field as $key => $value) {
+				$this->form_validation->set_rules('udf_field[' . $key . ']', $udf_titles[$key], $udf_validations[$key]);
+			}
+		}
+	}
+
+	function Insert_Update_UDF($person_id, $period){
+		$this->load->model('udf_model');
+		$udf_field  		= $this->input->post('udf_field', TRUE);
+		$udf_types	 		= $this->input->post('udf_types', TRUE);
+		$udf_validations	= $this->input->post("udf_validations", TRUE);
+		$udf_titles 		= $this->input->post("udf_titles", TRUE);
+		$udf_ids 			= $this->input->post("udf_ids", TRUE);
+		$udf_data_ids 		= $this->input->post("udf_data_ids", TRUE);
+		$insertData			= array();		
+		$updateData			= array();
+
+		foreach ($udf_field as $key => $value) {
+			$isAdd = empty($udf_data_ids[$key]);
+			switch ($udf_types[$key]) {				
+				default:
+					if ($isAdd){
+						$insertData[count($insertData)] = array(							
+							'udf_id' 		=> $udf_ids[$key],
+							'udf_value' 	=> $value,
+							'fk_id' 		=> $person_id,				
+							'fk_id_2' 		=> $period
+						);
+					}else{
+						$updateData[count($updateData)] = array(							
+							'udf_data_id' 	=> $udf_data_ids[$key],
+							'udf_id' 		=> $udf_ids[$key],
+							'udf_value' 	=> $value,
+							'fk_id' 		=> $person_id		
+						);
+					}
+					break;
+			}			
+		}
+		
+		
+		if(count($insertData) > 0){
+			$this->udf_model->AddUDFValues($insertData);
+		}
+		
+		
+		if(count($updateData) > 0){
+			$this->udf_model->UpdateUDFValues($updateData);
+		}
+		
+	}
 }
