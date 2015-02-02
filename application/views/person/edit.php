@@ -20,7 +20,9 @@
 		                <div class="control-group">
 		                    <label class="control-label" for="sel_category"><?php echo "Title";?></label>
 		                    <div class="controls">		                                        			                    	
-		                    	<?php echo form_dropdown('Title', $titles ,set_value('Title', $titleid),'id="Title"');  ?>
+		                    	<?php echo form_dropdown('Title', $titles ,set_value('Title', $titleid),'id="Title"');  
+		                    	echo  form_hidden('personrole',set_value('personrole', $personrole));
+		                    	?>
 		                    </div>
 		                </div>
 		                <div class="control-group">
@@ -81,7 +83,7 @@
 		                </div>
  						<?php $this->load->view('shared/display_udf_view');?>
 		                <div class="form-actions">
-	                  		<a href="/person" class="btn"><i class="icon-chevron-left icon-black"></i>Cancel</a>
+	                  		<a href="/person/<?php echo($personrole)?>" class="btn"> <i class="icon-chevron-left icon-black"></i>Cancel</a>
 							          <?php echo form_submit('submit','Submit', 'class="btn btn-primary"'); ?>
 							          
 					    </div>

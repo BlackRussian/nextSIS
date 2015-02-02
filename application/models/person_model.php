@@ -78,7 +78,7 @@ class Person_model extends CI_Model
 		}
 		$this->db->flush_cache();
 		$sdata = array('person_id' => $id,
-		'school_id' => $scoolid);
+		'school_id' => $schoolid);
 		$this->db->insert('person_school',$sdata);
 		
 		return $id;

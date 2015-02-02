@@ -28,7 +28,7 @@
 										<td><?php echo $person->username ?></td>
 										<td><?php echo $person->roles ?></td>
 										<td>
-											<a href="/person/edit/<?php echo urlencode($person->id); ?>"><?php echo $this->lang->line("edit_person");?></a>
+											<a href="/person/edit/<?php echo urlencode($person->id); ?>/<?php echo urlencode($filter); ?>"><?php echo $this->lang->line("edit_person");?></a>
 											
 										</td>
 										

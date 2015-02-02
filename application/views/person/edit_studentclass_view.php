@@ -15,6 +15,7 @@
 			                      	<?php
 			                      	 echo  form_hidden('syear',set_value('syear', $currentsyear));
 									  echo  form_hidden('person_id',set_value('person_id', $personid));
+									  echo  form_hidden('personrole',set_value('personrole', $personrole));
 			                      	 echo  form_label(set_value('fullname', $fullname)); ?>
 			                	</div>
 		                	</div>

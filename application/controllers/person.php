@@ -115,7 +115,7 @@ class Person extends CI_Controller
 			$this->load->view('templates/header', $this->viewdata);
 			$this->load->view('templates/sidenav', $this->viewdata);			
 			$this->load->view('person_view', $this->viewdata);
-			$this->load->view('shared/display_notification', $this->viewdata);
+			
 			$this->load->view('templates/footer');	
 			$this->breadcrumbcomponent->add('People', '/people/'.$filter);
 		}
@@ -240,7 +240,7 @@ class Person extends CI_Controller
 				$this->Insert_Update_UDF($person_id);
 				
 				$this->session->set_flashdata('msgsuccess','Record Saved');	
-				redirect('person','listing');
+				redirect('person/' . $this->input->post('personrole'));
 			}
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -300,7 +300,7 @@ class Person extends CI_Controller
 				$this->person_model->updateperson($id,$data,$roledata);
 				$this->Insert_Update_UDF($id);
 				$this->session->set_flashdata('msgsuccess','Record Saved');	
-				redirect('person','listing');
+				redirect('person/' . $this->input->post('personrole'));
 			}
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -346,7 +346,7 @@ class Person extends CI_Controller
 				
 				$this->person_model->updatepersonclass($person_id,$syear,$data);
 				$this->session->set_flashdata('msgsuccess','Record Saved');	
-				redirect('person','listing');
+				redirect('person/' . $this->input->post('personrole'));
 			}
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -425,7 +425,7 @@ class Person extends CI_Controller
 	
 	
     // The add function is used to load a person record for edit
-	function edit($id)
+	function edit($id, $personrole = FALSE)
 	{
 		    if($this->session->userdata('logged_in')) // user is logged in
 			{
@@ -480,7 +480,7 @@ class Person extends CI_Controller
 				
 				$this->viewdata['nav'] 				= $this->navigation->load('people');
 				$this->viewdata['page_title']		= "Edit User";				
-
+				$this->viewdata['personrole']       = $personrole;
 				//UDF setup
 				$this->load->model('udf_model');
 				$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
