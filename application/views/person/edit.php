@@ -29,24 +29,28 @@
 		                    <label class="control-label" for="fname"><?php echo "First Name";?></label>
 		                    <div class="controls">		                    			                    	
 		                    	<?php echo form_input('fname', set_value('fname',$fname));  ?>
+		                    	<p class="help-block">Enter First Name here e.g. John, Mary</p>
 		                    </div>
 		                </div>
 						<div class="control-group">
 		                    <label class="control-label" for="mname"><?php echo "Middle Name";?></label>
 		                    <div class="controls">		                    			                    	
 		                    	<?php echo form_input('mname', set_value('mname',$mname));  ?>
+		                    	<p class="help-block">Enter middle Name here.</p>
 		                    </div>
 		                </div>
 						<div class="control-group">
 		                    <label class="control-label" for="lname"><?php echo "Last Name";?></label>
 		                    <div class="controls">		                    			                    	
 		                    	<?php echo form_input('lname', set_value('lname',$lname));  ?>
+		                    	<p class="help-block"> Enter Last name e.g. Brown, Campbell</p>
 		                    </div>
 		                </div>
 		                <div class="control-group">
 		                    <label class="control-label" for="cname"><?php echo "Common Name";?></label>
 		                    <div class="controls">		                    			                    	
 		                    	<?php echo form_input('cname', set_value('cname',$cname));  ?>
+		                    	<p class="help-block">Alias or Called name</p>
 		                    </div>
 		                </div>
 						<div class="control-group">
@@ -59,6 +63,7 @@
 		                    <label class="control-label" for="uname"><?php echo "User Name";?></label>
 		                    <div class="controls">		                    			                    	
 		                    	<?php echo form_input('uname', set_value('uname',$uname), 'readonly="readonly"');  ?>
+		                    	<p class="help-block">Name used for log in</p>
 		                    </div>
 		                </div>
 		                <div class="control-group">
