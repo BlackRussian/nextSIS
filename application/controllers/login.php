@@ -58,7 +58,7 @@ class Login extends CI_Controller
 	       		$cookie = array(
 	   							'name' => 'nextsis',
 	   							'value'  => $school->anchor,
-	   							'expire' => '86500'); //Creates cookie array for storing anchor
+	   							'expire' => '604800'); //Creates cookie array for storing anchor
 
 				$this->input->set_cookie($cookie); //Store anchor cookie
 
@@ -69,7 +69,8 @@ class Login extends CI_Controller
 				$this->lang->load('login'); // load the login language file - the default language option (unused second parameter) is taken from config.php file 		
 				$this->load->view('login_view', $data); // load the standard login form
 			}else{
-				show_404(); //Shows 404 page if no valid school is found for url anchor
+				//redirect('http://www.google.com', 'refresh');
+        show_404(); //Shows 404 page if no valid school is found for url anchor
 			}
 		}
  	}

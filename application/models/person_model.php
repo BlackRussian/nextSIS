@@ -70,17 +70,14 @@ class Person_model extends CI_Model
 			{
 				$rdata = array(
 				'person_id' => $id,
-				'role_id' => $itm);
+				'role_id' => $itm,
+				'school_id' => $schoolid);
 				$this->db->insert('person_role',$rdata);
 				$this->db->flush_cache();
 				
 			}
 		}
-		$this->db->flush_cache();
-		$sdata = array('person_id' => $id,
-		'school_id' => $scoolid);
-		$this->db->insert('person_school',$sdata);
-		
+
 		return $id;
  	}
 	
@@ -121,8 +118,8 @@ class Person_model extends CI_Model
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
 		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id,username, dob')->from('person');
-		$this->db->join('person_school','person.id = person_school.person_id');
-		$this->db->where('person.id',$personid)->where('person_school.school_id', $schoolid);
+		$this->db->join('person_role','person.id = person_role.person_id');
+		$this->db->where('person.id',$personid)->where('person_role.school_id', $schoolid);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -141,7 +138,7 @@ class Person_model extends CI_Model
  	}
 
 	//Get Person by person id
-	public function GetUserProfileInfo($personid)
+	public function GetUserProfileInfo($personid, $schoolid)
  	{
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
@@ -151,7 +148,7 @@ class Person_model extends CI_Model
 		$this->db->join('role','person_role.role_id = role.id');
 		$this->db->join('person_title','person.title_id = person_title.id');
 		$this->db->join('person_gender','person.gender_id = person_gender.id');
-		$this->db->where('person.id',$personid);
+		$this->db->where('person.id',$personid)->where('person_role.school_id',$schoolid);
 		$this->db->group_by("first_name,surname,person.id");
 
    		// run the query and return the result
@@ -199,10 +196,10 @@ class Person_model extends CI_Model
 	
 
  	//Get current Person Roles
- 	public function getpersonrolesbypersonid($personid)
+ 	public function getpersonrolesbypersonid($personid, $schoolid)
 	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('person_id,role_id')->from('person_role')->where('person_id',$personid);
+		$this->db->select('person_id,role_id')->from('person_role')->where('person_id',$personid)->where('school_id', $schoolid);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -224,7 +221,9 @@ class Person_model extends CI_Model
 	public function GetStudentClassByStudent($studentid, $syear)
 	{
 		
-		$this->db->select('person_id,class_id,year')->from('person_class')->where('person_id',$studentid)->where('year',$syear);
+		$this->db->select('person_id,class_id,year')->from('person_class');
+		$this->db->join('person_role', 'person_class.person_id = person_role.person_id');
+		$this->db->where('person_id',$studentid)->where('year',$syear)->where('school_id',$schoolid);
 		$query = $this->db->get();
 		
 		// proceed if records are found

@@ -38,7 +38,13 @@
 													echo "<td>
 													<a href='/person/assignclass/" .  urlencode($person->id) . "/".urlencode($filter)."';>Assign Class</a>										
 													</td>";
-												}?>
+												}
+												if($filter && $filter=="3"){
+													echo "<td>
+													<a href='/person/assignclass/" .  urlencode($person->id) . "/".urlencode($filter)."';>Assign Class</a>										
+													</td>";
+												}
+										?>
 									</tr>
 								<?php }}?>
 							</tbody>

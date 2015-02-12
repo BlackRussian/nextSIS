@@ -95,7 +95,6 @@ class Schoolterms extends CI_Controller
 			$this->load->view('templates/header',$this->viewdata);	
 			$this->load->view('templates/sidenav', $this->viewdata);
 			$this->load->view('schoolterms/schoolterms_view', $this->viewdata);
-			$this->load->view('shared/display_notification', $this->viewdata);
 			$this->load->view('templates/footer',$this->viewdata);	
 		}
 		else // not logged in - redirect to login controller (login page)

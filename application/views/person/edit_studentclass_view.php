@@ -12,10 +12,10 @@
 							<div class="control-group">
 								<label class="control-label" for="fname">Name</label>
 			                	<div class="controls">
+			                		<span class="input uneditable-input"><?php echo $fullname ?></span>
 			                      	<?php
 			                      	 echo  form_hidden('syear',set_value('syear', $currentsyear));
-									  echo  form_hidden('person_id',set_value('person_id', $personid));
-			                      	 echo  form_label(set_value('fullname', $fullname)); ?>
+									  echo  form_hidden('person_id',set_value('person_id', $personid)); ?>
 			                	</div>
 		                	</div>
 							<div class="control-group">
