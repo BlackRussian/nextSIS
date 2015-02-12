@@ -14,6 +14,7 @@
 								<label class="control-label" for="title">Name/Title</label>
 			                	<div class="controls">
 			                      	<?php echo form_input('title',set_value('title', $schoolyearobj->title)); ?>
+			                      	<p class="help-block">Enter the full name of the School Year</p>
 			                	</div>
 		                	</div>
 		                	
@@ -21,6 +22,7 @@
 								<label class="control-label" for="short_name">Short Name</label>
 			                	<div class="controls">
 			                      	<?php echo form_input('short_name',set_value('short_name',$schoolyearobj->short_name)); ?>
+			                      	<p class="help-block">Name of the year F14 , Year 20 etc</p>
 			                	</div>
 		                	</div>
 		                	
@@ -31,6 +33,7 @@
 			                      	<?php 
 			                      	$js = array('name' => 'start_date','value'=>set_value('start_date', $schoolyearobj->start_date), 'id' => 'start_date');
 			                      	echo form_input($js); ?>
+			                      	<p class="help-block">Select start of the School Year </p>
 			                	</div>
 		                	</div>
 		                	<div class="control-group">
@@ -39,6 +42,7 @@
 			                      	<?php 
 			                      	$js = array('name' => 'end_date','value'=>set_value('end_date', $schoolyearobj->end_date), 'id' => 'end_date');
 			                      	echo form_input($js); ?>
+			                      	<p class="help-block">Select end of the School Year</p>
 			                	</div>
 		                	</div>
 		                	
