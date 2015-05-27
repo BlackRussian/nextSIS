@@ -49,7 +49,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </a>
-          <a class="brand" href="/home">SCHOOL NAME and Crest or default logo</a>
+          <a class="brand" href="/login/<?php echo $school_anchor?>"><?php echo $school_title;?></a>
         </div>
       </div>
     </div>
@@ -79,7 +79,7 @@
 	</div>
 
 	<footer class="white navbar-fixed-bottom">
-	  Don't have an account yet? <a href="register.html" class="btn btn-black">Register</a>
+	  <!--Don't have an account yet? <a href="register.html" class="btn btn-black">Register</a-->
 	</footer>
 	<script src="/assets/vendors/jquery-1.9.1.min.js"></script>
 	<script src="/assets/js/bootstrap.min.js"></script>

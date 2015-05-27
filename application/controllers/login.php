@@ -65,6 +65,7 @@ class Login extends CI_Controller
 				//Create view data array
 				$data["schid"] = $school->id;
 				$data["school_title"] = $school->title;
+        $data["school_anchor"] = $param;
 
 				$this->lang->load('login'); // load the login language file - the default language option (unused second parameter) is taken from config.php file 		
 				$this->load->view('login_view', $data); // load the standard login form
