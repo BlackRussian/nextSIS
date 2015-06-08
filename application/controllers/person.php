@@ -47,7 +47,7 @@ class Person extends CI_Controller
 		$this->lang->load('person');
 
 		$session_data = $this->session->userdata('logged_in');
-
+		
 		$this->viewdata['username'] 		= $session_data['username'];
 		$this->viewdata['school_id'] 		= $session_data['currentschoolid'];
 		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
@@ -56,6 +56,7 @@ class Person extends CI_Controller
 		$this->viewdata['nav'] 				= $this->navigation->load('people');
 		
 		$this->breadcrumbcomponent->add('People', '/person');
+
 
 		
 		$this->sidemenu = array
@@ -363,6 +364,7 @@ class Person extends CI_Controller
 	 // The add function is used to load a person record for edit
 	function assignclass($id,$personrole = "none")
 	{
+		echo "the person role is ".$personrole;
 		    if($this->session->userdata('logged_in')) // user is logged in
 			{
 				// get session data
@@ -415,7 +417,8 @@ class Person extends CI_Controller
 
 				//UDF setup
 				$this->load->model('udf_model');
-				$this->viewdata['school_id'] 	= $session_data['currentschoolid'];
+				//$this->viewdata['school_id'] 	= $session_data['currentschoolid'];
+				$this->viewdata['school_id'] 	= $this->viewdata['school_id'];
 				$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['school_id'],1,$id);
 				$this->breadcrumbcomponent->add('Assign Class','/people/assignclass/'.$id);
 				$this->load->view('templates/header', $this->viewdata);
