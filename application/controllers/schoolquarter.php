@@ -58,7 +58,7 @@ class SchoolQuarter extends CI_Controller
 	function addSemesterBreadCrumb($semesterid)
 	{
 		$result = $this->schoolquarter_model->GetSchoolTermById($semesterid);
-				$this->breadcrumbcomponent->add('School Terms', '/schoolterms/'.$result->year_id);
+				$this->breadcrumbcomponent->add('School Semester', '/schoolsemester/'.$result->year_id);
 				$this->breadcrumbcomponent->add('School Quarter','/schoolquarter/'.$semesterid);
 	}
 	function index($semesterid = null)

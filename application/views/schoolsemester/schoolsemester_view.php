@@ -5,10 +5,10 @@
        		<div class="block-content collapse in">
           		<div class="span12">
           			<?php $this->load->view('shared/display_notification.php');?>
-					<h3>Manage School Semesters/Terms for - <?php echo $syeartitle; ?></h3>
+					<h3>School Semesters/Terms for - <?php echo $syeartitle; ?></h3>
 					<div class="table-toolbar">
                     	<div class="btn-group">
-                    		<a href="/schoolterms/add/<?php echo $yearid;?>"><button class="btn btn-success"><?php echo $this->lang->line("add_new_schoolterm");?><i class="icon-plus icon-white"></i></button></a>
+                    		<a href="/schoolsemester/add/<?php echo $yearid;?>"><button class="btn btn-success">Add Semester <i class="icon-plus icon-white"></i></button></a>
                     	</div>
 					</div>	
 					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
@@ -67,7 +67,7 @@
 														
 							<td>
 									
-								<a href="/schoolterms/edit/<?php echo urlencode($sterm->marking_period_id); ?>"><?php echo $this->lang->line("editoption");?></a>
+								<a href="/schoolsemester/edit/<?php echo urlencode($sterm->marking_period_id); ?>"><?php echo $this->lang->line("editoption");?></a>
 							</td>
 							<td>
 								<a href="/schoolquarter/<?php echo urlencode($sterm->marking_period_id); ?>"><?php echo "Manage Quarters";?></a>
@@ -86,36 +86,4 @@
 			</div>
 		</div>
 	</div>
-
-
-
-
-<!--div class="span9" id="content">
-  
-  			<div class="row-fluid">
-  				<div class="span4 navleft">
-  					<ul class="nav nav-pills nav-stacked">
-  						<li ><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
-  						<li class="active"><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
-  						<li><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li>  
-  						<li><a href="../schoolclasses/listing"><?php echo $this->lang->line("schoolclasses");?></a></li>
-  						<li><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 	
-  						<li><a href="../schoolsubjects/listing"><?php echo $this->lang->line("school_subjects");?></a></li> 			  						
-  					</ul>
-  					<div class="well">
-  						<p><b><?php echo $this->lang->line("help");?></b>&nbsp;<?php echo $this->lang->line("sample_help_message");?></p>
-  					</div>
-  				</div>
-  				
-        		<div class="span8">
-					<h1><?php echo $this->lang->line("school_terms");?></h1>
-					
-					<div class="btn-group">
-					
-                    	</div>
-        		</div>  			
-  				  				
-  			</div>
-  		
-  		
-</div>-->
+	

@@ -22,24 +22,23 @@
 
 session_start();
 
-class Schoolterms extends CI_Controller
+class Schoolsemester extends CI_Controller
 {
 	var $viewdata = null;
 	function __construct()
 	{
 		parent::__construct();
-		$this->load->model('schoolterms_model');
+		$this->load->model('schoolsemester_model');
 		$this->load->model('schoolyear_model');
 		$this->load->model('dbfunctions_model');
 		$session_data = $this->session->userdata('logged_in');
 		// set the data associative array common values that is sent to the views of this controller
 		$this->viewdata['username'] 		= $session_data['username'];
-		$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
+		$this->viewdata['school_id'] 		= $session_data['currentschoolid'];
 		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
 		$this->viewdata['nav'] 				= $this->navigation->load('courses');
 		
 		$this->breadcrumbcomponent->add('School Years','/schoolyear');
-		//$this->breadcrumbcomponent->add('School Terms', '/schoolterms');
 	}
 	function _remap($method, $params = array()){
     	if (method_exists($this, $method))
@@ -50,51 +49,36 @@ class Schoolterms extends CI_Controller
         }
 	}
 	
-	function addSemesterBreadCrumb($yearid)
-	{
-		//$result = $this->schoolquarter_model->GetSchoolTermById($semesterid);
-		$this->breadcrumbcomponent->add('School Terms', '/schoolterms/'.$yearid);
-		//$this->breadcrumbcomponent->add('School Quarter','/schoolquarter/'.$semesterid);
-	}
-	
 	function index($filter = null)
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
 			
-			// set the data associative array that is sent to the home view (and display/send)
-			//$data['username'] = $session_data['username'];
-			//$data['currentschoolid'] = $session_data['currentschoolid'];
-			//$data['currentsyear'] = $session_data['currentsyear'];
 			$this->lang->load('setup'); // default language option taken from config.php file 	
 			
 			
 			// if the person model returns TRUE then call the view
-			if(!$this->load->model('schoolterms_model','',TRUE))
+			if(!$this->load->model('schoolsemester_model','',TRUE))
 			{
 				//echo "this is a test";
 				$this->lang->load('setup'); // default language option taken from config.php file 	
 				if($filter)
 				{
-					$this->viewdata['query'] = $this->schoolterms_model->listing($filter, $this->viewdata['currentschoolid']);
-					$this->viewdata['yearid'] = $filter;	
-					$this->addSemesterBreadCrumb($filter);
+					$year = $this->schoolyear_model->GetSchoolYearById($filter);
+
+					$this->viewdata['query'] = $this->schoolsemester_model->listing($filter, $this->viewdata['school_id']);
+					$this->viewdata['yearid'] = $filter;
+					$this->viewdata['syeartitle'] = $year->title;	
+					$this->breadcrumbcomponent->add($year->title . " - Semesters",'/schoolsemester/'.$filter);
 				}else{
 					$this->session->set_flashdata('msgerr','Please select the year to manage');	
 					redirect('schoolyear','refresh');
 				}
-				
-				
-				if($filter && $this->viewdata['query']){
-				$this->breadcrumbcomponent->add($this->viewdata['query'][0]->syeartitle,'schoolterms/'.$filter);
-				$this->viewdata['syeartitle'] = $this->viewdata['query'][0]->syeartitle;
-				}
-				
 					
 			}	
 			$this->load->view('templates/header',$this->viewdata);	
 			$this->load->view('templates/sidenav', $this->viewdata);
-			$this->load->view('schoolterms/schoolterms_view', $this->viewdata);
+			$this->load->view('schoolsemester/schoolsemester_view', $this->viewdata);
 			$this->load->view('templates/footer',$this->viewdata);	
 		}
 		else // not logged in - redirect to login controller (login page)
@@ -116,17 +100,18 @@ class Schoolterms extends CI_Controller
 			$this->load->helper(array('form', 'url')); // load the html form helper
 			$this->lang->load('setup'); // default language option taken from config.php file 
 			
-			$year = $this->schoolterms_model->GetSchoolYearById($yearid);
+			$year = $this->schoolsemester_model->GetSchoolYearById($yearid);
 			$this->viewdata['page_title'] 	= "Add Semester/Term for - " . $year->syear;
 			
 			$this->viewdata['year_id'] = $year->marking_period_id;
 			$this->viewdata['schoolyear'] = $year->syear;
+			
 			$this->addSemesterBreadCrumb($yearid);
 			$this->breadcrumbcomponent->add('Add','/schoolterm/add');
 			
 		    $this->load->view('templates/header',$this->viewdata);
 		    $this->load->view('templates/sidenav',$this->viewdata);
-			$this->load->view('schoolterms/add_schoolterms_view', $this->viewdata);
+			$this->load->view('schoolsemester/add_schoolsemester_view', $this->viewdata);
 			$this->load->view('templates/footer',$this->viewdata);
 			
 		}
@@ -199,11 +184,11 @@ class Schoolterms extends CI_Controller
 					
 				);
 				
-				$this->schoolterms_model->addschoolterms($newdata);
+				$this->schoolsemester_model->addschoolterms($newdata);
 			
 				$msg = "Record Saved - " . $title;
 				$this->session->set_flashdata('msgsuccess', $msg);	
-			    redirect('schoolterms/' . $year_id);
+			    redirect('schoolsemester/' . $year_id);
 			}
 				
 		}
@@ -349,10 +334,10 @@ class Schoolterms extends CI_Controller
 					
 				);
 				
-				$this->schoolterms_model->updateschoolterm($semesterid,$newdata);
+				$this->schoolsemester_model->updateschoolterm($semesterid,$newdata);
 			    $msg = "Record Updated - " . $title;
 				$this->session->set_flashdata('msgsuccess', $msg);
-			    redirect('schoolterms/'.$year_id);
+			    redirect('schoolsemester/'.$year_id);
 			}
 			
 			
@@ -380,30 +365,22 @@ class Schoolterms extends CI_Controller
 				$this->load->helper(array('form', 'url')); // load the html form helper
 				
 				$this->lang->load('setup'); // default language option taken from config.php file 	
-				//$this->load->view('person_view', $data);
-				
-				
-				
-				
-				//$this->breadcrumbcomponent->add('Add','/schoolterm/add');
-			
 		    
 				// if the person model returns TRUE then call the view
-				if(!$this->load->model('schoolterms_model','',TRUE))
+				if(!$this->load->model('schoolsemester_model','',TRUE))
 				{
 					
 						
-					$rows = $this->schoolterms_model->GetSchoolTermById($id);
+					$rows = $this->schoolsemester_model->GetSchoolTermById($id);
 					$this->viewdata['semesterobj'] = $rows;
 					$this->viewdata['page_title'] = "Edit School Semester/Term";
 					$this->addSemesterBreadCrumb($rows->year_id);
 					$this->breadcrumbcomponent->add('Edit','/schoolterm/edit');
-					//$data['gradelevels'] = $this->gradelevels_model->GetGradeLevelsExceptCurrent($session_data['currentschoolid'],$id);	
 				}
 				
 				$this->load->view('templates/header',$this->viewdata);
 		    $this->load->view('templates/sidenav',$this->viewdata);
-			$this->load->view('schoolterms/edit_schoolterms_view', $this->viewdata);
+			$this->load->view('schoolsemester/edit_schoolsemester_view', $this->viewdata);
 			$this->load->view('templates/footer',$this->viewdata);
 				
 				
@@ -420,24 +397,19 @@ class Schoolterms extends CI_Controller
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-			
-			// set the data associative array that is sent to the home view (and display/send)
-			$data['username'] = $session_data['username'];
-			$data['currentschoolid'] = $session_data['currentschoolid'];
-			$data['currentsyear'] = $session_data['currentsyear'];
 			$this->lang->load('setup'); // default language option taken from config.php file 	
 			
 			
 			// if the person model returns TRUE then call the view
-			if(!$this->load->model('schoolterms_model','',TRUE))
+			if(!$this->load->model('schoolsemester_model','',TRUE))
 			{
 				//echo "this is a test";
 				$this->lang->load('setup'); // default language option taken from config.php file 	
-				$this->viewdata['query'] = $this->schoolterms_model->listing($this->viewdata['currentschoolid'],$this->viewdata['currentsyear']);
+				$this->viewdata['query'] = $this->schoolsemester_model->listing($this->viewdata['school_id'],$this->viewdata['currentsyear']);
 				
 			}	
 			$this->load->view('templates/header',$this->viewdata);	
-			$this->load->view('schoolterms/schoolterms_view', $this->viewdata);
+			$this->load->view('schoolsemester/schoolsemester_view', $this->viewdata);
 			$this->load->view('templates/footer',$this->viewdata);	
 		}
 		else // not logged in - redirect to login controller (login page)

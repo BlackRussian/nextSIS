@@ -23,36 +23,78 @@
 class Person_model extends CI_Model
 {
 	// The listing method takes gets a list of people in the database 
-	public function listing($filter, $school_id)
+	public function listing($filter, $school_id, $ajax=FALSE)
  	{
- 		$sql = "select person.id, first_name, surname,username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles
-	 					from person inner join person_role on person.id = person_role.person_id
-						inner join role on person_role.role_id = role.id
-						where person.default_schoolId=$school_id
-						group by first_name,surname,person.id";
+ 		if($ajax){
+ 			
+ 			if($filter != ""){
+ 				$this->datatables->select("person.id, first_name, surname, middle_name, common_name, username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles", FALSE);
+				$this->datatables->from('person');
+				$this->datatables->join('person_role', 'person.id = person_role.person_id');
+				$this->datatables->join('role', 'person_role.role_id = role.id');
+				$this->datatables->where('school_id = default_schoolid');
+				$this->datatables->where('default_schoolid', $school_id);
+				$this->datatables->where('person_role.role_id', $filter);
+				$this->datatables->group_by('first_name,surname,person.id,middle_name, common_name');
+				$this->datatables->edit_column('edit', '<a href="/person/edit/$1">edit</a>', 'id');
+				
+				if($filter && ($filter=="3" || $filter=="2")){
+					$this->datatables->edit_column('assign', '<a href="/person/assignclass/$1">assign class</a>', 'id');	
+				}
+				if($filter && $filter=="3"){
+					$this->datatables->edit_column('reports', '<a href="/person/assignclass/$1">reports</a>', 'id');		
+				}
 
- 		if($filter){
-			$sql = "select person.id, first_name, surname,username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles
-	 					from person inner join person_role on person.id = person_role.person_id
-						inner join role on person_role.role_id = role.id
-						where person_role.role_id = $filter and person.default_schoolId=$school_id
-						group by first_name,surname,person.id";
-		}
-   		
-   		$query = $this->db->query($sql);
-		
-		// proceed if records are found
-   		if($query->num_rows()>0)
-   		{
-			// return the data (to the calling controller)
-			return $query->result();
-   		}
-		else
-		{
-			// there are no records
-			return FALSE;
+				return $this->datatables->generate();
+ 			}else{
+	 			
+	 			$this->datatables->select("person.id, first_name, surname, middle_name, common_name, username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles", FALSE);
+				$this->datatables->from('person');
+				$this->datatables->join('person_role', 'person.id = person_role.person_id');
+				$this->datatables->join('role', 'person_role.role_id = role.id');
+				$this->datatables->where('school_id = default_schoolid');
+				$this->datatables->where('default_schoolid', $school_id);
+				$this->datatables->group_by('first_name,surname,person.id,middle_name, common_name');
+				$this->datatables->edit_column('edit', '<a href="/person/edit/$1">edit</a>', 'id');
+				
+				return $this->datatables->generate();
+			}
+ 		}
+ 		else
+ 		{
+	 		$sql = "select person.id, first_name, surname, middle_name, common_name, username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles
+		 					from person inner join person_role on person.id = person_role.person_id
+							inner join role on person_role.role_id = role.id
+							where person.default_schoolId=$school_id
+							group by first_name,surname,person.id,middle_name, common_name limit 10";
+
+	 		if($filter){
+				$sql = "select person.id, first_name, surname, middle_name, common_name, username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles
+		 					from person inner join person_role on person.id = person_role.person_id
+							inner join role on person_role.role_id = role.id
+							where person_role.role_id = $filter and person.default_schoolId=$school_id
+							group by first_name,surname,person.id,middle_name, common_name limit 10";
+			}
+	   		
+	   		$query = $this->db->query($sql);
+			
+			// proceed if records are found
+	   		if($query->num_rows()>0)
+	   		{
+				// return the data (to the calling controller)
+				return $query->result();
+	   		}
+			else
+			{
+				// there are no records
+				return FALSE;
+			}
 		}
  	}
+
+
+
+
 	//Add person model
  	public function addperson($data,$roledata,$schoolid)
  	{
@@ -84,7 +126,7 @@ class Person_model extends CI_Model
 	
 	
  	//Update person model
- 	public function updateperson($id,$data,$roledata)
+ 	public function updateperson($id,$data,$roledata,$schoolid)
  	{
  		//This section will be used to update the person data
  		$this->db->where('id', $id);
@@ -103,7 +145,8 @@ class Person_model extends CI_Model
 			{
 				$rdata = array(
 				'person_id' => $id,
-				'role_id' => $itm);
+				'role_id' => $itm,
+				'school_id' => $schoolid);
 				$this->db->insert('person_role',$rdata);
 				$this->db->flush_cache();
 				
@@ -117,7 +160,7 @@ class Person_model extends CI_Model
  	{
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id,username, dob')->from('person');
+		$this->db->select('id,surname,first_name,middle_name,common_name,title_id,gender_id,local_id,username, dob, email')->from('person');
 		$this->db->join('person_role','person.id = person_role.person_id');
 		$this->db->where('person.id',$personid)->where('person_role.school_id', $schoolid);
 
@@ -142,7 +185,7 @@ class Person_model extends CI_Model
  	{
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select("person.id, first_name,middle_name, surname,common_name, username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles, person_title.label as title, person_gender.label as gender, dob",FALSE);
+		$this->db->select("person.id, first_name,middle_name, surname,common_name, username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles, person_title.label as title, person_gender.label as gender, dob, email",FALSE);
 		$this->db->from('person');
 		$this->db->join('person_role','person.id = person_role.person_id');
 		$this->db->join('role','person_role.role_id = role.id');
@@ -218,12 +261,12 @@ class Person_model extends CI_Model
 		
 	}
 	
-	public function GetStudentClassByStudent($studentid, $syear)
+	public function GetStudentClassByStudent($studentid, $syear,$school_id)
 	{
 		
-		$this->db->select('person_id,class_id,year')->from('person_class');
+		$this->db->select('person_class.person_id,class_id,year')->from('person_class');
 		$this->db->join('person_role', 'person_class.person_id = person_role.person_id');
-		$this->db->where('person_id',$studentid)->where('year',$syear)->where('school_id',$schoolid);
+		$this->db->where('person_class.person_id',$studentid)->where('year',$syear)->where('school_id',$school_id);
 		$query = $this->db->get();
 		
 		// proceed if records are found

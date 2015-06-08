@@ -10,3 +10,4 @@ application/config/database.php
 application/logs/*
 .gitignore
 *.prefs
+application/libraries/tcrypt.php

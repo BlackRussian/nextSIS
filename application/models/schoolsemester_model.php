@@ -20,7 +20,7 @@
  * Copyright 2012 http://nextsis.org
  */
 
-class Schoolterms_model extends CI_Model
+class Schoolsemester_model extends CI_Model
 {
 	// The listing method takes gets a list of people in the database 
 	public function listing($filter, $schoolid)

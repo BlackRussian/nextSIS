@@ -59,13 +59,14 @@
 	    <div id="login-wraper">
 	    	<?php echo form_open('login/authenticate', 'method="post" class="form login-form"'); ?>
 	            <fieldset>
-	            <legend>Sign in to <span class="blue">nextSIS</span></legend>
+	            <legend>Sign in to <span class="blue">qSIS</span></legend>
 	            <?php $this->load->view('shared/display_errors.php');?>
 	            <div class="body">
 	                <label>Username</label>
-	                <input type="text" name="username">
+	                <input type="text" name="username" />
 	                <label>Password</label>
-	                <input type="password" name="password">
+	                <input type="password" name="password" />
+	                <input type="hidden" name="schid" value="<?php echo $schid;?>" />
 	            </div>
 	            <div class="footer">
 	                <label class="checkbox inline">
@@ -79,7 +80,7 @@
 	</div>
 
 	<footer class="white navbar-fixed-bottom">
-	  <!--Don't have an account yet? <a href="register.html" class="btn btn-black">Register</a-->
+	  Don't remember your password? <a href="/login/retreive_password/<?php echo $school_anchor;?>" class="btn btn-black">Retreive Password</a>
 	</footer>
 	<script src="/assets/vendors/jquery-1.9.1.min.js"></script>
 	<script src="/assets/js/bootstrap.min.js"></script>

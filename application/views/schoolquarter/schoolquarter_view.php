@@ -8,7 +8,7 @@
 					<h3>Manage School Years</h3>
 					<div class="table-toolbar">
                     	<div class="btn-group">
-                    		<a href="/schoolquarter/add/<?php echo $semesterid ?>"><button class="btn btn-success">Add New School Quarter <i class="icon-plus icon-white"></i></button></a>
+                    		<a href="/schoolquarter/add/<?php echo $semesterid ?>"><button class="btn btn-success">Add Quarter <i class="icon-plus icon-white"></i></button></a>
                     	</div>
 					</div>
 					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">

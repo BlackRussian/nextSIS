@@ -62,6 +62,59 @@ class User extends CI_Model
 			return FALSE;
 		}
  	}
+ 	
+ 	function setUserPassword($username,$schoolid,$email){
+		$this->load->library('tcrypt');
+ 		$tcrypt = new Tcrypt;
+
+		$newpassword = $this->randomPassword();
+		$hashpassword = $tcrypt->password_hash($newpassword);
+
+		$data = array('password' => $hashpassword);
+
+		//This section will be used to update the person data
+ 		$this->db->where('username', $username);
+ 		$this->db->where('email', $email);
+ 		$this->db->where('default_schoolId', $schoolid);
+		$this->db->update('person', $data);
+		$this->db->flush_cache();
+
+		return $newpassword;
+	}
+
+	private function randomPassword() {
+	    $alphabet = "abcdefghijklmnopqrstuwxyzABCDEFGHIJKLMNOPQRSTUWXYZ0123456789#@$&!";
+	    $pass = array(); //remember to declare $pass as an array
+	    $alphaLength = strlen($alphabet) - 1; //put the length -1 in cache
+	    for ($i = 0; $i < 8; $i++) {
+	        $n = rand(0, $alphaLength);
+	        $pass[] = $alphabet[$n];
+	    }
+	    return implode($pass); //turn the array into a string
+	}
+
+ 	// The user login method - takes the username and password ultimately passed from the login screen
+	public function retreivepasswordvalidation($username, $email, $dschid)
+ 	{
+ 		
+		// first try to match the username
+		$this->db->select('username,email,default_schoolId,id')->from('person')->where('username',$username);
+		$this->db->where('default_schoolId',$dschid);
+		$this->db->where('email',$email);
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// if there is one result we have a matching username
+   		if($query->num_rows()==1)
+   		{
+     		return TRUE;
+   		}
+		else
+		{
+			// the username doesn't exist in the database - we won't tell the visitor that - simply return FALSE
+			return FALSE;
+		}
+ 	}
 
 	public function GetSchoolYear($schoolid)
 	{

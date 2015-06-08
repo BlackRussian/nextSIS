@@ -32,6 +32,7 @@ class ajaxcallbacks extends CI_Controller
 		$this->load->model('schoolclass_model');
 		$this->load->model('student_model');
         $this->load->model('subjects_model');
+        $this->load->model('person_model');
 	}
     
 	//fill class dropdown depending on the selected grade level
@@ -87,4 +88,11 @@ class ajaxcallbacks extends CI_Controller
 
         echo $this->subjects_model->GetSubjectCourses($subject_id, $school_id, TRUE);
     }
+
+    public function getPersonsBySchool(){
+        $school_id = $this->input->post('school_id');
+        $role_id = $this->input->post('role_id');
+
+        echo $this->person_model->listing($role_id, $school_id, TRUE);
+    }    
 }

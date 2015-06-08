@@ -75,7 +75,95 @@ class Login extends CI_Controller
 			}
 		}
  	}
-  
+
+  public function retreive_password($school_anchor =  "none"){
+      $school = $this->school_model->GetSchoolByAnchor($school_anchor); // Get school details using anchor passed in parameter
+      
+      if($school){
+        //Create view data array
+        $data["schid"] = $school->id;
+        $data["school_title"] = $school->title;
+        $data["school_anchor"] = $school_anchor;
+
+        $this->lang->load('login'); // load the login language file - the default language option (unused second parameter) is taken from config.php file     
+        $this->load->view('retreive_password', $data); // load the standard login form
+      
+      }else{
+        //redirect('http://www.google.com', 'refresh');
+        show_404(); //Shows 404 page if no valid school is found for url anchor
+      }
+  }
+
+  public function resetpassword(){
+      // use the CodeIgniter form validation library
+      $this->load->library('form_validation');
+
+      $this->form_validation->set_rules('username', 'login name', 'trim|required|xss_clean');
+      
+      $this->form_validation->set_rules('email', 'email address', 'trim|required|xss_clean|callback_validate_email');
+    
+      if($this->form_validation->run() == FALSE) // email and username validation failed
+      {
+        
+        //$this->session->set_flashdata('msgerr', 'Email address and username pair not valid!!');
+        
+        $stored_anchor = $this->input->cookie("nextsis");
+
+        $this->retreive_password($stored_anchor);
+      }
+      else{// email and username validation passed - display login page
+        
+        // generate and update user account with new password
+        $newpassword = $this->user->setUserPassword($this->input->post('username'), $this->input->post('schid'), $this->input->post('email'));
+        
+        $config = Array(
+            'protocol' => 'smtp',
+            'smtp_host' => 'localhost',
+            'smtp_port' => 25,
+            //'smtp_user' => 'support@tumpit.com',
+            //'smtp_pass' => 'Donotenter.1',
+            'mailtype'  => 'html', 
+            'charset'   => 'iso-8859-1'
+        );
+        $this->load->library('email', $config);
+        $this->email->from('support@tumpit.com', 'qSIS Support');
+        $this->email->to($this->input->post('email'));
+        $this->email->subject('qSIS Password Retreival');
+        $this->email->message('New Password :'.$newpassword);   
+        $this->email->send();
+
+        log_message('debug', $this->email->print_debugger());
+
+        $this->session->set_flashdata('msgerr', 'New password sent. Please check your email.');
+        redirect('/login', 'refresh'); //Redirects a default login page
+      }
+  }
+
+public function validate_email($email)
+  {
+    $schid = $this->input->post('schid');
+    $username = $this->input->post('username');
+    
+      // return the result of the user model login method (an array if true)
+    $result = $this->user->retreivepasswordvalidation($username, $email, $schid);
+
+    if($result)
+    {
+        return TRUE;
+    }
+    else
+    {
+      // load in the login language file (login_lang)
+      $this->lang->load('login');
+      
+      // set the validation message as 'login incorrect' 
+        $this->form_validation->set_message('validate_email', "Invalid email and username pair!!");
+            
+        return FALSE; // validation failed
+      } 
+  }
+
+
   public function chooserole(){
       if($this->session->userdata('choose_role'))
       {
@@ -108,7 +196,9 @@ class Login extends CI_Controller
 
 	public function authenticate()
 	{		
-   		// use the CodeIgniter form validation library
+   		 
+
+      // use the CodeIgniter form validation library
    		$this->load->library('form_validation');
    		// field is trimmed, required and xss cleaned respectively
    		$this->form_validation->set_rules('username', 'Username', 'trim|required|xss_clean');
@@ -119,7 +209,17 @@ class Login extends CI_Controller
    		{
         
    			$this->session->set_flashdata('msgerr', 'Login Failed!!');
-   			$this->load->view('login_view'); // load the standard login form
+         
+        $school = $this->school_model->GetSchoolById($this->input->post('schid'));
+        if($school){
+          $data["schid"] = $school->id;
+          $data["school_title"] = $school->title;
+          $data["school_anchor"] = $school->anchor;
+
+   			  $this->load->view('login_view', $data); // load the standard login form
+        }else{
+          show_404();
+        }
    		}
 		else{// authentication succeeded - display the homepage
 
@@ -136,10 +236,10 @@ class Login extends CI_Controller
    		// take the posted username
    		$username = $this->input->post('username');
 
-		$schid = $this->input->post('schid');
+		  $schid = $this->input->post('schid');
    		
    		// return the result of the user model login method (an array if true)
-   		$result = $this->user->login($username, $password, 1);
+   		$result = $this->user->login($username, $password, $schid);
 
    		if($result)
    		{

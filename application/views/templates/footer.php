@@ -23,6 +23,7 @@
     	<script src="/assets/js/form-validation.js"></script-->
     	<script src="/assets/js/scripts.js"></script>
         <script src="/assets/js/DT_bootstrap.js"></script>
+        
         <!--script>
     			jQuery(document).ready(function() {   
     			   FormValidation.init();

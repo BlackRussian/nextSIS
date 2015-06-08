@@ -29,11 +29,11 @@ class Schoolclass_model extends CI_Model
 			$this->db->select('school_class.id,school_class.school_id, school_class.title as class_title, gradelevel_id, school_gradelevels.title as grade_title')->from('school_class');
 			$this->db->join('school_gradelevels', 'school_class.gradelevel_id = school_gradelevels.id');
 			$this->db->where('gradelevel_id', $filter);
-			$this->db->where('school_class.school_id',$schoolid)->limit(10);
+			$this->db->where('school_class.school_id',$schoolid);//->limit(10);
 		}else{
 			$this->db->select('school_class.id,school_class.school_id, school_class.title as class_title, gradelevel_id, school_gradelevels.title as grade_title')->from('school_class');
 			$this->db->join('school_gradelevels', 'school_class.gradelevel_id = school_gradelevels.id');
-			$this->db->where('school_class.school_id',$schoolid)->limit(10);
+			$this->db->where('school_class.school_id',$schoolid);//->limit(10);
 		}
    		// run the query and return the result
    		$query = $this->db->get();

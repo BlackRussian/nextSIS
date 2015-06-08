@@ -31,7 +31,7 @@ class Tcrypt
 		 */
 		 
 		// get 256 random bits in hexadecimal
-		$salt = bin2hex(mcrypt_create_iv(32, MCRYPT_DEV_URANDOM));
+		$salt = bin2hex(mcrypt_create_iv(32, MCRYPT_RAND));
 		
 		// prepend the salt, then hash
 		$hash = hash("sha256",$salt.$password);

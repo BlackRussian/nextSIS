@@ -49,7 +49,7 @@ class Person extends CI_Controller
 		$session_data = $this->session->userdata('logged_in');
 
 		$this->viewdata['username'] 		= $session_data['username'];
-		$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
+		$this->viewdata['school_id'] 		= $session_data['currentschoolid'];
 		$this->viewdata['currentsyear'] 	= $session_data['currentsyear'];
 		$this->viewdata['defaultschoolid']  = $session_data['defaultschoolid'];
 		$this->viewdata['id']  				= $session_data['id'];
@@ -106,12 +106,12 @@ class Person extends CI_Controller
 			
 			$this->lang->load('person'); // default language option taken from config.php file
 
-			$this->viewdata['query'] = $this->person_model->listing($filter, $this->viewdata['currentschoolid']);
+			$this->viewdata['query'] 	 = $this->person_model->listing($filter, $this->viewdata['school_id']);
 
-			$this->viewdata['sidenav'] 	= $this->navigation->load_side_nav($filter, $this->sidemenu);
+			$this->viewdata['sidenav'] 	 = $this->navigation->load_side_nav($filter, $this->sidemenu);
 			
-			$this->viewdata['filter']	= $filter;
-			
+			$this->viewdata['filter']	 = $filter;
+
 			$this->load->view('templates/header', $this->viewdata);
 			$this->load->view('templates/sidenav', $this->viewdata);			
 			$this->load->view('person_view', $this->viewdata);
@@ -160,7 +160,7 @@ class Person extends CI_Controller
 			$this->viewdata['page_title']	= "Add New User";
 
 			//UDF setup
-			$this->viewdata['currentschoolid'] 			= $session_data['currentschoolid'];
+			$this->viewdata['school_id'] 			= $session_data['currentschoolid'];
 			$this->viewdata['udf'] 						= $this->udf_model->GetUdfs($session_data['currentschoolid'],1);
 
 			$this->viewdata['titles'] 	= $titles;
@@ -209,6 +209,7 @@ class Person extends CI_Controller
 			$this->form_validation->set_rules('mname', 'Middle Name', 'trim|xss_clean');
 			$this->form_validation->set_rules('cname', 'Common Name', 'trim|xss_clean');
 			$this->form_validation->set_rules('Gender', 'Gender', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('email', 'Email Address', 'trim|xss_clean');
 			$this->form_validation->set_rules('Title', 'Title', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('uname', 'User Name', 'trim|required|xss_clean|is_unique[person.username]');
 			$this->form_validation->set_rules('userrole[]', 'User Roles', 'trim|required|xss_clean');
@@ -231,6 +232,7 @@ class Person extends CI_Controller
 					'title_id' => $this->input->post('Title'),
 					'username' => $this->input->post('uname'),
 					'password' => $upwd,
+					'email'=>$this->input->post('email'),
 					'default_schoolid' => $session_data["currentschoolid"],
 					'dob' => $dateArr[2] . '-'. $dateArr[1] . '-' . $dateArr[0]
 				);
@@ -275,8 +277,10 @@ class Person extends CI_Controller
 			$this->form_validation->set_rules('Gender', 'Gender', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('Title', 'Title', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('uname', 'User Name', 'trim|required|xss_clean');
+			$this->form_validation->set_rules('email', 'Email Adrress', 'trim|xss_clean');
 			$this->form_validation->set_rules('userrole[]', 'User Roles', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('dob', 'Date of Birth', 'trim|required|xss_clean');
+
 
 			$this->UDF_Validation();
 
@@ -290,16 +294,18 @@ class Person extends CI_Controller
 					'first_name' => $this->input->post('fname'),
 					'surname' => $this->input->post('lname'),
 					'common_name' => $this->input->post('cname'),
+					'email' => $this->input->post('email'),
 					'gender_id' => $this->input->post('Gender'),
 					'title_id' => $this->input->post('Title'),
-					'default_schoolid' => $session_data["currentschoolid"],
 					'dob' => $dateArr[2] . '-'. $dateArr[1] . '-' . $dateArr[0]
 				);
+
 				$roledata = $this->input->post('userrole');
 				
-				$this->person_model->updateperson($id,$data,$roledata);
+				$this->person_model->updateperson($id,$data,$roledata,$session_data["currentschoolid"]);
 				$this->Insert_Update_UDF($id);
-				$this->session->set_flashdata('msgsuccess','Record Saved');	
+
+				$this->session->set_flashdata('msgsuccess','Record Updated');	
 				redirect('person/' . $this->input->post('personrole'));
 			}
 		}
@@ -308,7 +314,7 @@ class Person extends CI_Controller
 			redirect('login','refresh');
 		}
 	}
-
+	
 	function addclass()
 	{
 		//$this->load->model('person_model','',TRUE);
@@ -355,7 +361,7 @@ class Person extends CI_Controller
 		}
 	}
 	 // The add function is used to load a person record for edit
-	function assignclass($id,$personrole)
+	function assignclass($id,$personrole = "none")
 	{
 		    if($this->session->userdata('logged_in')) // user is logged in
 			{
@@ -372,7 +378,7 @@ class Person extends CI_Controller
 				if(!$this->load->model('person_model','',TRUE))
 				{
 					$this->lang->load('person'); // default language option taken from config.php file 	
-					$rows 					= $this->person_model->getpersonbyid($id, $this->viewdata['currentschoolid']);
+					$rows 					= $this->person_model->getpersonbyid($id, $this->viewdata['school_id']);
 					foreach($rows as $row)
 					{
 						$this->viewdata['fname'] 		= $row->first_name;
@@ -386,7 +392,7 @@ class Person extends CI_Controller
 						$this->viewdata['dob'] 			= $row->dob;
 						$this->viewdata['fullname']  = $row->first_name . " " . $row->middle_name . " " . $row->surname;
 					}
-					$result 				= $this->schoolclass_model->GetSchoolClasses($this->viewdata['currentschoolid']);
+					$result 				= $this->schoolclass_model->GetSchoolClasses($this->viewdata['school_id']);
 					$classes[""]			="Select Class";
 					foreach($result as $row){
 		            	$classes[$row->id]=$row->title;
@@ -394,7 +400,7 @@ class Person extends CI_Controller
 					$this->viewdata['classes'] 		= $classes;
 
 					
-					$result1 = $this->person_model->GetStudentClassByStudent($id,$this->viewdata['currentsyear']);					
+					$result1 = $this->person_model->GetStudentClassByStudent($id,$this->viewdata['currentsyear'],$this->viewdata['school_id']);					
 					if($result1)
 					{
 						$this->viewdata['classid'] 	= $result1->class_id;
@@ -409,8 +415,8 @@ class Person extends CI_Controller
 
 				//UDF setup
 				$this->load->model('udf_model');
-				$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
-				$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['currentschoolid'],1,$id);
+				$this->viewdata['school_id'] 	= $session_data['currentschoolid'];
+				$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['school_id'],1,$id);
 				$this->breadcrumbcomponent->add('Assign Class','/people/assignclass/'.$id);
 				$this->load->view('templates/header', $this->viewdata);
 				$this->load->view('templates/sidenav');	
@@ -442,40 +448,51 @@ class Person extends CI_Controller
 				if(!$this->load->model('person_model','',TRUE))
 				{
 					$this->lang->load('person'); // default language option taken from config.php file 	
-					$rows 					= $this->person_model->getpersonbyid($id,$this->viewdata['currentschoolid']);
-					foreach($rows as $row)
-					{
-						$this->viewdata['fname'] 		= $row->first_name;
-						$this->viewdata['mname'] 		= $row->middle_name;
-						$this->viewdata['lname']		= $row->surname;
-						$this->viewdata['cname'] 		= $row->common_name;
-						$this->viewdata['genderid']		= $row->gender_id;
-						$this->viewdata['titleid'] 		= $row->title_id;
-						$this->viewdata['uname'] 		= $row->username;
-						$this->viewdata['personid'] 	= $row->id;
-						$this->viewdata['dob'] 			= $row->dob;
-					}
-					$result 				= $this->person_model->GetPersonGender(1);
-					$genders[""]			="Select Gender";
-					foreach($result as $row){
-		            	$genders[$row->id]=$row->label;
-		        	}
-					$this->viewdata['genders'] 		= $genders;
+					
+					$rows 					= $this->person_model->getpersonbyid($id,$this->viewdata['school_id']);
+					if($rows){
+						foreach($rows as $row)
+						{
+							$this->viewdata['fname'] 		= $row->first_name;
+							$this->viewdata['mname'] 		= $row->middle_name;
+							$this->viewdata['lname']		= $row->surname;
+							$this->viewdata['cname'] 		= $row->common_name;
+							$this->viewdata['genderid']		= $row->gender_id;
+							$this->viewdata['titleid'] 		= $row->title_id;
+							$this->viewdata['uname'] 		= $row->username;
+							$this->viewdata['personid'] 	= $row->id;
+							$this->viewdata['dob'] 			= $row->dob;
+							$this->viewdata['email'] 		= $row->email;
+						}
+						$result 				= $this->person_model->GetPersonGender(1);
+						$genders[""]			= "Select Gender";
+						foreach($result as $row){
+			            	$genders[$row->id]=$row->label;
+			        	}
+						$this->viewdata['genders'] 		= $genders;
 
-					$result 						= $this->person_model->GetPersonTitles(1);
-					$titles[""]						="Select Title";
-					foreach($result as $row){
-		            	$titles[$row->id]	= $row->label;
-		        	}
-					$this->viewdata['titles'] 		= $titles;
+						$result 						= $this->person_model->GetPersonTitles(1);
+						$titles[""]						="Select Title";
+						foreach($result as $row){
+			            	$titles[$row->id]	= $row->label;
+			        	}
+						$this->viewdata['titles'] 		= $titles;
 
-					$this->viewdata['roles'] 		= $this->person_model->GetPersonRoles();
+						$this->viewdata['roles'] 		= $this->person_model->GetPersonRoles();
 
-					$result 						= $this->person_model->getpersonrolesbypersonid($id, $this->viewdata['currentschoolid'] );					
-					foreach($result as $row){
-		            	$personroles[$row->role_id]	= $row->role_id;
+						$result 						= $this->person_model->getpersonrolesbypersonid($id, $this->viewdata['school_id'] );					
+						
+						foreach($result as $row){
+			            	$personroles[$row->role_id]	= $row->role_id;
+			        	}
+
+			        	$this->viewdata['personroles'] 	= $personroles;
 		        	}
-		        	$this->viewdata['personroles'] 	= $personroles;
+		        	else
+		        	{
+		        		$this->session->set_flashdata('msgerr', 'Error user details');
+		        		redirect("/person/");
+		        	}
 				}	
 				
 				$this->viewdata['nav'] 				= $this->navigation->load('people');
@@ -483,8 +500,8 @@ class Person extends CI_Controller
 				$this->viewdata['personrole']       = $personrole;
 				//UDF setup
 				$this->load->model('udf_model');
-				$this->viewdata['currentschoolid'] 	= $session_data['currentschoolid'];
-				$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['currentschoolid'],1,$id);
+				$this->viewdata['school_id'] 	= $session_data['currentschoolid'];
+				$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['school_id'],1,$id);
 				$this->breadcrumbcomponent->add('Edit','/person/edit/'.$id);
 				$this->load->view('templates/header', $this->viewdata);
 				$this->load->view('templates/sidenav');	
@@ -503,7 +520,7 @@ class Person extends CI_Controller
 		    if($this->session->userdata('logged_in')) // user is logged in
 			{				
 				$id 									= $this->viewdata['id'];
-				$userProfile 							= $this->person_model->GetUserProfileInfo($id);
+				$userProfile 							= $this->person_model->GetUserProfileInfo($id, $this->viewdata['school_id']);
 				//$this->load->helper(array('form', 'url'));
 				if($userProfile)
 				{					
@@ -514,15 +531,15 @@ class Person extends CI_Controller
 
 					//UDF setup
 					$this->load->model('udf_model');
-					$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['currentschoolid'],1,$id);
+					$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['school_id'],1,$id);
 					$this->viewdata['udfDisplay']		= TRUE;
-					$this->viewdata['age']				= $this->ago(new DateTime($userProfile->dob));
+					$this->viewdata['age']				= "";//$this->ago(new DateTime($userProfile->dob));
 					$this->load->view('templates/header', $this->viewdata);
 					$this->load->view('templates/sidenav');	
 					$this->load->view('person/profile', $this->viewdata);
 					$this->load->view('templates/footer');
 				}else{
-					$this->session->set_flashdata('msgerror', 'Error retreiving user profile');
+					$this->session->set_flashdata('msgerr', 'Error retreiving user profile');
 			    
 			    	redirect('/home/');
 				}
@@ -602,7 +619,7 @@ class Person extends CI_Controller
 			$this->udf_model->UpdateUDFValues($updateData);
 	}
 
-	function ago( $datetime )
+	/*function ago( $datetime )
 	{
 	    $interval = date_create('now')->diff( $datetime );
 	    $suffix = ( $interval->invert ? ' old' : '' );
@@ -613,7 +630,7 @@ class Person extends CI_Controller
 	    if ( $v = $interval->i >= 1 ) return $this->pluralize( $interval->i, 'minute' ) . $suffix;
 	    
 	    return $this->pluralize( $interval->s, 'second' ) . $suffix;
-	}
+	}*/
 
 	function pluralize( $count, $text ) 
 	{ 

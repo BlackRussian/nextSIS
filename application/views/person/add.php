@@ -64,13 +64,20 @@
 		                    </div>
 		                </div>
 		                <div class="control-group">
+		                    <label class="control-label" for="email"><?php echo "Email Adrress";?></label>
+		                    <div class="controls">		                    			                    	
+		                    	<?php echo form_input('email', set_value('email'));  ?>
+		                    	<p class="help-block">email address for communication and resetting passwords</p>
+		                    </div>
+		                </div>
+		                <div class="control-group">
 		                    <label class="control-label" for="dob"><?php echo "Date of Birth";?></label>
 		                    <div class="controls">		                    			                    	
 		                    	<?php echo form_input('dob', set_value('dob'),'class="datepicker"');  ?>
 		                    </div>
 		                </div>						
 		                <div class="control-group">
-		                    <label class="control-label" for="uname"><?php echo "User Roles";?></label>
+		                    <label class="control-label" for="userrole"><?php echo "User Roles";?></label>
 		                    <div class="controls">		                    			                    	
 		                    	<?php
 									foreach($roles as $role){

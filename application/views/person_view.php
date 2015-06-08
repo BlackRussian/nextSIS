@@ -8,27 +8,40 @@
 					<h3>People</h3>
 					<div class="table-toolbar">
                     	<div class="btn-group">
-                    		<a href="/person/add/<?php echo $filter ?>"><button class="btn btn-success">Add New Person <i class="icon-plus icon-white"></i></button></a>
+                    		<a href="/person/add<?php if($filter){echo '/'.$filter;} ?>"><button class="btn btn-success">Add New Person <i class="icon-plus icon-white"></i></button></a>
                     	</div>
 					</div>	
-						<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+						<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered"  id="myTable">
 							<thead>
 								<tr>
 									<th>First Name</th>
 									<th>Middle Name</th>
 									<th>Surname</th>
+									<th>Called/Alias</th>
+									<th>Login name</th>
 									<th>Role(s)</th>
+									<th></th>
+									<?php if($filter && ($filter=="3" || $filter=="2"))
+												{
+													echo '<th style="border-left:0px"></th>';
+												}
+												if($filter && $filter=="3"){
+													echo '<th style="border-left:0px"></th>';
+												}
+										?>
 								</tr>
 							</thead>
 							<tbody>
 							 	<?php if($query){  foreach($query as $person){?>
 									<tr>
 										<td><?php echo $person->first_name ?></td>
+										<td><?php echo $person->middle_name ?></td>
 										<td><?php echo $person->surname ?></td>
+										<td><?php echo $person->common_name ?></td>
 										<td><?php echo $person->username ?></td>
 										<td><?php echo $person->roles ?></td>
 										<td>
-											<a href="/person/edit/<?php echo urlencode($person->id); ?>/<?php echo urlencode($filter); ?>"><?php echo $this->lang->line("edit_person");?></a>
+											<a href="/person/edit/<?php echo urlencode($person->id); if($filter){echo '/'.$filter;} ?>">edit</a>
 											
 										</td>
 										
@@ -36,12 +49,12 @@
 												{
 													
 													echo "<td>
-													<a href='/person/assignclass/" .  urlencode($person->id) . "/".urlencode($filter)."';>Assign Class</a>										
+													<a href='/person/assignclass/" .  urlencode($person->id) . "/".urlencode($filter)."';>assign class</a>										
 													</td>";
 												}
 												if($filter && $filter=="3"){
 													echo "<td>
-													<a href='/person/assignclass/" .  urlencode($person->id) . "/".urlencode($filter)."';>Assign Class</a>										
+													<a href='/person/assignclass/" .  urlencode($person->id) . "/".urlencode($filter)."';>assign class</a>										
 													</td>";
 												}
 										?>
@@ -54,3 +67,29 @@
 		</div>
 	</div>
 </div>
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#myTable').dataTable( {
+			"processing": true,
+        	"serverSide": true,
+        	"ajax": {"url":"<?php echo base_url(); ?>ajaxcallbacks/getPersonsBySchool","type":"POST", "data":{"school_id":"<?php echo $school_id?>", "role_id":"<?php echo $filter?>"}},
+        	"columns":[
+        				{"data":"first_name"},
+        				{"data":"middle_name"},
+        				{"data":"surname"},
+        				{"data":"common_name"},
+        				{"data":"username"},
+        				{"data":"roles", "sortable":false, "searchable":false},
+        				{"data":"edit","sortable":false, "searchable":false}
+        				<?php if($filter && ($filter=="3" || $filter=="2"))
+        				{
+							echo ',{"data":"assign", "sortable":false, "searchable":false}';
+						}
+						if($filter && $filter=="3"){
+							echo ',{"data":"reports", "sortable":false, "searchable":false}';
+						}
+				?>
+        	]
+		} );
+	} );
+</script>

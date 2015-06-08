@@ -27,8 +27,8 @@
 					<fieldset>
                   		<?php $this->load->view('shared/display_errors');?>
                   		<legend><?php echo $page_title;?></legend>
-        					<?php echo form_open('schoolterms/addrecord', 'method="post" class="form-horizontal"'); ?>
-							<?php echo "<input type='hidden' id='school_id' name='school_id' value='" .$currentschoolid ."'  />"?>
+        					<?php echo form_open('schoolsemester/addrecord', 'method="post" class="form-horizontal"'); ?>
+							<?php echo "<input type='hidden' id='school_id' name='school_id' value='" .$school_id ."'  />"?>
 							
 							<?php echo form_hidden('year_id', set_value('year_id', $year_id)); ?>
 							<?php echo form_hidden('schoolyear', set_value('schoolyear', $schoolyear)); ?>
@@ -71,7 +71,7 @@
 		                	
 							
 	                  		<div class="form-actions">
-	                  			<a href="/schoolterms/<?php echo $year_id; ?>" class="btn"> <i class="icon-chevron-left icon-black"></i>Cancel</a>
+	                  			<a href="/schoolsemester/<?php echo $year_id; ?>" class="btn"> <i class="icon-chevron-left icon-black"></i>Cancel</a>
 							          <?php echo form_submit('submit','Submit', 'class="btn btn-primary"'); ?>
 					        </div>
 				          	<?php echo form_close(); ?>

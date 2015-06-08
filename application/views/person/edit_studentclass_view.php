@@ -8,16 +8,16 @@
                   		<?php $this->load->view('shared/display_errors');?>
                   		<legend><?php echo $page_title;?></legend>
         					<?php echo form_open('person/addclass', 'method="post" class="form-horizontal"'); ?>
-							<?php echo "<input type='hidden' id='school_id' name='school_id' value='" .$currentschoolid ."'  />"?>
+							<?php echo "<input type='hidden' id='school_id' name='school_id' value='" .$school_id ."'  />"?>
 							<div class="control-group">
 								<label class="control-label" for="fname">Name</label>
 			                	<div class="controls">
 			                		<span class="input uneditable-input"><?php echo $fullname ?></span>
 			                      	<?php
 			                      	 echo  form_hidden('syear',set_value('syear', $currentsyear));
-									  echo  form_hidden('person_id',set_value('person_id', $personid));
-									  echo  form_hidden('personrole',set_value('personrole', $personrole));
-			                      	 echo  form_label(set_value('fullname', $fullname)); ?>
+									 echo  form_hidden('person_id',set_value('person_id', $personid));
+									 echo  form_hidden('personrole',set_value('personrole', $personrole));
+									 ?>
 			                	</div>
 		                	</div>
 							<div class="control-group">
