@@ -428,7 +428,8 @@ class Courses extends CI_Controller
 				
 				$this->subjects_model->EditTermCourse($id, $data);
 			    
-			    redirect('courses/' . $this->input->post('subject_id'));
+			    //redirect('courses/' . $this->input->post('subject_id'));
+			    redirect('courses/' . $this->input->post('course_id'));
 			}
 		}
 		else // not logged in - redirect to login controller (login page)

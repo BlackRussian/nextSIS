@@ -57,6 +57,8 @@ class Reports extends CI_Controller
 
 			$result = $this->gradelevels_model->GetGradeLevels($session_data['currentschoolid']);
 			
+			$resultterms = $this->schoolsemester_model->GetGradeLevels($session_data['currentschoolid']);
+			
 			$gradelevels["-1"]="Select Grade";
 			foreach($result as $row){
             	$gradelevels[$row->id]=$row->title;

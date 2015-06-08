@@ -4,7 +4,7 @@
        		<div class="block-content collapse in">
           		<div class="span9">
         		<?php
-        			$hiddenflds = array('term_course_id' => $course->term_course_id, 'subject_id' => $subject_id);
+        			$hiddenflds = array('term_course_id' => $course->term_course_id, 'subject_id' => $subject_id,'course_id'=>$course->course_id);
         			echo form_open('courses/edittermcourse', 'method="post" class="form-horizontal"', $hiddenflds);
         		?>
                 <fieldset>

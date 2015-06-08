@@ -160,7 +160,8 @@ class Gradebook extends CI_Controller
 			$this->load->model('subjects_model');
 			$this->data['query'] 		= $this->gradebook_model->GetGradeTypes($id);	
 			$this->data['course_id'] 	= $id;
-			$subject 					= $this->subjects_model->GetSubjectCourseById($id);
+			//$subject 					= $this->subjects_model->GetSubjectCourseById($id);
+			$subject 					= $this->subjects_model->GetSubjectCourseByTermCourseId($id);
 			$this->data['page_title'] 	= "Manage Grades for \"". $subject->course_title . "\"";
 
 			$this->breadcrumbcomponent->add($subject->course_title." Grades", '/gradetypelist/'.$id);
