@@ -163,7 +163,7 @@ class Subjects_model extends CI_Model
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
 		//$where = 'subject_id = '. $id . ' AND school_id = ' . $school_id;
-		$this->db->select('course_id,subject.subject_id,subject.syear,grade_level,subject_course.title as course_title,subject_course.short_name, school_gradelevels.title as grade_title, subject.title as subject_title');
+		$this->db->select('subject_course.course_id,subject.subject_id,subject.syear,grade_level,subject_course.title as course_title,subject_course.short_name, school_gradelevels.title as grade_title, subject.title as subject_title');
 		$this->db->from('subject_course');
 		$this->db->join('school_gradelevels', 'subject_course.grade_level = school_gradelevels.id');
 		$this->db->join('subject', 'subject.subject_id = subject_course.subject_id');
