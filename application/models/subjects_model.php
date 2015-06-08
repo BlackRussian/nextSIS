@@ -167,8 +167,10 @@ class Subjects_model extends CI_Model
 		$this->db->from('subject_course');
 		$this->db->join('school_gradelevels', 'subject_course.grade_level = school_gradelevels.id');
 		$this->db->join('subject', 'subject.subject_id = subject_course.subject_id');
-		$this->db->where('course_id',$course_id);
-
+		//New line i added
+		$this->db->join('term_course','term_course.course_id = subject_course.course_id');
+		//$this->db->where('course_id',$course_id);
+		$this->db->where('term_course_id',$course_id);
    		// run the query and return the result
    		$query = $this->db->get();
 		
