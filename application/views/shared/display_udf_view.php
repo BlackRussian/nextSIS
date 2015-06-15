@@ -39,8 +39,8 @@
 					    );
 
 						$dropValues[""] 		= "Select " . $field->title;
-
-						foreach(explode("\r\n", $field->select_options) as $value){
+//foreach(explode("\r\n", $field->select_options) as $value){
+						foreach(explode(",", $field->select_options) as $value){
 			            	$dropValues[$value] = $value;
 			        	}
 			        	
