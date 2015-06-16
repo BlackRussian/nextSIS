@@ -42,7 +42,7 @@ class Person_model extends CI_Model
 					$this->datatables->edit_column('assign', '<a href="/person/assignclass/$1">assign class</a>', 'id');	
 				}
 				if($filter && $filter=="3"){
-					$this->datatables->edit_column('reports', '<a href="/person/assignclass/$1">reports</a>', 'id');		
+					$this->datatables->edit_column('courses', '<a href="/person/assigncourses/$1">assign courses</a>', 'id');		
 				}
 
 				return $this->datatables->generate();

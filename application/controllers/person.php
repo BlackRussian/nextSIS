@@ -364,7 +364,6 @@ class Person extends CI_Controller
 	 // The add function is used to load a person record for edit
 	function assignclass($id,$personrole = "none")
 	{
-		echo "the person role is ".$personrole;
 		    if($this->session->userdata('logged_in')) // user is logged in
 			{
 				// get session data
@@ -431,7 +430,45 @@ class Person extends CI_Controller
 				redirect('login','refresh');
 			}
 	}
-	
+
+	function assigncourses($person_id, $role_id ="none"){
+		    if($this->session->userdata('logged_in')) // user is logged in
+			{
+				// get session data
+				$session_data 				= $this->session->userdata('logged_in');
+				
+				// set the data associative array that is sent to the home view (and display/send)
+				$this->load->helper(array('form', 'url')); // load the html form helper
+				$this->viewdata['username'] 			= $session_data['username'];
+				$this->lang->load('person'); // default language option taken from config.php file 	
+				//$this->load->view('person_view', $data);
+				
+				// if the person model returns TRUE then call the view
+				if(!$this->load->model('person_model','',TRUE))
+				{
+		        	
+				}	
+
+				$this->viewdata['personrole']       = $role_id;
+				$this->viewdata['nav'] 				= $this->navigation->load('people');
+				$this->viewdata['page_title']		= "Assign Courses";				
+
+				//UDF setup
+				$this->load->model('udf_model');
+				//$this->viewdata['school_id'] 	= $session_data['currentschoolid'];
+				$this->viewdata['school_id'] 	= $this->viewdata['school_id'];
+				$this->viewdata['udf'] 				= $this->udf_model->GetUdfs($this->viewdata['school_id'],1,$person_id);
+				$this->breadcrumbcomponent->add('Assign Class','/people/assigncourse/'.$person_id);
+				$this->load->view('templates/header', $this->viewdata);
+				$this->load->view('templates/sidenav');	
+				$this->load->view('subjects/assign_student', $this->viewdata);
+				$this->load->view('templates/footer');
+			}
+			else // not logged in - redirect to login controller (login page)
+			{
+				redirect('login','refresh');
+			}
+	}
 	
     // The add function is used to load a person record for edit
 	function edit($id, $personrole = FALSE)
