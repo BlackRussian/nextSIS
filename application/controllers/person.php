@@ -334,7 +334,9 @@ class Person extends CI_Controller
 			$syear= $this->input->post('syear');
 			$class_id = $this->input->post('class_id');
 			$person_id = $this->input->post('person_id');
-					
+			$personrole = $this->input->post('personrole');
+			
+			
 			$this->form_validation->set_rules('class_id', 'class_id', 'trim|required|xss_clean');
 			
 
@@ -351,7 +353,44 @@ class Person extends CI_Controller
 				);
 				
 				
-				$this->person_model->updatepersonclass($person_id,$syear,$data);
+				//$this->person_model->updatepersonclass($person_id,$syear,$data);
+				if($personrole==2)
+				{
+					
+					$this->person_model->updatepersonclass($person_id,$syear,$data);
+				}
+				
+				
+				///Region added by chris to be deleted
+				if($personrole == 3)
+				{
+					
+				
+				$schterms = unserialize($this->input->post('hfvschterms'));
+				$termc = array();
+				foreach($schterms as $term)
+				{
+					$control = 'termcourse'.$term -> marking_period_id;
+					//echo $control;
+					//if(isset($this->input->post($control)))
+					//{
+						$vals = $this->input->post($control);
+						if (is_array($vals) || is_object($vals))
+						{
+							foreach($vals as $val)
+							{
+								$termc[] = $val;
+							}
+						}
+						//print_r($vals);
+					//}
+				}
+				//echo "stop";
+				//$array[] = $var;
+				//$roledata = $this->input->post('userrole');
+				$this->person_model->updatepersonclassandCourse($person_id,$syear,$data,$termc);
+				}
+				///End Region
 				$this->session->set_flashdata('msgsuccess','Record Saved');	
 				redirect('person/' . $this->input->post('personrole'));
 			}
@@ -362,9 +401,9 @@ class Person extends CI_Controller
 		}
 	}
 	 // The add function is used to load a person record for edit
-	function assignclass($id,$personrole = "none")
+	function assignclass($id,$personrole = FALSE)
 	{
-		echo "the person role is ".$personrole;
+		//echo "the person role is ".$personrole;
 		    if($this->session->userdata('logged_in')) // user is logged in
 			{
 				// get session data
@@ -409,6 +448,35 @@ class Person extends CI_Controller
 					}else{
 						$this->viewdata['classid']="";
 					}
+					//This section of code was added by chris to temporary support of students to term course
+					if($personrole==3)
+					{
+						$this->load->model('schoolsemester_model');
+						$this->load->model('subjects_model');
+						$currentschterms = $this->schoolsemester_model->GetSchoolTermsBySchoolYear($this->viewdata['currentsyear']);
+						$gradelevel = $this->person_model->GetGradeLevelPersonId($id,$this->viewdata['currentsyear'],$this->viewdata['school_id']);
+						//if($currentschterms)
+						//{
+						$termcourses = $this->subjects_model->GetAllSubjectCourseBySchoolYearTerms($currentschterms,$gradelevel->gradelevel_id);
+						//}
+						
+						$this->viewdata['currentschterms'] = $currentschterms;
+						$this->viewdata['termcourses'] = $termcourses;
+						
+						
+						$personcourses = array();
+						$persontermcourseresult = $this->person_model->GetPersonCoursesByPersonId($id);
+						if($persontermcourseresult)
+						{
+						foreach($persontermcourseresult as $prow){
+				            	$personcourses[$prow->term_course_id]	= $prow->term_course_id;
+				        	}
+						}
+	
+				        $this->viewdata['personcourses'] 	= $personcourses;
+					
+					}
+					//End of the section added by chris
 		        	
 				}	
 				$this->viewdata['personrole']       = $personrole;
@@ -423,7 +491,16 @@ class Person extends CI_Controller
 				$this->breadcrumbcomponent->add('Assign Class','/people/assignclass/'.$id);
 				$this->load->view('templates/header', $this->viewdata);
 				$this->load->view('templates/sidenav');	
-				$this->load->view('person/edit_studentclass_view', $this->viewdata);
+				//$this->load->view('person/edit_studentclass_view', $this->viewdata);
+				if($personrole==3)
+				{
+					$this->load->view('person/edit_tempstudentcourse_view', $this->viewdata);
+				}
+				if($personrole == 2)
+				{
+					$this->load->view('person/edit_studentclass_view', $this->viewdata);
+				}
+				
 				$this->load->view('templates/footer');
 			}
 			else // not logged in - redirect to login controller (login page)
