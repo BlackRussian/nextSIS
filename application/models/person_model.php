@@ -210,7 +210,61 @@ class Person_model extends CI_Model
 		}
  	}
 
-	
+	public function validate_oldpwd($id,$pwd)
+	{
+		$this->db->select('id,username,password,default_schoolId, first_name, surname')->from('person')->where('id',$id)->limit(1);
+		
+		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// if there is one result we have a matching username
+   		if($query->num_rows()==1)
+   		{
+   			// get the correcthash from the database
+   			$array = $query->row_array();
+   			$correcthash = $array['password'];
+			
+			// load our tcrypt class and create a new object to work with
+			$this->load->library('tcrypt');
+ 			$tcrypt = new Tcrypt;
+			
+			// call the password_validate method of the tcrypt class to hash the password and compare it to the correct hash
+			// - the method returns true if there is an exact match
+			if($tcrypt->password_validate($pwd,$correcthash))
+			{
+				// the user-supplied password hash is a match for the correct hash so return the query as an array
+				return $query->result();
+			}
+			else
+			{
+     			// no soup for you
+     			return FALSE;
+			}
+   		}
+		else
+		{
+			// the username doesn't exist in the database - we won't tell the visitor that - simply return FALSE
+			return FALSE;
+		}
+	}
+	public function UpdateUserPassword($id,$data)
+	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('id,username,password,default_schoolId, first_name, surname')->from('person')->where('id',$id)->limit(1);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+   			$this->db->flush_cache();
+			$this->db->where('id', $id);
+			$this->db->update('person', $data);
+			$this->db->flush_cache();
+   		}
+		
+	}
 	public function updatepersonclass($personid, $year, $data)
 	{
 		// select all the information from the table we want to use with a 10 row limit (for display)

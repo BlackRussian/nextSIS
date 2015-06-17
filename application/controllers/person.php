@@ -509,7 +509,87 @@ class Person extends CI_Controller
 			}
 	}
 	
-	
+	function UpdateUserProfile()
+	{
+		//$this->load->model('person_model','',TRUE);
+		if($this->session->userdata('logged_in')) // user is logged in
+		{
+			// get session data
+			$session_data = $this->session->userdata('logged_in');
+			$this->load->library('form_validation');
+			// set the data associative array that is sent to the home view (and display/send)
+
+			
+			$this->lang->load('person'); // default language option taken from config.php file 				
+			
+			//Set the id that should be updated
+			$oldpwd= $this->input->post('old_password');
+			$newpwd = $this->input->post('newpassword');
+			$person_id = $this->input->post('person_id');
+			$conpwd = $this->input->post('con_password');
+			
+			
+			 $this->form_validation->set_rules('old_password', 'Password', 'trim|required|xss_clean|callback_validate_oldpwd');
+		     $this->form_validation->set_rules('newpassword', 'New Password', 'required|matches[con_password]|min_length[7]|callback_password_check');
+		     $this->form_validation->set_rules('con_password', 'Retype Password', 'required');
+			
+
+			if($this->form_validation->run() == FALSE) 
+   			{
+				$this->profile();
+			}else{
+				$this->load->library('tcrypt');
+				$tcrypt = new Tcrypt;
+				
+				//$newpassword = $this->randomPassword();
+				$hashpassword = $tcrypt->password_hash($newpwd);
+				
+				//$data = array('password' => $hashpassword);
+				$data = array(
+					
+					'password' => $hashpassword
+					
+				);
+					$this->person_model->UpdateUserPassword($person_id,$data);
+				
+				$this->session->set_flashdata('msgsuccess','Password Changed');	
+				//redirect('person/' . $this->input->post('personrole'));
+				//$this->profile();
+				redirect('home');
+			}
+		}
+		else // not logged in - redirect to login controller (login page)
+		{
+			redirect('login','refresh');
+		}
+	}
+	public function password_check($str)
+	{
+	   if (preg_match('#[0-9]#', $str) && preg_match('#[a-zA-Z]#', $str)) {
+	     return TRUE;
+	   }else{
+	   	
+	   $this->form_validation->set_message('password_check', 'Invalid Password Supplied');
+	   return FALSE;
+	   }
+	}
+	function validate_oldpwd($str)
+	{
+	   $pwd = $str; //this is redundant, but it's to show you how
+	   //the content of the fields gets automatically passed to the method
+	   $id = $id = $this->input->post('person_id');
+	   if($this->person_model->validate_oldpwd($id,$pwd))
+	   {
+	     return TRUE;
+	   }
+	   else
+	   {
+	   	 $this->form_validation->set_message('validate_oldpwd', 'Current %s is incorrect');
+	     return FALSE;
+	   }
+	}
+
+
     // The add function is used to load a person record for edit
 	function edit($id, $personrole = FALSE)
 	{

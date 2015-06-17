@@ -4,6 +4,7 @@
      	<div class="block">
        		<div class="block-content collapse in">
           		<div class="span12">
+          			<?php $this->load->view('shared/display_notification.php');?>
           		</div>
           	</div>
          </div>
