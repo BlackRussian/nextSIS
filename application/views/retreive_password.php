@@ -77,7 +77,7 @@
 	</div>
 
 	<footer class="white navbar-fixed-bottom">
-	  If you do not remember your your details please contact your school assist[at]qsis.com
+	  If you do not remember your your details please contact your school assist[at]quamsoft.com
 	</footer>
 	<script src="/assets/vendors/jquery-1.9.1.min.js"></script>
 	<script src="/assets/js/bootstrap.min.js"></script>
