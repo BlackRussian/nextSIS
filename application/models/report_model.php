@@ -67,12 +67,14 @@ class Report_model extends CI_Model
 
 		$this->lang->load('setup');
 
-		$this->db->select("CONCAT(first_name,if(middle_name = '',middle_name,CONCAT(' ',SUBSTRING(middle_name,1,1),'. ')),' ',surname) as name, person.id as person_id, school_class.id as class_id, school_class.title as class", FALSE);
+		//$this->db->select("CONCAT(first_name,if(middle_name = '',middle_name,CONCAT(' ',SUBSTRING(middle_name,1,1),'. ')),' ',surname) as name, person.id as person_id, school_class.id as class_id, school_class.title as class", FALSE);
+		$this->db->select("CONCAT_WS(' ',first_name,middle_name,surname) as name, person.id as person_id, school_class.id as class_id, school_class.title as class", FALSE);
+		
 		$this->db->from('person_class', FALSE);
 		$this->db->join('person', 'person_class.person_id = person.id', FALSE);
 		$this->db->join('person_role', 'person.id = person_role.person_id', FALSE);
 		$this->db->join('school_class', 'person_class.class_id = school_class.id', FALSE);		
-		$this->db->where('person_role.role_id', 2, FALSE);
+		$this->db->where('person_role.role_id', 3, False);
 		$this->db->where('person_class.year', $year, FALSE);
 		$this->db->where('person.default_schoolId', $schoolid, FALSE);
 		$this->db->where('school_class.id', $class_id, FALSE);

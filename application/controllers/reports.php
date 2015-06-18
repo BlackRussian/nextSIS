@@ -239,7 +239,7 @@ class Reports extends CI_Controller
 			
 			if($result){
 				foreach($result as $row){
-	            	$periods[$row->marking_period_id] = $row->short_name;
+	            	$periods[$row->marking_period_id] = $row->title;
 	        	}
         	}
 
