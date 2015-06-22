@@ -23,7 +23,10 @@
 							<tr>
 								<td><?php echo $info->name ?></td>								
 								<td><?php echo $info->class?></td>
-								<td><a href='/reports/student_list/<?php echo urlencode($info->id); ?>'><?php echo "View Students";?></a></td>
+								<td><a href='/reports/student_list/<?php echo urlencode($info->id); ?>'><?php echo "View Students";?></a>
+									
+								
+								</td>
 							</tr>
 						<?php } ?>
 						<tbody>
