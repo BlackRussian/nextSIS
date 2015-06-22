@@ -302,8 +302,9 @@ class Person extends CI_Controller
 				);
 
 				$roledata = $this->input->post('userrole');
+				$fid = $this->input->post('UserFunction');
 				
-				$this->person_model->updateperson($id,$data,$roledata,$session_data["currentschoolid"]);
+				$this->person_model->updateperson($id,$data,$roledata,$session_data["currentschoolid"],$fid);
 				$this->Insert_Update_UDF($id);
 
 				$this->session->set_flashdata('msgsuccess','Record Updated');	
@@ -639,14 +640,31 @@ class Person extends CI_Controller
 						$this->viewdata['titles'] 		= $titles;
 
 						$this->viewdata['roles'] 		= $this->person_model->GetPersonRoles();
+						
+						$result= $this->person_model->GetPersonFunctions();
+						$functions[""]			= "Select Function";
+						foreach($result as $row){
+			            	$functions[$row->functionId]=$row->Function;
+			        	}
+						$this->viewdata['functions'] 		= $functions;
 
 						$result 						= $this->person_model->getpersonrolesbypersonid($id, $this->viewdata['school_id'] );					
 						
 						foreach($result as $row){
 			            	$personroles[$row->role_id]	= $row->role_id;
 			        	}
-
-			        	$this->viewdata['personroles'] 	= $personroles;
+						$this->viewdata['personroles'] 	= $personroles;
+						
+						$result = $this->person_model->getpersonfunctionsbypersonid($id, $this->viewdata['school_id'] );
+						$functionId = "";
+						if($result)
+						{
+						
+			            	$functionId= $result->function_id;
+						}
+			        	$this->viewdata['functionid'] = $functionId;
+						
+			        	
 		        	}
 		        	else
 		        	{
