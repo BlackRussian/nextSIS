@@ -107,10 +107,10 @@
 		                    	
 		                    	if($enablef)
 								{
-									echo $enablef;
+									
 									echo form_dropdown('UserFunction', $functions,set_value('UserFunction', $functionid),'id="UserFunction"');
 								}else{
-									echo $enablef;
+									
 									echo form_dropdown('UserFunction', $functions,set_value('UserFunction', $functionid),'id="UserFunction"','disabled="disabled"');
 								}
 		                    	  ?>
