@@ -46,8 +46,9 @@
 							<tr>
 								<td><?php echo $student->name ?>
 								<?php //echo var_dump($student)?></td>								
-								<td><a style="cursor:pointer;" onclick="updateProfile('<?php echo $student->person_id; ?>')"><?php echo "Update Report Profile";?></a><?php if($function){?> | 
-								<a style="cursor:pointer;" onclick="updateProfileComments('<?php echo $student->person_id; ?>')"><?php echo "Update Report Comments";?></a>	<?php }?>
+								<?php if($fteacher) { ?><td><a style="cursor:pointer;" onclick="updateProfile('<?php echo $student->person_id; ?>')"><?php echo "Update Report Profile";?></a><?php } ?> </td>
+								<?php	if($function){ ?>  <td>
+								<a style="cursor:pointer;" onclick="updateProfileComments('<?php echo $student->person_id; ?>')"><?php echo "Update Report Comments";?></a>	</td><?php }?>
 									
 									
 									

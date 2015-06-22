@@ -750,10 +750,13 @@ class Person extends CI_Controller
 		$udf_validations	= $this->input->post("udf_validations", TRUE);
 		$udf_titles 		= $this->input->post("udf_titles", TRUE);
 		
-
-		foreach ($udf_field as $key => $value) {
-			$this->form_validation->set_rules('udf_field[' . $key . ']', $udf_titles[$key], $udf_validations[$key]);
+		if(is_array($udf_field))
+		{
+			foreach ($udf_field as $key => $value) {
+				$this->form_validation->set_rules('udf_field[' . $key . ']', $udf_titles[$key], $udf_validations[$key]);
+			}
 		}
+		
 	}
 
 
@@ -768,26 +771,30 @@ class Person extends CI_Controller
 		$insertData			= array();		
 		$updateData			= array();
 
-		foreach ($udf_field as $key => $value) {
-			$isAdd = empty($udf_data_ids[$key]);
-			switch ($udf_types[$key]) {				
-				default:
-					if ($isAdd){
-						$insertData[count($insertData)] = array(							
-							'udf_id' 		=> $udf_ids[$key],
-							'udf_value' 	=> $value,
-							'fk_id' 		=> $person_id					
-						);
-					}else{
-						$updateData[count($updateData)] = array(							
-							'udf_data_id' 	=> $udf_data_ids[$key],
-							'udf_id' 		=> $udf_ids[$key],
-							'udf_value' 	=> $value,
-							'fk_id' 		=> $person_id					
-						);
-					}
-					break;
-			}			
+		if(is_array($udf_field))
+		{
+			foreach ($udf_field as $key => $value) {
+				$isAdd = empty($udf_data_ids[$key]);
+				switch ($udf_types[$key]) {				
+					default:
+						if ($isAdd){
+							$insertData[count($insertData)] = array(							
+								'udf_id' 		=> $udf_ids[$key],
+								'udf_value' 	=> $value,
+								'fk_id' 		=> $person_id					
+							);
+						}else{
+							$updateData[count($updateData)] = array(							
+								'udf_data_id' 	=> $udf_data_ids[$key],
+								'udf_id' 		=> $udf_ids[$key],
+								'udf_value' 	=> $value,
+								'fk_id' 		=> $person_id					
+							);
+						}
+						break;
+				}	
+			
+			}
 		}
 
 		if(count($insertData) > 0)

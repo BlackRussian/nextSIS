@@ -223,8 +223,35 @@ class Reports extends CI_Controller
 			$this->breadcrumbcomponent->add('Student List', '/reports/student_list');
 
 			$this->load->model('report_model');
+			$this->load->model('person_model');
 			$student_listing					= $this->report_model->student_listing($class_id, $this->data['currentsyear'], $this->data['currentschoolid']);	
-
+			
+			$function = "";
+					
+			$results = $this->report_model->GetPersonFunctionByPersonId($this->data['id'],$this->data['currentschoolid']);
+			if($results)
+			{
+				$function = $results->function;
+			}
+			$fteacher = "";
+			$result = $this->person_model->GetStudentClassByStudent($this->data['id'],$this->data['currentsyear'],$this->data['currentschoolid']);
+			if($result)
+			{
+				if($result->class_id == $class_id)
+				{
+					$fteacher = true;
+				}
+							
+				if($result->class_id != $class_id && $function > 0)
+				{
+					$this->session->set_flashdata('msgerr','Sorry you do not have access to that class');	
+					redirect('/reports/class_list');
+				}
+			}else{
+				$this->session->set_flashdata('msgerr','Sorry you do not have access to that class');	
+					redirect('/reports/class_list');
+			}
+			
 			$this->data['query']				= $student_listing;
 
 
@@ -255,7 +282,7 @@ class Reports extends CI_Controller
 			$this->data['periods'] 				= $periods;
 			$this->data['class_id'] 			= $class_id;
 			$this->data['function'] = $function;
-
+			$this->data['fteacher'] = $fteacher;
 
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('templates/sidenav');
@@ -306,6 +333,22 @@ class Reports extends CI_Controller
 				//$this->viewdata['uname'] 		= $row->username;
 				//$this->viewdata['personid'] 	= $row->id;
 				//$this->viewdata['dob'] 			= $row->dob;
+			}
+			
+			
+			
+			$result = $this->person_model->GetStudentClassByStudent($this->data['id'],$this->data['currentsyear'],$this->data['currentschoolid']);
+			if($result)
+			{
+							
+				if($result->class_id != $class_id)
+				{
+					$this->session->set_flashdata('msgerr','Sorry you are not allowed to complete this student'."'".'s report profile');	
+					redirect('/reports/student_list/' . $class_id);
+				}
+			}else{
+				$this->session->set_flashdata('msgerr','Sorry you are not allowed to complete this student'."'".'s report profile');	
+					redirect('/reports/student_list/'. $class_id);
 			}
 			
 			
@@ -415,6 +458,29 @@ class Reports extends CI_Controller
 
 			$this->lang->load('person'); // default language option taken from config.php file 
 			$this->load->model('person_model','',TRUE);
+			
+			$results = $this->report_model->GetPersonFunctionByPersonId($this->data['id'],$this->data['currentschoolid']);
+			if($results)
+			{
+				$function = $results->function;
+			}
+			
+			$result = $this->person_model->GetStudentClassByStudent($this->data['id'],$this->data['currentsyear'],$this->data['currentschoolid']);
+			if($result)
+			{
+							
+				if($function > 0)
+				{
+					$this->session->set_flashdata('msgerr','Sorry you are not allowed to add comments.');	
+					redirect('/reports/student_list/'.$class_id);
+				}
+			}else{
+				$this->session->set_flashdata('msgerr','Sorry you do not have access to that class');	
+					redirect('/reports/class_list');
+			}
+			
+			
+			
 				
 			$rows 								= $this->person_model->getpersonbyid($id,$this->data['currentschoolid']);
 			$student = "";
