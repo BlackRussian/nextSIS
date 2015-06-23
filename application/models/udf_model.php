@@ -91,27 +91,8 @@ class Udf_model extends CI_Model
 
  	public function GetUdfs($school_id, $category_id, $fk_id = NULL, $fk_id_2 = NULL)
  	{
- 		switch ($category_id) {
- 			case 1:
- 				if($fk_id == NULL){
-					$this->db->select('udf_id, school_id, type,  title,  description,  sort_order,  select_options,  category_id,  validation,  default_selection,  hide, NULL as udf_data_id, NULL as udf_value',false);
-					$this->db->from('udf_definition');
-					$this->db->where('school_id', $school_id);
-					$this->db->where('category_id', $category_id);
-					$this->db->where('hide', '0');
-					$this->db->order_by('sort_order');
- 				}else{
-					$this->db->select('udf_definition.udf_id, school_id, type,  title,  description,  sort_order,  select_options,  category_id,  validation,  default_selection,  hide, udf_data_id, udf_value');
-					$this->db->from('udf_definition');
-					$this->db->join('udf_data','udf_definition.udf_id = udf_data.udf_id and fk_id = "' . $fk_id . '"', 'left');
-					$this->db->where('school_id', $school_id);
-					$this->db->where('category_id', $category_id);					
-					$this->db->where('hide', '0');
-					$this->db->order_by('sort_order');
- 				}
-
- 				break;
- 			case 2:
+ 		switch ($category_id) { 			
+ 			default:
  				if($fk_id == NULL){
 					$this->db->select('udf_id, school_id, type,  title,  description,  sort_order,  select_options,  category_id,  validation,  default_selection,  hide, NULL as udf_data_id, NULL as udf_value',false);
 					$this->db->from('udf_definition');
@@ -128,10 +109,6 @@ class Udf_model extends CI_Model
 					$this->db->where('hide', '0');
 					$this->db->order_by('sort_order');
  				}
-
- 				break;
- 			default:
- 				return FALSE;
  		}		
 
    		// run the query and return the result
