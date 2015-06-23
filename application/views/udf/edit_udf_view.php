@@ -1,18 +1,35 @@
 <script type="text/javascript">
 	$(document).ready(function() {
-	     
-	     if ($('#sel_type').val() != "select")
+	     if ($('#sel_type').val() != "text")
+			setValidationList(false);
+
+	     if ($('#sel_type').val() != "select" && $('#sel_type').val() != "checkbox")
 	     	$('#txt_selectoptions').attr('disabled','disabled');
 
 	     $('#sel_type').change(function() {	     	
-	        if($(this).val() == 'select') {
+	        if($(this).val() == 'select' || $(this).val() == 'checkbox') {
 	           	$('#txt_selectoptions').removeAttr('disabled');
 	        }else{
 	        	$('#txt_selectoptions').attr('disabled','disabled');
 	        }
+
+	        if ($('#sel_type').val() != "text")
+				setValidationList(false);
+			else				
+				setValidationList(true);
+
 	     });
 	 });
 
+	function setValidationList(enabled){
+		$("#sel_validation > option").each(function() {
+			if (this.text != "required")
+			    if (enabled)
+			    	$(this).prop("disabled", false);
+			    else
+			    	$(this).prop("disabled", true);
+		});
+	}
 </script>
 <div class="span9" id="content">
 	<div class="row-fluid">
@@ -84,7 +101,8 @@
 		                <div class="control-group">
 		                    <label class="control-label" for="sel_validation"><?php echo "Validation";?></label>
 		                    <div class="controls">		                    	
-		                    	<?php echo form_multiselect('sel_validation[]', $validations, $this->input->post('sel_validation')?explode('|',$udf->validation):$this->input->post('sel_validation'),'id="sel_validation"');?>
+		                    	<?php echo form_multiselect('sel_validation[]', $validations, explode('|',$udf->validation),'id="sel_validation"');?>
+		                    	<!-- ?php echo form_multiselect('sel_validation[]', $validations, $this->input->post('sel_validation')?explode('|',$udf->validation):$this->input->post('sel_validation'),'id="sel_validation"');?-->
 		                    </div>
 		                </div>
 		                <div class="control-group">

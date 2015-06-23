@@ -28,7 +28,8 @@ class UDF extends CI_Controller
 	var $types = array(
         		"text"				=>"Text Box",
         		"select"			=>"Drop Down List",
-        		"textarea"			=>"Text Area"
+        		"textarea"			=>"Text Area",
+        		"checkbox"			=>"Checkbox"
         	);
 
     var $validations = array(
@@ -158,9 +159,9 @@ class UDF extends CI_Controller
 					'title'				=> $txt_title,
 					'description' 		=> $txt_description,
 					'sort_order' 		=> $txt_sort,
-					'select_options' 	=> implode("\r\n",array_unique(explode("\r\n", $txt_selectoptions))),
+					'select_options' 	=> (empty($txt_selectoptions)? "": implode(",",array_unique(explode(",", $txt_selectoptions)))),
 					'category_id' 		=> $sel_category,
-					'validation' 		=> implode("|", $sel_validation),
+					'validation' 		=> (empty($sel_validation) ? "":implode("|", $sel_validation)),
 					'default_selection'	=> $txt_default,
 					'hide' 				=> (empty($chk_hidden) ? "0" : $chk_hidden)					
 				);			
@@ -258,9 +259,9 @@ class UDF extends CI_Controller
 					'title'				=> $txt_title,
 					'description' 		=> $txt_description,
 					'sort_order' 		=> $txt_sort,
-					'select_options' 	=> implode("\r\n",array_unique(explode("\r\n", $txt_selectoptions))),
+					'select_options' 	=> (empty($txt_selectoptions)? "": implode(",",array_unique(explode(",", $txt_selectoptions)))),
 					'category_id' 		=> $sel_category,
-					'validation' 		=> implode("|", $sel_validation),
+					'validation' 		=> (empty($sel_validation) ? "":implode("|", $sel_validation)),
 					'default_selection'	=> $txt_default,
 					'hide' 				=> (empty($chk_hidden) ? "0" : $chk_hidden)					
 				);			

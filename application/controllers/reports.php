@@ -363,7 +363,7 @@ class Reports extends CI_Controller
 			$this->data['class_id']			= $class_id;
 
 			//UDF setup
-			$this->data['udf'] 				= $this->udf_model->GetUdfs($session_data['currentschoolid'],2,$id,$period);
+			$this->data['udf'] 				= $this->udf_model->GetUdfs($this->data['currentschoolid'],2,$id,$period);
 
 
 			$this->load->view('templates/header', $this->data);
@@ -556,6 +556,7 @@ class Reports extends CI_Controller
 			// get session data
 			$session_data 				= $this->session->userdata('logged_in');
 			$this->load->library('form_validation');
+			$this->load->helper('udf');
 
 			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] 			= $session_data['username'];
@@ -567,13 +568,13 @@ class Reports extends CI_Controller
 			$class_id 					= $this->input->post('class_id');
 			$period 					= $this->input->post('period');
 						
-			$this->UDF_Validation();
+			UDF_Validation($this);
 
 			if($this->form_validation->run() == FALSE) 
    			{
    				$this->report_profile($student_id,$period,$class_id);			
 			}else{				
-				$this->Insert_Update_UDF($student_id,$period);
+				Insert_Update_UDF($this, $student_id, $period);
 				$this->session->set_flashdata('msgsuccess','Record Saved');	
 				redirect('reports/student_list/'. $class_id,'refresh');
 			}
@@ -582,65 +583,5 @@ class Reports extends CI_Controller
 		{
 			redirect('login','refresh');
 		}
-	}
-
-	//UDF Validation 
-	function UDF_Validation(){
-		$udf_field  		= $this->input->post('udf_field', TRUE);
-		$udf_types	 		= $this->input->post('udf_types', TRUE);
-		$udf_validations	= $this->input->post("udf_validations", TRUE);
-		$udf_titles 		= $this->input->post("udf_titles", TRUE);
-		
-		if (!empty($udf_field)){
-			foreach ($udf_field as $key => $value) {
-				$this->form_validation->set_rules('udf_field[' . $key . ']', $udf_titles[$key], $udf_validations[$key]);
-			}
-		}
-	}
-
-	function Insert_Update_UDF($person_id, $period){
-		$this->load->model('udf_model');
-		$udf_field  		= $this->input->post('udf_field', TRUE);
-		$udf_types	 		= $this->input->post('udf_types', TRUE);
-		$udf_validations	= $this->input->post("udf_validations", TRUE);
-		$udf_titles 		= $this->input->post("udf_titles", TRUE);
-		$udf_ids 			= $this->input->post("udf_ids", TRUE);
-		$udf_data_ids 		= $this->input->post("udf_data_ids", TRUE);
-		$insertData			= array();		
-		$updateData			= array();
-
-		foreach ($udf_field as $key => $value) {
-			$isAdd = empty($udf_data_ids[$key]);
-			switch ($udf_types[$key]) {				
-				default:
-					if ($isAdd){
-						$insertData[count($insertData)] = array(							
-							'udf_id' 		=> $udf_ids[$key],
-							'udf_value' 	=> $value,
-							'fk_id' 		=> $person_id,				
-							'fk_id_2' 		=> $period
-						);
-					}else{
-						$updateData[count($updateData)] = array(							
-							'udf_data_id' 	=> $udf_data_ids[$key],
-							'udf_id' 		=> $udf_ids[$key],
-							'udf_value' 	=> $value,
-							'fk_id' 		=> $person_id		
-						);
-					}
-					break;
-			}			
-		}
-		
-		
-		if(count($insertData) > 0){
-			$this->udf_model->AddUDFValues($insertData);
-		}
-		
-		
-		if(count($updateData) > 0){
-			$this->udf_model->UpdateUDFValues($updateData);
-		}
-		
 	}
 }

@@ -20,6 +20,7 @@
 								<th>Title</th>
 								<th>Descrption</th>
 								<th>Type</th>
+								<th>Validations</th>
 								<th>Hidden</th>
 								<th>&nbsp;</th>
 							</tr>
@@ -31,6 +32,7 @@
 								<td><?php echo $udf->title ?></td>
 								<td><?php echo $udf->description ?></td>
 								<td><?php echo $udf->type ?></td>
+								<td><?php echo str_replace('|', ', ', $udf->validation) ?></td>
 								<td><?php echo $udf->hide == 1? "Yes":"No"; ?></td>
 								<td><a href='udf/edit/<?php echo urlencode($udf->udf_id); ?>'><?php echo $this->lang->line("editoption");?></a></td>
 							</tr>

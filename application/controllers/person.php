@@ -162,7 +162,7 @@ class Person extends CI_Controller
 
 			//UDF setup
 			$this->viewdata['school_id'] 			= $session_data['currentschoolid'];
-			$this->viewdata['udf'] 						= $this->udf_model->GetUdfs($session_data['currentschoolid'],1);
+			$this->viewdata['udf'] 					= $this->udf_model->GetUdfs($session_data['currentschoolid'],1);
 
 			$this->viewdata['titles'] 	= $titles;
 			$this->viewdata['role_id'] 	= $role;
@@ -188,6 +188,7 @@ class Person extends CI_Controller
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
 			$this->load->library('form_validation');
+			$this->load->helper('udf');
 
 			// get session data
 			$session_data = $this->session->userdata('logged_in');
@@ -216,8 +217,7 @@ class Person extends CI_Controller
 			$this->form_validation->set_rules('userrole[]', 'User Roles', 'trim|required|xss_clean');
 			$this->form_validation->set_rules('dob', 'Date of Birth', 'trim|required|xss_clean');
 			
-
-			$this->UDF_Validation();
+			UDF_Validation($this);
 
 			if($this->form_validation->run() == FALSE) 
    			{
@@ -240,7 +240,7 @@ class Person extends CI_Controller
 				$roledata 		= $this->input->post('userrole');
 				$person_id 		= $this->person_model->addperson($data,$roledata,$session_data["currentschoolid"]);
 
-				$this->Insert_Update_UDF($person_id);
+				Insert_Update_UDF($this, $person_id);
 				
 				$this->session->set_flashdata('msgsuccess','Record Saved');	
 				redirect('person/' . $this->input->post('personrole'));
@@ -261,6 +261,7 @@ class Person extends CI_Controller
 			// get session data
 			$session_data = $this->session->userdata('logged_in');
 			$this->load->library('form_validation');
+			$this->load->helper('udf');
 
 			// set the data associative array that is sent to the home view (and display/send)
 			$data['username'] = $session_data['username'];
@@ -283,7 +284,7 @@ class Person extends CI_Controller
 			$this->form_validation->set_rules('dob', 'Date of Birth', 'trim|required|xss_clean');
 
 
-			$this->UDF_Validation();
+			UDF_Validation($this);
 
 			if($this->form_validation->run() == FALSE) 
    			{
@@ -302,10 +303,9 @@ class Person extends CI_Controller
 				);
 
 				$roledata = $this->input->post('userrole');
-				$fid = $this->input->post('UserFunction');
 				
-				$this->person_model->updateperson($id,$data,$roledata,$session_data["currentschoolid"],$fid);
-				$this->Insert_Update_UDF($id);
+				$this->person_model->updateperson($id,$data,$roledata,$session_data["currentschoolid"]);
+				Insert_Update_UDF($this, $person_id);
 
 				$this->session->set_flashdata('msgsuccess','Record Updated');	
 				redirect('person/' . $this->input->post('personrole'));
@@ -640,31 +640,14 @@ class Person extends CI_Controller
 						$this->viewdata['titles'] 		= $titles;
 
 						$this->viewdata['roles'] 		= $this->person_model->GetPersonRoles();
-						
-						$result= $this->person_model->GetPersonFunctions();
-						$functions[""]			= "Select Function";
-						foreach($result as $row){
-			            	$functions[$row->functionId]=$row->Function;
-			        	}
-						$this->viewdata['functions'] 		= $functions;
 
 						$result 						= $this->person_model->getpersonrolesbypersonid($id, $this->viewdata['school_id'] );					
 						
 						foreach($result as $row){
 			            	$personroles[$row->role_id]	= $row->role_id;
 			        	}
-						$this->viewdata['personroles'] 	= $personroles;
-						
-						$result = $this->person_model->getpersonfunctionsbypersonid($id, $this->viewdata['school_id'] );
-						$functionId = "";
-						if($result)
-						{
-						
-			            	$functionId= $result->function_id;
-						}
-			        	$this->viewdata['functionid'] = $functionId;
-						
-			        	
+
+			        	$this->viewdata['personroles'] 	= $personroles;
 		        	}
 		        	else
 		        	{
@@ -743,67 +726,7 @@ class Person extends CI_Controller
 			redirect('login', 'refresh');
 	}
 
-	//UDF Validation 
-	function UDF_Validation(){
-		$udf_field  		= $this->input->post('udf_field', TRUE);
-		$udf_types	 		= $this->input->post('udf_types', TRUE);
-		$udf_validations	= $this->input->post("udf_validations", TRUE);
-		$udf_titles 		= $this->input->post("udf_titles", TRUE);
-		
-		if(is_array($udf_field))
-		{
-			foreach ($udf_field as $key => $value) {
-				$this->form_validation->set_rules('udf_field[' . $key . ']', $udf_titles[$key], $udf_validations[$key]);
-			}
-		}
-		
-	}
-
-
-	function Insert_Update_UDF($person_id){
-		$this->load->model('udf_model');
-		$udf_field  		= $this->input->post('udf_field', TRUE);
-		$udf_types	 		= $this->input->post('udf_types', TRUE);
-		$udf_validations	= $this->input->post("udf_validations", TRUE);
-		$udf_titles 		= $this->input->post("udf_titles", TRUE);
-		$udf_ids 			= $this->input->post("udf_ids", TRUE);
-		$udf_data_ids 		= $this->input->post("udf_data_ids", TRUE);
-		$insertData			= array();		
-		$updateData			= array();
-
-		if(is_array($udf_field))
-		{
-			foreach ($udf_field as $key => $value) {
-				$isAdd = empty($udf_data_ids[$key]);
-				switch ($udf_types[$key]) {				
-					default:
-						if ($isAdd){
-							$insertData[count($insertData)] = array(							
-								'udf_id' 		=> $udf_ids[$key],
-								'udf_value' 	=> $value,
-								'fk_id' 		=> $person_id					
-							);
-						}else{
-							$updateData[count($updateData)] = array(							
-								'udf_data_id' 	=> $udf_data_ids[$key],
-								'udf_id' 		=> $udf_ids[$key],
-								'udf_value' 	=> $value,
-								'fk_id' 		=> $person_id					
-							);
-						}
-						break;
-				}	
-			
-			}
-		}
-
-		if(count($insertData) > 0)
-			$this->udf_model->AddUDFValues($insertData);
-		
-		if(count($updateData) > 0)
-			$this->udf_model->UpdateUDFValues($updateData);
-	}
-
+	
 	/*function ago( $datetime )
 	{
 	    $interval = date_create('now')->diff( $datetime );
