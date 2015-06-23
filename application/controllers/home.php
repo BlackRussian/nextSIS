@@ -82,7 +82,7 @@ class Home extends CI_Controller
 
 	public function getCUrrentPeriodId()
 	{
-		return 4;
+		return 3;
 	}
 }
 
