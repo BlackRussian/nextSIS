@@ -7,6 +7,14 @@
 		window.location.href = url;
    		return false;
 	}
+	function updateProfileComments(id){
+		var period = $('#sel_marking_period').val();
+		var class_id =   $("input[name='class_id']").val();
+		var url = "/reports/report_comments/" + id + "/" + period + "/" + class_id;
+
+		window.location.href = url;
+   		return false;
+	}
 
 </script>
 <div class="span9" id="content">
@@ -38,12 +46,18 @@
 							<tr>
 								<td><?php echo $student->name ?>
 								<?php //echo var_dump($student)?></td>								
-								<td><a style="cursor:pointer;" onclick="updateProfile('<?php echo $student->person_id; ?>')"><?php echo "Update Report Profile";?></a></td>
+								<?php if($fteacher) { ?><td><a style="cursor:pointer;" onclick="updateProfile('<?php echo $student->person_id; ?>')"><?php echo "Update Report Profile";?></a><?php } ?> </td>
+								<?php	if($function){ ?>  <td>
+								<a style="cursor:pointer;" onclick="updateProfileComments('<?php echo $student->person_id; ?>')"><?php echo "Update Report Comments";?></a>	</td><?php }?>
+									
+									
+									
+								</td>
 							</tr>
 						<?php } ?>
 						<tbody>
 					</table>
-					<?php }?>	
+					<?php } ?>	
         		</div>  			
   				  				
   			</div>

@@ -85,14 +85,38 @@
 		                <div class="control-group">
 		                    <label class="control-label" for="userrole"><?php echo "User Roles";?></label>
 		                    <div class="controls">		                    			                    	
-		                    	<?php		                    	
-									foreach($roles as $role){									
+		                    	<?php		
+		                    		$enablef = false;                    	
+									foreach($roles as $role){
+										
+										if(in_array("2", $personroles))
+										{
+											$enablef = true;
+										}								
 										echo form_checkbox('userrole[]', $role->id, set_checkbox('userrole[]', $role->id, in_array($role->id, $personroles)));
 										echo " " .$role->label . "<br />";									
 									}
+									
 								?>
 		                    </div>
 		                </div>
+		                <div class="control-group">
+		                    <label class="control-label" for="UserFunction"><?php echo "User Function";?></label>
+		                    <div class="controls">		                    			                    			                    	
+		                    	<?php 
+		                    	
+		                    	if($enablef)
+								{
+									
+									echo form_dropdown('UserFunction', $functions,set_value('UserFunction', $functionid),'id="UserFunction"');
+								}else{
+									
+									echo form_dropdown('UserFunction', $functions,set_value('UserFunction', $functionid),'id="UserFunction"','disabled="disabled"');
+								}
+		                    	  ?>
+		                    </div>
+		                </div>
+		               
  						<?php $this->load->view('shared/display_udf_view');?>
 		                <div class="form-actions">
 	                  		<a href="/person/<?php echo($personrole)?>" class="btn"> <i class="icon-chevron-left icon-black"></i>Cancel</a>

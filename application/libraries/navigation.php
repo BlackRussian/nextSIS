@@ -110,6 +110,7 @@ class Navigation{
 				'icon-class'=>	'icon-home',
 				'parent'	=>	5
 			)
+			
 		); 
 	}
 	
