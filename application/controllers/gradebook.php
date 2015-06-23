@@ -105,7 +105,8 @@ class Gradebook extends CI_Controller
 		if($this->session->userdata('logged_in')) // user is logged in
 		{	
 			$this->load->model('subjects_model');
-			$subject 					= $this->subjects_model->GetSubjectCourseById($id);
+			//$subject 					= $this->subjects_model->GetSubjectCourseById($id);
+$subject = $this->subjects_model->GetSubjectCourseByTermCourseId($id);
 
 			$this->data['page_title'] 	= "Adding Grade Type for \"". $subject->course_title . "\"";
 

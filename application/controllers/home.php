@@ -35,11 +35,31 @@ class Home extends CI_Controller
 		{
 			// get session data
 			$session_data = $this->session->userdata('logged_in');
-			
+			$this->load->model('dashboard_model');
 			// set the data associative array that is sent to the home view (and display/send)
+			
+			$this->data['currentschoolid'] 		= $session_data['currentschoolid'];
+			$this->data['currentsyear'] 		= $session_data['currentsyear'];		
+			$this->data['roles'] 				= $session_data['role'];	
+			$this->data['id'] 					= $session_data['id'];	
 			$data['username'] = $session_data['username'];
 			$data['nav'] = $this->navigation->load('home');
 			$this->lang->load('home'); // default language option taken from config.php file 
+			
+			$results = $this->dashboard_model->GetSubjectRegisteredStudentCount($this->getCUrrentPeriodId(), $this->data['id']);	
+			
+			$data['subjectgradecount'] = $results;
+			
+			$results = $this->dashboard_model->GetTeacherSubjectList($this->getCUrrentPeriodId(), $this->data['id']);	
+			
+			$subjects = "";
+			if($results)
+			{
+				$subjects = $results;
+			}
+			
+			$data['teachercourses'] = $subjects;
+			$data['roles'] = $this->data['roles'];
 			
 			$this->load->view('templates/header', $data);	
 			$this->load->view('templates/sidenav');
@@ -58,6 +78,11 @@ class Home extends CI_Controller
 		$this->session->unset_userdata('logged_in');
 		session_destroy();
 		redirect('login', 'refresh');
+	}
+
+	public function getCUrrentPeriodId()
+	{
+		return 4;
 	}
 }
 

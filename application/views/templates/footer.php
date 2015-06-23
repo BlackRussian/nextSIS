@@ -13,6 +13,7 @@
         <script src="/assets/vendors/jquery.uniform.min.js"></script>
         <script src="/assets/vendors/chosen.jquery.min.js"></script>
         <script src="/assets/vendors/bootstrap-datepicker.js"></script>
+        <script src="/assets/vendors/easypiechart/jquery.easy-pie-chart.js"></script>
         <script src="/assets/vendors/datatables/js/jquery.dataTables.min.js"></script>
         
         <!--script src="/assets/vendors/wysiwyg/wysihtml5-0.3.0.js"></script>

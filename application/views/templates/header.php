@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="<?php echo base_url('assets/css/DT_bootstrap.css');?>" rel="stylesheet" media="screen">
 		<!--link rel="stylesheet" href="<?php echo base_url('assets/css/nextsis.css');?>" type="text/css"-->
     <link rel="stylesheet" href="<?php echo base_url('assets/css/styles.css');?>" type="text/css" media="screen">
+    
+    <link href="<?php echo base_url('assets/vendors/easypiechart/jquery.easy-pie-chart.css');?>" rel="stylesheet" media="screen">
+    
+    
     <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="vendors/flot/excanvas.min.js"></script><![endif]-->
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
     <!--[if lt IE 9]>
