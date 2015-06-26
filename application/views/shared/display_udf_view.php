@@ -78,7 +78,9 @@
 					case 'checkbox':       	
 						?>
 						    <div class="control-group">
+						    	<label><?php echo $field->description;?></label>
 						        <label class="control-label" for="<?php echo $udf_field_name ."[]"; ?>"><?php echo $field->title;?></label>
+						        
 						        <? 
 						        	$row_limit = 4;
 						        	$cnt = count(explode(",", $field->select_options));
@@ -86,7 +88,7 @@
 									$cnter = 1;
 									foreach(explode(",", $field->select_options) as $value){
 										if ($cnter == 1 || $cnter % $row_limit == 1)
-											echo "<div class='controls span2'>";
+										echo "<div class='controls span2'>";
 
 										echo "<label class='checkbox'>";
 										echo form_checkbox($udf_field_name ."[]", $value, set_checkbox($udf_field_name ."[]", $value, in_array($value, explode(",", $default_vals))));
