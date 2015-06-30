@@ -44,21 +44,16 @@ class Home extends CI_Controller
 			$this->data['id'] 					= $session_data['id'];	
 			$data['username'] = $session_data['username'];
 			$data['nav'] = $this->navigation->load('home');
+			$data['currentschoolid'] = $this->data['currentschoolid'] ;
+			$data['currentsyear'] = $this->data['currentsyear'] ;
+			
 			$this->lang->load('home'); // default language option taken from config.php file 
 			
-			$results = $this->dashboard_model->GetSubjectRegisteredStudentCount($this->getCUrrentPeriodId(), $this->data['id']);	
 			
-			$data['subjectgradecount'] = $results;
 			
-			$results = $this->dashboard_model->GetTeacherSubjectList($this->getCUrrentPeriodId(), $this->data['id']);	
 			
-			$subjects = "";
-			if($results)
-			{
-				$subjects = $results;
-			}
+			$data = $this->getDashBoardData($data);
 			
-			$data['teachercourses'] = $subjects;
 			$data['roles'] = $this->data['roles'];
 			
 			$this->load->view('templates/header', $data);	
@@ -79,10 +74,95 @@ class Home extends CI_Controller
 		session_destroy();
 		redirect('login', 'refresh');
 	}
-
-	public function getCUrrentPeriodId()
+	
+	public function getDashBoardData($curdata)
 	{
-		return 3;
+		$curdata = $curdata;
+		$currperiod = $this->getCUrrentPeriodId($curdata['currentschoolid'],$curdata['currentsyear']);
+		$results = $this->dashboard_model->GetSubjectRegisteredStudentCount($currperiod, $this->data['id']);	
+		$curdata['subjectgradecount'] = $results;
+		$results = $this->dashboard_model->GetTeacherSubjectList($currperiod, $this->data['id']);	
+		$subjects = "";
+		if($results)
+		{
+			$subjects = $results;
+		}
+		$curdata['teachercourses'] = $subjects;
+		
+		
+		$results = $this->dashboard_model->GetCoursesforSemester($currperiod);
+		$termcoursecount = "";
+		$gradebookcount ="";
+		if($results)
+		{
+			$termcoursecount = count($results);
+			$termcourseids = array();
+			foreach($results as $result)
+			{
+					$termcourseids[] = $result->term_course_id;
+			}
+			if($termcourseids)
+			{
+				$results = $this->dashboard_model->GetCreatedGradeBooks($termcourseids);
+				if($results)
+				{
+					$gradebookcount = count($results);
+				}
+			}
+		}
+		$curdata['termcoursecount'] = $termcoursecount;
+		$curdata['gradebookcount'] = $gradebookcount;
+		return $curdata;
+		
+	}
+	
+	public function getCUrrentPeriodId($schoolId, $syear)
+	{
+		$this->load->model('schoolsemester_model');
+		$periodid = 0;
+		$result = $this->schoolsemester_model->GetCurrentSchoolSemester($schoolId,$syear);
+		$mydate_timestamp = strtotime("+ 10 days");
+		$mydate = date("Y-m-d", $mydate_timestamp);
+		$focusid = 0;
+		$focusd = "";
+		$diff = 1000;
+		$mpid = "";
+		foreach($result as $r)
+		{
+			$focusid = $r->marking_period_id;
+			$focusd = $r->end_date;
+			if($r->start_date <= $mydate && $mydate <= $r->end_date)
+			{
+				
+				$mpid =$r->marking_period_id;
+				
+			}else{
+			
+				if($mydate > $r->end_date)
+				{
+					$mydate = new DateTime();
+					//$difval =      $mydate->diff(new DateTime($r->end_date))->format("%a");
+					$sdate = new DateTime($r->end_date);
+					$difval = round(($mydate->format('U') - $sdate->format('U')) / (60*60*24));
+					if( $difval  < $diff)
+					{
+						$diff = $difval;
+						$focusid =$r->marking_period_id;
+					}
+				}
+			}
+		}
+		
+		$myid="";
+		if($mpid)
+		{
+			$myid = $mpid;
+		}else{
+			$myid  = $focusid;
+		}
+		
+		
+		return $myid;
 	}
 }
 

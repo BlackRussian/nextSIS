@@ -91,6 +91,49 @@ class Dashboard_model extends CI_Model
 	
 	}
 
+	public function GetCoursesforSemester($periodid)
+	{
+		
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('term_course_id,marking_period_id,mp,term_course.course_id,teacher_id')->from('term_course')->where('marking_period_id',$periodid);
+		
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+	}
+	public function GetCreatedGradeBooks($courseids)
+	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('grade_type_id,title,weight,term_course_id')->from('grade_type')->where_in('term_course_id', $courseids);;
+		
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+	}
  	
 
 

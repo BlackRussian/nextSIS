@@ -14,9 +14,14 @@
           			
           			
           		</div>
+          		 <?php if($roles==2){
+          			
+					 $this->load->view('dashboard/semester_subject_setup_progress.php'); } ?>
           		<?php if($roles==2){
           			
 					 $this->load->view('dashboard/grade_input_progress.php'); } ?>
+					 
+				
           		
           		<!--<div class="row-fluid">
           		<div class="block">
