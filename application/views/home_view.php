@@ -14,7 +14,7 @@
           			
           			
           		</div>
-          		 <?php if($roles==2){
+          		 <?php if($roles==1){
           			
 					 $this->load->view('dashboard/semester_subject_setup_progress.php'); } ?>
           		<?php if($roles==2){
