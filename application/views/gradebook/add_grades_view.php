@@ -4,7 +4,7 @@
        		<div class="block-content collapse in">
           		<div class="span12">
 					<?php
-	        			$hiddenflds = array('grade_type_id' => $grade_type_id, 'course_id' => $course_id);
+	        			$hiddenflds = array('grade_type_id' => $grade_type_id, 'term_course_id' => $term_course_id);
 	        			echo form_open('gradebook/addrecord', 'method="post" class="form-horizontal"', $hiddenflds);
 	        		?>
 		                <fieldset>
@@ -67,7 +67,7 @@
 		                }?>
 		                </div>
 						<div class="form-actions">
-	                  		<a href="/gradebook/gradetypelist/<?php echo $course_id;?>" class="btn"><i class="icon-chevron-left icon-black"></i>Cancel</a>
+	                  		<a href="/gradebook/gradetypelist/<?php echo $term_course_id; ?>" class="btn"><i class="icon-chevron-left icon-black"></i>Cancel</a>
 							          <?php echo form_submit('submit','Submit', 'class="btn btn-primary"'); ?>
 							          <?php echo form_close(); ?>
 					    </div>
