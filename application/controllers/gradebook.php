@@ -76,16 +76,18 @@ class Gradebook extends CI_Controller
 			$courses 						= $this->gradebook_model->GetGradeTypeInfo($id);
 			$this->data['query'] 			= $this->gradebook_model->GetStudentList($id);			
 			$this->data['grade_type_id'] 	= $id;
-			$this->data['course_id'] 		= $courses->term_course_id;
+			$this->data['term_course_id'] 		= $courses->term_course_id;
 			$this->data['page_title'] 		= "Adding Grades for \"". $courses->subject . " - " . $courses->title . "\"";
 			
 
 
 			//UDF setup		
 			$udfs = array();
-			foreach ($this->data['query'] as $student) {
-				$udfs[$student->studentid] = $this->udf_model->GetUdfs($this->data['currentschoolid'],3,$student->studentid,$id);
-			}				
+			if($this->data['query']){
+				foreach ($this->data['query'] as $student) {
+					$udfs[$student->studentid] = $this->udf_model->GetUdfs($this->data['currentschoolid'],3,$student->studentid,$this->data['term_course_id']);
+				}	
+			}			
 			
 			$this->data['udfs'] = $udfs;
 
@@ -201,7 +203,7 @@ $subject = $this->subjects_model->GetSubjectCourseByTermCourseId($id);
 			$session_data 		= $this->session->userdata('logged_in');
 			
 			$grade_type_id  	= $this->input->post('grade_type_id', TRUE);
-			$course_id  		= $this->input->post('course_id', TRUE);
+			$term_course_id  		= $this->input->post('term_course_id', TRUE);
 			$grade 				= $this->input->post("grade", TRUE);
 			$gradeid 			= $this->input->post("gradeid", TRUE);
 			$studentid 			= $this->input->post("studentid", TRUE);
@@ -238,8 +240,11 @@ $subject = $this->subjects_model->GetSubjectCourseByTermCourseId($id);
 							);
 						}
 					}
+					
+					//term_course_id
 
-					Insert_Update_UDF($this, $studentid[$key], $grade_type_id,$studentid[$key]);
+					//Insert_Update_UDF($this, $studentid[$key], $grade_type_id,$studentid[$key]);
+					Insert_Update_UDF($this, $studentid[$key], $term_course_id,$studentid[$key]);
 				}
 				//$_SESSION["insert"] = $insertData;
 				//$_SESSION["update"] = $updateData;
@@ -250,7 +255,7 @@ $subject = $this->subjects_model->GetSubjectCourseByTermCourseId($id);
 				if (count($updateData) > 0)
 					$this->gradebook_model->UpdateGrades($updateData);
 
-			    redirect('gradebook/gradetypelist/' . $course_id);
+			    redirect('gradebook/gradetypelist/' . $grade_type_id);
 			}
 		}
 		else // not logged in - redirect to login controller (login page)
