@@ -28,7 +28,7 @@ class Person_model extends CI_Model
  		if($ajax){
  			
  			if($filter != ""){
- 				$this->datatables->select("person.id, first_name, surname, middle_name, common_name, username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles", FALSE);
+ 				$this->datatables->select("person.id, first_name, surname, middle_name, common_name, username, GROUP_CONCAT(role.label SEPARATOR ', ') as roles,role.id as roleid", FALSE);
 				$this->datatables->from('person');
 				$this->datatables->join('person_role', 'person.id = person_role.person_id');
 				$this->datatables->join('role', 'person_role.role_id = role.id');
@@ -39,7 +39,7 @@ class Person_model extends CI_Model
 				$this->datatables->edit_column('edit', '<a href="/person/edit/$1">edit</a>', 'id');
 				
 				if($filter && ($filter=="3" || $filter=="2")){
-					$this->datatables->edit_column('assign', '<a href="/person/assignclass/$1">assign class</a>', 'id');	
+					$this->datatables->edit_column('assign', '<a href="/person/assignclass/$1/$2">assign class</a>', 'id,roleid');	
 				}
 				if($filter && $filter=="3"){
 					$this->datatables->edit_column('courses', '<a href="/person/assigncourses/$1">assign courses</a>', 'id');		
@@ -236,6 +236,54 @@ class Person_model extends CI_Model
 		}
 		
 	}
+	public function updatepersonclassandCourse($personid, $year, $data,$courses)
+	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('person_id,class_id')->from('person_class')->where('person_id',$personid)->where('year', $year);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+   			$this->db->flush_cache();
+			$this->db->where('person_id', $personid);
+			$this->db->where('year', $year);
+			$this->db->update('person_class', $data);
+			$this->db->flush_cache();
+   		}
+		else
+		{
+			// there are no records
+			$this->db->insert('person_class', $data);
+			$this->db->flush_cache();
+		}
+		
+		
+		//Clear the current roles associated with the person
+		$this->db->where('person_id', $personid);
+		$this->db->where('syear', $year);
+        $this->db->delete('person_course'); 
+		$this->db->flush_cache();
+		
+		//Add the new roles
+		if(is_array($courses))
+		{
+			foreach($courses as $itm)
+			{
+				$rdata = array(
+				'person_id' => $personid,
+				'term_course_id' => $itm,
+				'syear'=>$year
+				);
+				$this->db->insert('person_course',$rdata);
+				$this->db->flush_cache();
+				
+			}
+		}
+		
+	}
 	
 
  	//Get current Person Roles
@@ -281,6 +329,28 @@ class Person_model extends CI_Model
 			return FALSE;
 		}
 	}
+	
+	public function GetGradeLevelPersonId($studentid, $syear,$school_id)
+	{
+		
+		$this->db->select('school_class.gradelevel_id,school_class.title,school_class.id')->from('person_class');
+		$this->db->join('school_class', 'person_class.class_id = school_class.id');
+		$this->db->where('person_class.person_id',$studentid)->where('year',$syear)->where('school_id',$school_id);
+		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->row();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+	}
+	
 	
  	//Get all Person Genders
 	public function GetPersonGender($langid)
@@ -347,6 +417,26 @@ class Person_model extends CI_Model
 		}
  	}
 
+	public function GetPersonCoursesByPersonId($personid)
+	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('person_id,term_course_id')->from('person_course')->where('person_id',$personid);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+	}
  	public function GetPersonsWithRole($role_id, $school_id){
 
 		$sql = "select person.id, first_name, surname 

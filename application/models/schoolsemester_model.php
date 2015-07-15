@@ -76,6 +76,28 @@ class Schoolsemester_model extends CI_Model
 		}
  	}
 
+
+	public function GetSchoolTermsBySchoolYear($syear)
+	 	{
+			// select all the information from the table we want to use with a 10 row limit (for display)
+			$this->db->select('marking_period_id,year_id,school_id,title,syear,start_date,end_date')->from('school_semester')->where('syear',$syear)->limit(10);
+	
+	   		// run the query and return the result
+	   		$query = $this->db->get();
+			
+			// proceed if records are found
+	   		if($query->num_rows()>0)
+	   		{
+				// return the data (to the calling controller)
+				return $query->result();
+	   		}
+			else
+			{
+				// there are no records
+				return FALSE;
+			}
+	 	}
+
 	
 	
 	

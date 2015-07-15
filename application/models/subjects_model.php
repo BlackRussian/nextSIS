@@ -216,6 +216,43 @@ public function GetSubjectCourseByTermCourseId($termcourse_id)
 		}
  	}
 
+//This method will select all available term courses for a school year
+public function GetAllSubjectCourseBySchoolYearTerms($termcourses,$gradelevelid)
+ 	{
+ 		
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		//$where = 'subject_id = '. $id . ' AND school_id = ' . $school_id;
+		$this->db->select('person.first_name,person.surname,term_course.term_course_id,term_course.marking_period_id,subject_course.course_id,subject.subject_id,subject.syear,grade_level,subject_course.title as course_title,subject_course.short_name, school_gradelevels.title as grade_title, subject.title as subject_title');
+		$this->db->from('subject_course');
+		$this->db->join('school_gradelevels', 'subject_course.grade_level = school_gradelevels.id');
+		$this->db->join('subject', 'subject.subject_id = subject_course.subject_id');
+		//New line i added
+		$this->db->join('term_course','term_course.course_id = subject_course.course_id');
+		$this->db->join('person','person.id = term_course.teacher_id');
+		
+		
+		foreach($termcourses as $tc){
+		   //$classes[$row->id]=$row->title;
+			$this->db->or_where('term_course.marking_period_id',$tc->marking_period_id);
+		}
+		$this->db->where('grade_level',$gradelevelid);
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+
+
 
 
  		//Get Grade Levels
