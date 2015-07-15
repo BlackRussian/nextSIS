@@ -72,12 +72,24 @@ class Gradebook extends CI_Controller
 		
 		if($this->session->userdata('logged_in')) // user is logged in
 		{	
+			$this->load->model('udf_model');
 			$courses 						= $this->gradebook_model->GetGradeTypeInfo($id);
 			$this->data['query'] 			= $this->gradebook_model->GetStudentList($id);			
 			$this->data['grade_type_id'] 	= $id;
-			$this->data['course_id'] 		= $courses->term_course_id;
+			$this->data['term_course_id'] 		= $courses->term_course_id;
 			$this->data['page_title'] 		= "Adding Grades for \"". $courses->subject . " - " . $courses->title . "\"";
+			
 
+
+			//UDF setup		
+			$udfs = array();
+			if($this->data['query']){
+				foreach ($this->data['query'] as $student) {
+					$udfs[$student->studentid] = $this->udf_model->GetUdfs($this->data['currentschoolid'],3,$student->studentid,$this->data['term_course_id']);
+				}	
+			}			
+			
+			$this->data['udfs'] = $udfs;
 
 			if($this->data['query']){
 			    $this->load->view('templates/header',$this->data);
@@ -105,7 +117,8 @@ class Gradebook extends CI_Controller
 		if($this->session->userdata('logged_in')) // user is logged in
 		{	
 			$this->load->model('subjects_model');
-			$subject 					= $this->subjects_model->GetSubjectCourseById($id);
+			//$subject 					= $this->subjects_model->GetSubjectCourseById($id);
+$subject = $this->subjects_model->GetSubjectCourseByTermCourseId($id);
 
 			$this->data['page_title'] 	= "Adding Grade Type for \"". $subject->course_title . "\"";
 
@@ -182,7 +195,7 @@ class Gradebook extends CI_Controller
 	{
 		// use the CodeIgniter form validation library
    		$this->load->library('form_validation');
-		
+		$this->load->helper('udf');
 		//$this->load->model('person_model','',TRUE);
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
@@ -190,7 +203,7 @@ class Gradebook extends CI_Controller
 			$session_data 		= $this->session->userdata('logged_in');
 			
 			$grade_type_id  	= $this->input->post('grade_type_id', TRUE);
-			$course_id  		= $this->input->post('course_id', TRUE);
+			$term_course_id  		= $this->input->post('term_course_id', TRUE);
 			$grade 				= $this->input->post("grade", TRUE);
 			$gradeid 			= $this->input->post("gradeid", TRUE);
 			$studentid 			= $this->input->post("studentid", TRUE);
@@ -200,6 +213,7 @@ class Gradebook extends CI_Controller
 
 			foreach ($grade as $key => $value) {
 				$this->form_validation->set_rules('grade[' . $key . ']', $studentName[$key] .' grade', 'trim|numeric|required|xss_clean');
+				UDF_Validation($this,$studentid[$key]);
 			}
 			
 			$insertData = array();
@@ -226,6 +240,11 @@ class Gradebook extends CI_Controller
 							);
 						}
 					}
+					
+					//term_course_id
+
+					//Insert_Update_UDF($this, $studentid[$key], $grade_type_id,$studentid[$key]);
+					Insert_Update_UDF($this, $studentid[$key], $term_course_id,$studentid[$key]);
 				}
 				//$_SESSION["insert"] = $insertData;
 				//$_SESSION["update"] = $updateData;
@@ -236,7 +255,7 @@ class Gradebook extends CI_Controller
 				if (count($updateData) > 0)
 					$this->gradebook_model->UpdateGrades($updateData);
 
-			    redirect('gradebook/gradetypelist/' . $course_id);
+			    redirect('gradebook/gradetypelist/' . $grade_type_id);
 			}
 		}
 		else // not logged in - redirect to login controller (login page)

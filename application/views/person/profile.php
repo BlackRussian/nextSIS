@@ -4,7 +4,10 @@
         <div class="block-content collapse in">
           <div class="span12" >
           <?php
-          		echo form_open('person', 'method="post" class="form-horizontal"'); ?>
+          
+          		echo form_open('person/UpdateUserProfile', 'method="post" class="form-horizontal"');
+				echo  form_hidden('person_id',set_value('person_id', $profile->id));
+				 ?>
           				<fieldset>
 		                <?php $this->load->view('shared/display_errors');?>
 		                <legend><?php echo $page_title;?></legend>
@@ -73,9 +76,35 @@
 		                    	<?php echo  $profile->roles ?>	                                        			                    	
 		                    </div>
 		                </div>
- 						<?php $this->load->view('shared/display_udf_view');?>		                
+ 						<?php $this->load->view('shared/display_udf_view');?>		
+ 						<legend>Change Password</legend>
+ 						<div class="control-group">
+		                    <label class="control-label" for="fname"><?php echo "Password";?></label>
+		                    <div class="controls">		                    			                    	
+		                    	<input type="password" name="old_password" placeholder="Current Password: " class="form-control">
+		                    	
+		                    </div>
+		                </div>
+						<div class="control-group">
+		                    <label class="control-label" for="mname"><?php echo "New Password";?></label>
+		                    <div class="controls">		                    			                    	
+		                    	<input type="password" name="newpassword" placeholder="New Password: " class="form-control">
+		                    	
+		                    </div>
+		                </div>
+ 						<div class="control-group">
+		                    <label class="control-label" for="mname"><?php echo "Confirm Password";?></label>
+		                    <div class="controls">		                    			                    	
+		                    	<input type="password" name="con_password" placeholder="Confirm Password: " class="form-control">
+		                    	
+		                    </div>
+		                </div>                
 					</fieldset>	
-        		<?php echo form_close(); ?>
+        		<div class="form-actions">
+          			
+				          <?php echo form_submit('submit','Change Password', 'class="btn btn-primary"'); ?>
+		        </div>
+	          	<?php echo form_close(); ?>
         		</div>  			
   				  				
   			</div>

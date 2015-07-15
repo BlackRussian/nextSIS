@@ -126,7 +126,7 @@ class Person_model extends CI_Model
 	
 	
  	//Update person model
- 	public function updateperson($id,$data,$roledata,$schoolid)
+ 	public function updateperson($id,$data,$roledata,$schoolid,$ufunction)
  	{
  		//This section will be used to update the person data
  		$this->db->where('id', $id);
@@ -151,6 +151,24 @@ class Person_model extends CI_Model
 				$this->db->flush_cache();
 				
 			}
+		}
+		
+		//Clear the current function
+		$this->db->where('person_id',$id);
+		$this->db->where('school_id',$schoolid);
+		$this->db->delete('person_function');
+		$this->db->flush_cache();
+		
+		
+		if($ufunction)
+		{
+			
+			$functiondata = array(
+			'school_id' => $schoolid,
+			'person_id' => $id,
+			'function_id' => $ufunction);
+			$this->db->insert('person_function',$functiondata);
+			$this->db->flush_cache();
 		}
 		
 		
@@ -210,7 +228,61 @@ class Person_model extends CI_Model
 		}
  	}
 
-	
+	public function validate_oldpwd($id,$pwd)
+	{
+		$this->db->select('id,username,password,default_schoolId, first_name, surname')->from('person')->where('id',$id)->limit(1);
+		
+		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// if there is one result we have a matching username
+   		if($query->num_rows()==1)
+   		{
+   			// get the correcthash from the database
+   			$array = $query->row_array();
+   			$correcthash = $array['password'];
+			
+			// load our tcrypt class and create a new object to work with
+			$this->load->library('tcrypt');
+ 			$tcrypt = new Tcrypt;
+			
+			// call the password_validate method of the tcrypt class to hash the password and compare it to the correct hash
+			// - the method returns true if there is an exact match
+			if($tcrypt->password_validate($pwd,$correcthash))
+			{
+				// the user-supplied password hash is a match for the correct hash so return the query as an array
+				return $query->result();
+			}
+			else
+			{
+     			// no soup for you
+     			return FALSE;
+			}
+   		}
+		else
+		{
+			// the username doesn't exist in the database - we won't tell the visitor that - simply return FALSE
+			return FALSE;
+		}
+	}
+	public function UpdateUserPassword($id,$data)
+	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('id,username,password,default_schoolId, first_name, surname')->from('person')->where('id',$id)->limit(1);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+   			$this->db->flush_cache();
+			$this->db->where('id', $id);
+			$this->db->update('person', $data);
+			$this->db->flush_cache();
+   		}
+		
+	}
 	public function updatepersonclass($personid, $year, $data)
 	{
 		// select all the information from the table we want to use with a 10 row limit (for display)
@@ -307,6 +379,27 @@ class Person_model extends CI_Model
 			return FALSE;
 		}
 		
+	}
+
+	public function getpersonfunctionsbypersonid($personid, $schoolid)
+	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+			$this->db->select('person_id,function_id')->from('person_function')->where('person_id',$personid)->where('school_id', $schoolid);
+	
+	   		// run the query and return the result
+	   		$query = $this->db->get();
+			
+			// proceed if records are found
+	   		if($query->num_rows()>0)
+	   		{
+				// return the data (to the calling controller)
+				return $query->row();
+	   		}
+			else
+			{
+				// there are no records
+				return FALSE;
+			}
 	}
 	
 	public function GetStudentClassByStudent($studentid, $syear,$school_id)
@@ -416,6 +509,29 @@ class Person_model extends CI_Model
 			return FALSE;
 		}
  	}
+	
+	//Get all School Functions
+	public function GetPersonFunctions()
+ 	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('functionId,Function')->from('SchoolFunction');
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->result();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+	
 
 	public function GetPersonCoursesByPersonId($personid)
 	{

@@ -67,12 +67,14 @@ class Report_model extends CI_Model
 
 		$this->lang->load('setup');
 
-		$this->db->select("CONCAT(first_name,if(middle_name = '',middle_name,CONCAT(' ',SUBSTRING(middle_name,1,1),'. ')),' ',surname) as name, person.id as person_id, school_class.id as class_id, school_class.title as class", FALSE);
+		//$this->db->select("CONCAT(first_name,if(middle_name = '',middle_name,CONCAT(' ',SUBSTRING(middle_name,1,1),'. ')),' ',surname) as name, person.id as person_id, school_class.id as class_id, school_class.title as class", FALSE);
+		$this->db->select("CONCAT_WS(' ',first_name,middle_name,surname) as name, person.id as person_id, school_class.id as class_id, school_class.title as class", FALSE);
+		
 		$this->db->from('person_class', FALSE);
 		$this->db->join('person', 'person_class.person_id = person.id', FALSE);
 		$this->db->join('person_role', 'person.id = person_role.person_id', FALSE);
 		$this->db->join('school_class', 'person_class.class_id = school_class.id', FALSE);		
-		$this->db->where('person_role.role_id', 2, FALSE);
+		$this->db->where('person_role.role_id', 3, False);
 		$this->db->where('person_class.year', $year, FALSE);
 		$this->db->where('person.default_schoolId', $schoolid, FALSE);
 		$this->db->where('school_class.id', $class_id, FALSE);
@@ -94,6 +96,95 @@ class Report_model extends CI_Model
 			return FALSE;
 		}
  	}
+ 	public function GetPersonFunctionByPersonId($id,$schoolid)
+ 	{
+ 		$this->db->select("functionid,function", FALSE);
+		
+		$this->db->from('person_function', FALSE);
+		$this->db->join('SchoolFunction', 'person_function.function_id = SchoolFunction.functionid', FALSE);
+			
+		$this->db->where('person_id', $id, False);
+		$this->db->where('school_id', $schoolid, FALSE);
+		
+		
+		
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->row();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+ 	public function GetStudentReportComments($student_id,$teacher_id,$period_id)
+ 	{
+
+		$this->lang->load('setup');
+
+		$this->db->select("id,student_id,teacher_id,marking_period_id,comments", FALSE)->limit(1);
+		//$this->db->select("CONCAT_WS(' ',first_name,middle_name,surname) as name, person.id as person_id, school_class.id as class_id, school_class.title as class", FALSE);
+		
+		$this->db->from('student_report_profile_comments', FALSE);
+		//$this->db->join('person', 'person_class.person_id = person.id', FALSE);
+			
+		$this->db->where('student_id', $student_id, False);
+		$this->db->where('teacher_id', $teacher_id, FALSE);
+		$this->db->where('marking_period_id', $period_id, FALSE);
+		
+		
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+			// return the data (to the calling controller)
+			return $query->row();
+   		}
+		else
+		{
+			// there are no records
+			return FALSE;
+		}
+ 	}
+	
+	public function updatepersonreportcomments($data,$studentid,$teacherid,$periodid)
+	{
+		// select all the information from the table we want to use with a 10 row limit (for display)
+		$this->db->select('id,student_id,teacher_id,marking_period_id,comments')->from('student_report_profile_comments')->where('student_id',$studentid)->where('teacher_id', $teacherid)->where('marking_period_id',$periodid);
+
+   		// run the query and return the result
+   		$query = $this->db->get();
+		
+		// proceed if records are found
+   		if($query->num_rows()>0)
+   		{
+   			$this->db->flush_cache();
+			$this->db->where('teacher_id', $teacherid);
+			$this->db->where('marking_period_id', $periodid);
+			$this->db->where('student_id', $studentid);
+			$this->db->update('student_report_profile_comments', $data);
+			$this->db->flush_cache();
+   		}
+		else
+		{
+			// there are no records
+			$this->db->insert('student_report_profile_comments', $data);
+			$this->db->flush_cache();
+		}
+		
+	}
+ 	
+ 	
 }
 
 ?>
