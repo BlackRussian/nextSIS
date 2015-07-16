@@ -30,7 +30,7 @@
 							<tr>
 								<td><?php echo $udf->category ?></td>
 								<td><?php echo $udf->title ?></td>
-								<td><?php echo $udf->description ?></td>
+								<td><?php echo word_limiter($udf->description, 10) ?></td>
 								<td><?php echo $udf->type ?></td>
 								<td><?php echo str_replace('|', ', ', $udf->validation) ?></td>
 								<td><?php echo $udf->hide == 1? "Yes":"No"; ?></td>
