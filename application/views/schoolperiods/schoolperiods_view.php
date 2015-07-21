@@ -52,44 +52,42 @@
   			</div>
   		</div>-->
   		
-  		<div class="container-fluid">
-  			<div class="row-fluid">
-  				<div class="span4 navleft">
-  					<ul class="nav nav-pills nav-stacked">
-  						<li ><a href=""><?php echo $this->lang->line("search");?>&nbsp;<i class="icon-search icon-white"></i></a></li>
-  						<li><a href="../schoolterms/listing"><?php echo $this->lang->line("school_terms");?></a></li> 	
-  						<li><a href="../gradelevels/listing"><?php echo $this->lang->line("grade_levels");?></a></li> 
-  						<li><a href="../schoolclasses/listing"><?php echo $this->lang->line("schoolclasses");?></a></li> 
-  						<li class="active"><a href="../schoolperiods/listing"><?php echo $this->lang->line("school_periods");?></a></li> 
-  						<li><a href="../schoolsubjects/listing"><?php echo $this->lang->line("school_subjects");?></a></li> 	 						  						
-  					</ul>
-  					<div class="well">
-  						<p><b><?php echo $this->lang->line("help");?></b>&nbsp;<?php echo $this->lang->line("sample_help_message");?></p>
-  					</div>
-  				</div>
-  				
-        		<div class="span8">
-					<h1><?php echo $this->lang->line("school_periods");?></h1>
-					<table>
-					<tr>
-						<td>
+  	<div class="span9" id="content">
+  		<div class="row-fluid">
+  		<?php echo $this->load->view('templates/breadcrumb.php');?>
+  		<div class="block">
+       		<div class="block-content collapse in">
+          		<div class="span12">
+          			<?php $this->load->view('shared/display_notification.php');?>
+					<h3>School Periods/Terms for - <?php echo $currentsyear; ?></h3>
+					<div class="table-toolbar">
+                    	<div class="btn-group">
+                    		<a href="/schoolperiods/add"><button class="btn btn-success">Add Period <i class="icon-plus icon-white"></i></button></a>
+                    	</div>
+					</div>
+					<table cellpadding="0" cellspacing="0" border="0" class="table table-striped table-bordered">
+					<thead>
+						<tr>
+						<th>
 							Title
-						</td>
-						<td>
+						</th>
+						<th>
 							Start Time
-						</td>
-						<td>
+						</th>
+						<th>
 							End Time
-						</td>
-						<td>
+						</th>
+						<th>
 							Length
 							(minutes)
-						</td>
-						<td>
+						</th>
+						<th>
 							&nbsp;
-						</td>
-					</tr>
-				 	<?php 
+						</th>
+						</tr>
+					</thead>
+					<tbody>
+						<?php 
 				 	
 				 	function is_iterable($var)
 					{
@@ -132,12 +130,13 @@
 						}
 					
 						}?>
+					</tbody>
 					</table>
-					<a href="add"><?php echo $this->lang->line("add_new_schoolperiod");?></a>
-        		</div>  			
-  				  				
-  			</div>
-  		</div>
+								
+          		</div>
+          	</div>
+        </div>
+  				
+  				
+  						
   		
-	</body>
-</html>

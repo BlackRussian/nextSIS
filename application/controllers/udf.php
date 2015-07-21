@@ -71,7 +71,7 @@ class UDF extends CI_Controller
 		{
 
 			$this->data['query'] = $this->udf_model->listing($this->data['currentschoolid']);	
-			$this->load->helper('text');
+
 			$this->load->view('templates/header', $this->data);
 			$this->load->view('templates/sidenav');
 			$this->load->view('udf/list_udf_view', $this->data);

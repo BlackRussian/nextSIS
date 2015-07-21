@@ -54,7 +54,7 @@
 												}
 												if($filter && $filter=="3"){
 													echo "<td>
-													<a href='/person/assigncourses/" .  urlencode($person->id) . "/".urlencode($filter)."';>assign courses</a>										
+													<a href='/person/assignclass/" .  urlencode($person->id) . "/".urlencode($filter)."';>assign class</a>										
 													</td>";
 												}
 										?>
@@ -86,7 +86,7 @@
 							echo ',{"data":"assign", "sortable":false, "searchable":false}';
 						}
 						if($filter && $filter=="3"){
-							echo ',{"data":"courses", "sortable":false, "searchable":false}';
+							echo ',{"data":"reports", "sortable":false, "searchable":false}';
 						}
 				?>
         	]

@@ -28,21 +28,36 @@ class Schoolperiods extends CI_Controller
 	{
 		parent::__construct();
 		$this->load->model('schoolperiods_model');
+		$this->lang->load('setup'); // default language option taken from config.php file 	
+		
+		// get session data
+		$session_data = $this->session->userdata('logged_in');
+			
+		// set the data associative array that is sent to the home view (and display/send)
+		$this->data['username'] 			= $session_data['username'];
+		$this->data['currentschoolid'] 		= $session_data['currentschoolid'];
+		$this->data['currentsyear'] 		= $session_data['currentsyear'];		
+		$this->data['roles'] 				= $session_data['role'];	
+		$this->data['id'] 					= $session_data['id'];	
+		$this->data['nav'] 					= $this->navigation->load('schoolperiods');
+		
+		$this->breadcrumbcomponent->add('School Periods', '/schoolperiods');
+		
 	}
 	
 	function index()
 	{
 		if($this->session->userdata('logged_in')) // user is logged in
 		{
-			// get session data
-			$session_data = $this->session->userdata('logged_in');
 			
 			// set the data associative array that is sent to the home view (and display/send)
 			
-			$data['username'] = $session_data['username'];
-			$this->lang->load('setup'); // default language option taken from config.php file 	
-			$this->load->view('templates/header');
-			$this->load->view('schoolperiods/schoolperiods_view', $data);
+			$this->data['query'] = $this->schoolperiods_model->listing($this->data['currentschoolid'], $this->data['currentsyear']);	
+			
+			$this->load->view('templates/header', $this->data);
+			$this->load->view('templates/sidenav');
+			$this->load->view('schoolperiods/schoolperiods_view',  $this->data);
+			$this->load->view('templates/footer');
 		}
 		else // not logged in - redirect to login controller (login page)
 		{
@@ -61,22 +76,22 @@ class Schoolperiods extends CI_Controller
 			
 			// set the data associative array that is sent to the home view (and display/send)
 			//$this->session->userdata('currentschoolid')
-			$data['username'] = $session_data['username'];
-			$data['currentschoolid'] = $session_data['currentschoolid'];
-			$data['currentsyear'] = $session_data['currentsyear'];
+			$this->data['username'] = $session_data['username'];
+			$this->data['currentschoolid'] = $session_data['currentschoolid'];
+			$this->data['currentsyear'] = $session_data['currentsyear'];
 			echo "current school year is" .$session_data['currentsyear'] . $session_data['currentschoolid'];
 			$this->load->helper(array('form', 'url')); // load the html form helper
 			
-			
+			$this->data['page_title'] = "Add Period";
 			$this->lang->load('setup'); // default language option taken from config.php file 
 			$availabletimedata = $this->schoolperiods_model->GetAvailableTimes();
 			$availablesortopts = $this->schoolperiods_model->GetSortOrder($session_data['currentschoolid'],$session_data['currentsyear']);
-			$data['hoursopts'] = 	$availabletimedata['hour'];
-			$data['minutesopts'] = 	$availabletimedata['minutes'];
-			$data['allsortopts'] = $availablesortopts['sortopts'];
+			$this->data['hoursopts'] = 	$availabletimedata['hour'];
+			$this->data['minutesopts'] = 	$availabletimedata['minutes'];
+			$this->data['allsortopts'] = $availablesortopts['sortopts'];
 			
-		    $this->load->view('templates/header',$data);
-			$this->load->view('schoolperiods/add', $data);
+		    $this->load->view('templates/header',$this->data);
+			$this->load->view('schoolperiods/add', $this->data);
 			
 			
 		}

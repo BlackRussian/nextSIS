@@ -109,7 +109,14 @@ class Navigation{
 				'show_condition'=>	1,
 				'icon-class'=>	'icon-home',
 				'parent'	=>	5
-			)
+			),
+			14 => 	array(
+				'text'		=> "Manage School Periods",	
+				'link'		=> 	base_url().'schoolperiods',
+				'show_condition'=>	1,
+				'icon-class'=>	'icon-home',
+				'parent'	=>	5
+			),
 			
 		); 
 	}

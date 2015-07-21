@@ -25,7 +25,7 @@ class Schoolperiods_model extends CI_Model
 	// The listing method takes gets a list of people in the database 
 	public function listing($schoolid,$syear)
  	{
- 		echo "testing" . $syear;
+ 		
 		// select all the information from the table we want to use with a 10 row limit (for display)
 		$this->db->select('period_id,school_id,sort_order,title,start_time,end_time','ignore_scheduling','attendance')->from('school_periods')->where('school_id',$schoolid)->where('syear',$syear)->limit(10);
 
