@@ -358,6 +358,51 @@ class Courses extends CI_Controller
 			}
 		}
 
+function scheduleteacher($term_course_id)
+		{
+			//$this->load->model('person_model','',TRUE);
+			if($this->session->userdata('logged_in')) // user is logged in
+			{
+				$this->load->model('school_model');
+				$this->load->model('person_model');
+
+				//load course details for use in view
+				$course = $this->subjects_model->GetTermCourseById($term_course_id);
+
+				$result = $this->school_model->GetSchoolTerms($this->viewdata['currentschoolid'], $this->viewdata['currentsyear']);
+
+				$markingperiod[""] = "Select a Term";
+
+				foreach ($result as $row) {
+					$markingperiod[$row->marking_period_id."|".$row->short_name] = $row->title; 
+				}
+
+				$result = $this->person_model->GetPersonsWithRole(2, $this->viewdata['currentschoolid']);
+
+				$teachers[""] = "Select a Teacher";
+
+				foreach ($result as $row) {
+					$teachers[$row->id] = $row->first_name . " " . $row->surname; 
+				}
+
+				//construct page title
+				$this->viewdata["page_title"] 		= "Schedule teacher for \"" .$course->course_title ." - " . $course->short_name . "\"";
+				$this->viewdata["course"] 			= $course;
+				$this->viewdata["subject_id"] 		= $course->subject_id;
+				$this->viewdata["markingperiod"] 	= $markingperiod;
+				$this->viewdata["teachers"] 		= $teachers;
+
+				$this->load->view('templates/header', $this->viewdata);
+				$this->load->view('templates/sidenav');
+				$this->load->view('subjects/schedule_teacher_view', $this->viewdata);
+				$this->load->view('templates/footer');
+			}
+			else // not logged in - redirect to login controller (login page)
+			{
+				redirect('login','refresh');
+			}
+		}
+
 
 	function addtermcourse(){
 		// use the CodeIgniter form validation library

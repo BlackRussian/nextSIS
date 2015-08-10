@@ -29,6 +29,7 @@
                       <td><?php echo $course->grade_level ?></td>
                       <td><?php echo $course->full_name ?></td>
                       <td><a href='/courses/reassignteacher/<?php echo urlencode($course->term_course_id); ?>'>edit</a></td>
+                      <td><a href='/courses/scheduleteacher/<?php echo urlencode($course->term_course_id); ?>'>Schedule</a></td>
                     </tr>
                   <?php } } ?>
                   <tbody>

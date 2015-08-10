@@ -91,7 +91,9 @@ class Schoolperiods extends CI_Controller
 			$this->data['allsortopts'] = $availablesortopts['sortopts'];
 			
 		    $this->load->view('templates/header',$this->data);
+			$this->load->view('templates/sidenav');	
 			$this->load->view('schoolperiods/add', $this->data);
+			$this->load->view('templates/footer');
 			
 			
 		}
@@ -163,9 +165,13 @@ class Schoolperiods extends CI_Controller
 			    $this->load->view('templates/header',$data);
 				$this->load->view('schoolperiods/add', $data);
 			}else{
-				$length=(strtotime(date('m/d/y'). ' ' .$end_time) - (strtotime(date('m/d/y'). ' ' .$start_time))) / 60;
-			
+				$time1 = strtotime(date('m/d/y'). ' ' .$end_time);
+				$time2 = strtotime(date('m/d/y'). ' ' .$start_time);
 				
+				//$length=(strtotime(date('m/d/y'). ' ' .$end_time) - (strtotime(date('m/d/y'). ' ' .$start_time))) / 60;
+				$length =round(abs($time2 - $time1) / 60,2);
+				//$length = $time1->diff($time2);
+				//echo $length;
 				$newdata = array(
 					'syear' => $syear,
 					'title' => $title,
@@ -181,7 +187,7 @@ class Schoolperiods extends CI_Controller
 				);
 				
 				$this->schoolperiods_model->addschoolperiod($newdata);
-			    redirect('schoolperiods/listing');
+			    redirect('schoolperiods/');
 			}
 
 			//$this->gradelevels_model->addgradelevel($data);
@@ -360,7 +366,7 @@ class Schoolperiods extends CI_Controller
 				);
 				
 				$this->schoolperiods_model->updateperiodlevel($id,$newdata);
-			    redirect('schoolperiods/listing');
+			    redirect('schoolperiods/');
 			}
 			
 			
@@ -386,42 +392,44 @@ class Schoolperiods extends CI_Controller
 				
 				// set the data associative array that is sent to the home view (and display/send)
 				$this->load->helper(array('form', 'url')); // load the html form helper
-				$data['username'] = $session_data['username'];
-				$data['currentschoolid'] = $session_data['currentschoolid'];
-				$data['currentsyear'] = $session_data['currentsyear'];
+				
+				$this->data['page_title'] = "Edit School Period";
 				$this->lang->load('setup'); // default language option taken from config.php file 	
 				//$this->load->view('person_view', $data);
 				
 				// if the person model returns TRUE then call the view
 				if(!$this->load->model('schoolperiods_model','',TRUE))
 				{
-					echo "this is a test edit";
+					
 						
 					$rows = $this->schoolperiods_model->GetSchoolPeriodById($id);
 					foreach($rows as $row)
 					{
-						$data['title'] = $row->title;
-						$data['school_id'] = $row->school_id;
-						$data['syear'] = $row->syear;
-						$data['period_id'] = $row->period_id;
-						$data['sort_order'] = $row->sort_order;
-						$data['short_name'] = $row->short_name;
-						$data['start_time'] = $row->start_time;
-						$data['end_time'] = $row->end_time;
-						$data['db_stime'] = $row->start_time;
-						$data['db_etime'] = $row->end_time;
-						$data['ignore_scheduling'] = $row->ignore_scheduling;
-						$data['attendance'] = $row->attendance;
+						$this->data['title'] = $row->title;
+						$this->data['school_id'] = $row->school_id;
+						$this->data['syear'] = $row->syear;
+						$this->data['period_id'] = $row->period_id;
+						$this->data['sort_order'] = $row->sort_order;
+						$this->data['short_name'] = $row->short_name;
+						$this->data['start_time'] = $row->start_time;
+						$this->data['end_time'] = $row->end_time;
+						$this->data['db_stime'] = $row->start_time;
+						$this->data['db_etime'] = $row->end_time;
+						$this->data['ignore_scheduling'] = $row->ignore_scheduling;
+						$this->data['attendance'] = $row->attendance;
 					}
 					//$data['gradelevels'] = $this->gradelevels_model->GetGradeLevelsExceptCurrent($session_data['currentschoolid'],$id);	
 				}
+				$this->breadcrumbcomponent->add('Edit','/schoolperiods/edit/'.$id);
 				$availablesortopts = $this->schoolperiods_model->GetSortOrder($session_data['currentschoolid'],$session_data['currentsyear']);
 				$availabletimedata = $this->schoolperiods_model->GetAvailableTimes();
-				$data['hoursopts'] = 	$availabletimedata['hour'];
-				$data['minutesopts'] = 	$availabletimedata['minutes'];	
-				$data['allsortopts'] = $availablesortopts['sortopts'];
-				$this->load->view('templates/header',$data);
-				$this->load->view('schoolperiods/edit', $data);
+				$this->data['hoursopts'] = 	$availabletimedata['hour'];
+				$this->data['minutesopts'] = 	$availabletimedata['minutes'];	
+				$this->data['allsortopts'] = $availablesortopts['sortopts'];
+				$this->load->view('templates/header',$this->data);
+				$this->load->view('templates/sidenav');	
+				$this->load->view('schoolperiods/edit', $this->data);
+				$this->load->view('templates/footer');
 				
 				
 				

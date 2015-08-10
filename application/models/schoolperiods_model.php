@@ -27,7 +27,7 @@ class Schoolperiods_model extends CI_Model
  	{
  		
 		// select all the information from the table we want to use with a 10 row limit (for display)
-		$this->db->select('period_id,school_id,sort_order,title,start_time,end_time','ignore_scheduling','attendance')->from('school_periods')->where('school_id',$schoolid)->where('syear',$syear)->limit(10);
+		$this->db->select('period_id,school_id,sort_order,title,start_time,end_time,length,ignore_scheduling,attendance')->from('school_periods')->where('school_id',$schoolid)->where('syear',$syear)->limit(10);
 
    		// run the query and return the result
    		$query = $this->db->get();
@@ -107,6 +107,7 @@ class Schoolperiods_model extends CI_Model
    		$query = $this->db->get();
 		
 		// proceed if records are found
+		$sortoptions = array();
    		if($query->num_rows()>0)
    		{
    			$x=1;
@@ -190,7 +191,7 @@ class Schoolperiods_model extends CI_Model
 		
    		// run the query and return the result
    		$query1 = $this->db->get();
-		echo $query1->num_rows();
+		//echo $query1->num_rows();
 		// proceed if records are found
    		if($query1->num_rows()>0)
    		{
@@ -213,7 +214,7 @@ class Schoolperiods_model extends CI_Model
 		
    		// run the query and return the result
    		$query1 = $this->db->get();
-		echo $query1->num_rows();
+		//echo $query1->num_rows();
 		// proceed if records are found
    		if($query1->num_rows()>0)
    		{
